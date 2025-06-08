@@ -1,0 +1,233 @@
+/* ==========================================================================
+   1. GRUNDEINSTELLUNGEN & CSS-VARIABLEN
+   ========================================================================== */
+:root {
+    --Papier: #E8E8E8;
+    --Hintergrund: #434C63;
+    --Schatten-Farbe: rgba(0, 0, 0, 0.45);
+    --Schatten-Farbe-Inhalt: rgba(0, 0, 0, 0.25);
+
+    --font-script: 'Pinyon Script', cursive;
+    --font-mono: 'Courier Prime', monospace;
+    --tab-radius: 35px;
+    --inhalt-radius-gross: 80px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+    background-color: var(--Papier);
+    color: var(--Hintergrund);
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: column;
+}
+.page-wrapper { flex: 1 0 auto; display: flex; flex-direction: column; }
+.page-header { padding: 2rem 2rem 1rem 2rem; color: var(--Papier); }
+
+/* ==========================================================================
+   2. ORDNER-SYSTEM
+   ========================================================================== */
+.ordner-system {
+    flex-grow: 1;
+    position: relative;
+    margin-top: 2rem;
+}
+
+.no-transition {
+    transition: none !important;
+}
+
+.ordner-tabs {
+    position: relative;
+    height: 30px;
+}
+.tab {
+    position: absolute;
+    top: 0;
+    border: none;
+    min-width: 350px;
+    padding: 1rem 3rem;
+    font-family: var(--font-script);
+    font-size: 3rem;
+    font-weight: 100;
+    color: var(--Hintergrund);
+    background-color: var(--Papier);
+    border-top-left-radius: var(--tab-radius);
+    border-top-right-radius: var(--tab-radius);
+    cursor: pointer;
+    transition: transform 0.3s ease-out, box-shadow 0.4s ease-out;
+    color: transparent;
+    -webkit-text-stroke: 0.5px var(--Hintergrund);
+    text-stroke: 0.5px var(--Hintergrund);
+
+    /* Standard-Schatten für ALLE Tabs */
+     box-shadow: 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
+}
+
+/* Das "Pflaster" UND der Schatten für den AKTIVEN Tab */
+.tab.active {
+    box-shadow: 
+        /* Schicht 1: Das "Pflaster" (liegt oben und verdeckt die Naht) */
+       /* Schicht 2: Der ECHTE Schatten (liegt darunter und ist sichtbar) */
+          box-shadow: 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
+    /* Muss über dem Inhalt (z-index: 5) liegen */
+    
+}
+
+/* ==========================================================================
+   DEKO-ELEMENTE FÜR ALLE TABS
+   ========================================================================== */
+
+/* RECHTES Deko-Element (::before) */
+.tab::before {
+    content: '';
+    position: absolute;
+    top: calc(var(--tab-radius) - 10px);
+    left: 100%;
+    width: 35px;
+    height: 55px;
+    background-color: var(--Papier);
+    -webkit-mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
+    mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+   
+    z-index: 7;
+     filter: drop-shadow(0   -18px  15px  -10px   rgba(0, 0, 0, 0.2));
+}
+
+/* LINKES Deko-Element (::after) */
+.tab::after {
+    content: '';
+    position: absolute;
+     top: calc(var(--tab-radius) - 10px);
+    right: 100%;
+    width: 35px;
+    height: 55px;
+    background-color: var(--Papier);
+    -webkit-mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
+    mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+   
+    z-index: 7;
+    filter: drop-shadow(0   -18px  15px  -10px   rgba(0, 0, 0, 0.2));
+}
+
+/* ==========================================================================
+   WEITERES STYLING & POSITIONIERUNG
+   ========================================================================== */
+
+/* Positionierung der Tabs */
+.tab[data-tab-target="startseite"] { left: 0; border-top-left-radius: 0; }
+.tab[data-tab-target="projekte"] { left: 260px; }
+.tab[data-tab-target="about"] { left: 520px; }
+
+/* Ausnahme: Der Start-Tab hat kein linkes Deko-Element */
+.tab[data-tab-target="startseite"]::after {
+    display: none;
+}
+
+.tab:hover {
+    transform: translateY(-8px);
+}
+
+.ordner-inhalt-stapel {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    border-top-right-radius: var(--inhalt-radius-gross);
+       box-shadow: 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-out;
+}
+
+.ordner-inhalt-stapel {
+    position: absolute;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5;
+    border-top-right-radius: var(--inhalt-radius-gross);
+    
+    transition: transform 0.3s ease-out;
+}
+.ordner-inhalt {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: var(--Papier);
+    padding: 3rem;
+    border-top-right-radius: var(--inhalt-radius-gross);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s;
+    overflow-y: auto;
+}
+.ordner-inhalt.active {
+    opacity: 1;
+    visibility: visible;
+}
+.ordner-inhalt[data-content="startseite"] {
+    border-top-left-radius: 0;
+}
+
+.ordner-inhalt-stapel.is-lifted {
+    transform: translateY(-8px);
+}
+
+.page-footer {
+    flex-shrink: 0;
+    text-align: center;
+    padding: 2rem;
+    color: var(--Papier);
+    z-index: 7;
+}
+
+/* ==========================================================================
+   3. MOBILE ANPASSUNGEN
+   ========================================================================== */
+@media (max-width: 768px) {
+    .ordner-system {
+        position: static;
+        margin-top: 1rem;
+    }
+    .ordner-tabs {
+        height: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    .tab {
+        position: static;
+        width: 100%;
+        border-radius: 0;
+        margin-bottom: -1px;
+        border: 1px solid var(--Hintergrund);
+        border-bottom: none;
+        box-shadow: none !important;
+    }
+    .tab.active {
+        border-bottom-color: var(--Papier);
+    }
+    .tab::before, .tab::after {
+        display: none !important;
+    }
+    .ordner-inhalt-stapel {
+        position: static;
+        box-shadow: none;
+        border: 1px solid var(--Hintergrund);
+        border-top: none;
+    }
+    .ordner-inhalt {
+        position: static;
+        height: auto;
+        min-height: 300px;
+        display: none;
+    }
+    .ordner-inhalt.active {
+        display: block;
+    }
+}
