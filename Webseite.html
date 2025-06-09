@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dein Name | Portfolio-Ordner</title>
+    <title>Leon Remmert | Portfolio</title>
     
     <link rel="stylesheet" href="style.css">
     
+    <link rel="icon" type="image/png" href="Favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Pinyon+Script&display=swap" rel="stylesheet">
@@ -26,17 +27,111 @@
                 
                  <div class="ordner-inhalt-stapel">
                       <main class="ordner-inhalt" data-content="startseite">
-                    <h2>Willkommen</h2>
-                    <p>Inhalt Startseite...</p>
-                     </main>
+                        <p>Inhalt Startseite...</p>
+                      </main>
+
                     <main class="ordner-inhalt" data-content="projekte">
-                    <h2>Projekte</h2>
-                    <p>Inhalt Projekte...</p>
+                        <div class="marquee-container">
+                            <div class="marquee-content">
+                                <!-- Block 1 -->
+                                <span>
+                                    <button class="marquee-button active" data-projekt-target="ashoka-dupe">Ashoka Dupe //</button>
+                                    <button class="marquee-button" data-projekt-target="leiter">Dekorierte Leiter //</button>
+                                    <button class="marquee-button" data-projekt-target="faltkarre">Faltkarre //</button>
+                                    <button class="marquee-button" data-projekt-target="tin-3d">Tin 3D Printer //</button>
+                                    <button class="marquee-button" data-projekt-target="movement">Movement to signal //</button>
+                                    <button class="marquee-button" data-projekt-target="new-tool">New tool //</button>
+                                    <button class="marquee-button" data-projekt-target="sketches">Sketches ||</button>
+                                </span>
+                                <!-- Block 2 -->
+                                <span>
+                                    <button class="marquee-button" data-projekt-target="ashoka-dupe">Ashoka Dupe //</button>
+                                    <button class="marquee-button" data-projekt-target="leiter">Dekorierte Leiter //</button>
+                                    <button class="marquee-button" data-projekt-target="faltkarre">Faltkarre //</button>
+                                    <button class="marquee-button" data-projekt-target="tin-3d">Tin 3D Printer //</button>
+                                    <button class="marquee-button" data-projekt-target="movement">Movement to signal //</button>
+                                    <button class="marquee-button" data-projekt-target="new-tool">New tool //</button>
+                                    <button class="marquee-button" data-projekt-target="sketches">Sketches ||</button>
+                                </span>
+                                <!-- Block 3 -->
+                                <span>
+                                    <button class="marquee-button" data-projekt-target="ashoka-dupe">Ashoka Dupe //</button>
+                                    <button class="marquee-button" data-projekt-target="leiter">Dekorierte Leiter //</button>
+                                    <button class="marquee-button" data-projekt-target="faltkarre">Faltkarre //</button>
+                                    <button class="marquee-button" data-projekt-target="tin-3d">Tin 3D Printer //</button>
+                                    <button class="marquee-button" data-projekt-target="movement">Movement to signal //</button>
+                                    <button class="marquee-button" data-projekt-target="new-tool">New tool //</button>
+                                    <button class="marquee-button" data-projekt-target="sketches">Sketches ||</button>
+                                </span>
+                                <!-- Block 4 -->
+                                <span>
+                                    <button class="marquee-button" data-projekt-target="ashoka-dupe">Ashoka Dupe //</button>
+                                    <button class="marquee-button" data-projekt-target="leiter">Dekorierte Leiter //</button>
+                                    <button class="marquee-button" data-projekt-target="faltkarre">Faltkarre //</button>
+                                    <button class="marquee-button" data-projekt-target="tin-3d">Tin 3D Printer //</button>
+                                    <button class="marquee-button" data-projekt-target="movement">Movement to signal //</button>
+                                    <button class="marquee-button" data-projekt-target="new-tool">New tool //</button>
+                                    <button class="marquee-button" data-projekt-target="sketches">Sketches ||</button>
+                                </span>
+                            </div>
+                        </div>
+                    
+                        <div class="projekt-details-container">
+                            <div class="projekt-detail active" data-projekt="ashoka-dupe">
+                                <div class="projekt-header">
+                                    <h3>Ashoka Dupe</h3>
+                                    <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                </div>
+                                <div class="projekt-galerie"></div>
+                            </div>
+                            <div class="projekt-detail" data-projekt="leiter">
+                                <div class="projekt-header">
+                                    <h3>Dekorierte Leiter</h3>
+                                    <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                </div>
+                                <div class="projekt-galerie"></div>
+                            </div>
+                            <div class="projekt-detail" data-projekt="faltkarre">
+                                 <div class="projekt-header">
+                                    <h3>Faltkarre</h3>
+                                    <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                </div>
+                                <div class="projekt-galerie"></div>
+                            </div>
+                            <div class="projekt-detail" data-projekt="tin-3d">
+                                 <div class="projekt-header">
+                                    <h3>Tin 3D Printer</h3>
+                                    <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                </div>
+                                <div class="projekt-galerie"></div>
+                            </div>
+                            <div class="projekt-detail" data-projekt="movement">
+                                 <div class="projekt-header">
+                                    <h3>Movement to signal</h3>
+                                    <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                </div>
+                                <div class="projekt-galerie"></div>
+                            </div>
+                            <div class="projekt-detail" data-projekt="new-tool">
+                                 <div class="projekt-header">
+                                    <h3>New tool</h3>
+                                    <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                </div>
+                                <div class="projekt-galerie"></div>
+                            </div>
+                            <div class="projekt-detail" data-projekt="sketches">
+                                 <div class="projekt-header">
+                                    <h3>Sketches</h3>
+                                    <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                </div>
+                                <div class="projekt-galerie"></div>
+                            </div>
+                        </div>
                      </main>
+
                     <main class="ordner-inhalt" data-content="about">
-                    <h2>About</h2>
-                    <p>Inhalt About...</p>
-                     </main>
+                        <p>Inhalt About...</p>
+                    </main>
                  </div>     
             </div>
         </div>
@@ -44,6 +139,11 @@
     <footer class="page-footer">
         <p>© 2024 [Dein Name]. Alle Rechte vorbehalten.</p>
     </footer>
+
+    <!-- Dekorative Wolken -->
+    <img src="Data/wolke-links.png" alt="" class="deko-wolke wolke-links">
+    <img src="Data/wolke-rechts.png" alt="" class="deko-wolke wolke-rechts">
+
     <script src="script.js"></script>
 </body>
 </html>

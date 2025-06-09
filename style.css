@@ -1,3 +1,28 @@
+/* In style.css */
+body {
+    /* Ihre bestehenden Stile wie font-family, display etc. bleiben erhalten */
+    color: var(--Hintergrund);
+    font-family: var(--font-mono);
+    display: flex;
+    flex-direction: column;
+
+    /* ERSETZEN SIE "background-color: var(--Papier);" MIT DIESEM BLOCK: */
+    background:
+        /* Schicht 1: Die Linie (ein Gradient, der sofort endet) */
+        linear-gradient(
+            to bottom, /* Die Richtung ist hier unwichtig */
+            var(--Hintergrund), /* Die Farbe der Linie */
+            var(--Hintergrund) 0.5px, /* Die Dicke der Linie */
+            transparent 0.5px   /* Der Rest ist durchsichtig */
+        )
+        no-repeat               /* Die Linie soll sich nicht wiederholen */
+        0 30px / 100% 0.5px,   /* Position (links, oben) / Größe (Breite, Höhe) */
+
+        /* Schicht 2: Ihre ursprüngliche Hintergrundfarbe */
+        var(--Papier);
+}
+
+
 /* ==========================================================================
    1. GRUNDEINSTELLUNGEN & CSS-VARIABLEN
    ========================================================================== */
@@ -46,9 +71,9 @@ body {
     top: 0;
     border: none;
     min-width: 350px;
-    padding: 1rem 3rem;
+    padding: 0.2rem 3rem 1.5rem 3rem;
     font-family: var(--font-script);
-    font-size: 3rem;
+    font-size: 3.2rem;
     font-weight: 100;
     color: var(--Hintergrund);
     background-color: var(--Papier);
@@ -93,7 +118,7 @@ body {
     mask-size: 100% 100%;
    
     z-index: 7;
-     filter: drop-shadow(0   -18px  15px  -10px   rgba(0, 0, 0, 0.2));
+    box-shadow: 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
 }
 
 /* LINKES Deko-Element (::after) */
@@ -110,8 +135,8 @@ body {
     -webkit-mask-size: 100% 100%;
     mask-size: 100% 100%;
    
-    z-index: 7;
-    filter: drop-shadow(0   -18px  15px  -10px   rgba(0, 0, 0, 0.2));
+    z-index: 10;
+    box-shadow: 0 -18px 15px -10px rgb(252, 0, 0);
 }
 
 /* ==========================================================================
@@ -159,13 +184,38 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-color: var(--Papier);
+    /* NEU: Hintergrund mit Linie und Füllfarbe */
+    background:
+        /* Schicht 1: Die horizontale Linie */
+        linear-gradient(
+            var(--Hintergrund), 
+            var(--Hintergrund) 0.5px, 
+            transparent 0.5px
+
+
+      ) 
+        no-repeat
+        0 2.5rem / 100% 0.5px, /* Position: 2.5rem von oben */
+
+        /* Schicht 2: Die zweite, untere Linie */
+        linear-gradient(
+            var(--Hintergrund), 
+            var(--Hintergrund) 0.5px, 
+            transparent 0.5px
+        ) 
+        no-repeat
+        0 calc(2.5rem + 40px) / 100% 0.5px, /* Position: 30px unter der ersten */
+
+        /* Schicht 3: Die Papierfarbe als Füllung (immer die letzte Schicht) */
+        var(--Papier);
+
     padding: 3rem;
     border-top-right-radius: var(--inhalt-radius-gross);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s;
     overflow-y: auto;
+    
 }
 .ordner-inhalt.active {
     opacity: 1;
@@ -179,6 +229,7 @@ body {
     transform: translateY(-8px);
 }
 
+
 .page-footer {
     flex-shrink: 0;
     text-align: center;
@@ -186,6 +237,192 @@ body {
     color: var(--Papier);
     z-index: 7;
 }
+
+/* ==========================================================================
+   PROJEKTSEITE: MARQUEE & INHALTSWECHSEL
+   ========================================================================== */
+
+/* Der "Rahmen" für das Marquee, positioniert zwischen den Linien */
+.marquee-container {
+    position: absolute;
+    top: 2.8rem; /* Genau auf Höhe der ersten Linie */
+    left: 0;
+    right: 0;
+    height: 30px; /* Die Höhe des Zwischenraums */
+    overflow: hidden; /* Versteckt den Text, der außerhalb ist */
+    display: flex;
+    align-items: center;
+
+     
+}
+
+/* Der bewegliche Inhalt */
+.marquee-content {
+    display: flex; /* Richtet die Button-Gruppen nebeneinander aus */
+    flex-shrink: 0; /* Verhindert, dass der Inhalt schrumpft */
+    animation: marquee-scroll 100s linear infinite; /* Die Endlos-Animation */
+}
+
+/* UX-Verbesserung: Marquee pausiert bei Hover */
+.marquee-container:hover .marquee-content {
+    animation-play-state: continue;
+}
+
+/* Die Keyframe-Animation für den Scroll-Effekt */
+@keyframes marquee-scroll {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-50%); /* Bewegt sich um genau eine Inhaltsbreite nach links */
+    }
+}
+
+/* Styling der Buttons im Marquee */
+.marquee-button {
+    background: none;
+    border: none;
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--Hintergrund);
+    padding: 0 1rem;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s;
+}
+
+
+.marquee-button:hover {
+    opacity: 1;
+}
+
+/* Hervorhebung für den aktiven Button */
+.marquee-button.active {
+    opacity: 3;
+   
+   
+}
+
+/* Der Container, der die wechselnden Projekt-Inhalte aufnimmt */
+.projekt-details-container {
+    /* Positioniert den Inhalt unterhalb der zweiten Linie mit etwas Abstand */
+    margin-top: calc(2.5rem + 30px + 2rem);
+}
+
+/* Alle Projekt-Details sind standardmäßig unsichtbar */
+.projekt-detail {
+    display: none;
+}
+
+/* Nur das Detail mit der Klasse "active" wird angezeigt */
+.projekt-detail.active {
+    display: block;
+    animation: fadeIn 0.5s ease-in-out; /* Schöne Einblend-Animation */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.projekt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.projekt-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.rearrange-button {
+    background: none;
+    border: 1px solid var(--Hintergrund);
+    color: var(--Hintergrund);
+    padding: 0.5rem 1rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.rearrange-button:hover {
+    background: var(--Hintergrund);
+    color: var(--Papier);
+}
+
+/* Das Grid-System für die Galerie */
+.projekt-galerie {
+    display: grid;
+    /* Responsive Spalten: füllt auf, min. 150px breit, sonst flexibel */
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    /* Jede Zeile ist standardmässig 150px hoch */
+    grid-auto-rows: 350px;
+    gap: 1rem; /* Abstand zwischen den Bildern */
+}
+
+.galerie-item {
+    overflow: hidden; /* Verhindert, dass Bilder über den Rand ragen */
+    border-radius: 4px;
+    animation: zoomIn 0.4s ease-out; /* Schöner Effekt beim Laden */
+}
+
+/* Die Bilder füllen ihren Container aus, ohne sich zu verzerren */
+.galerie-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Grössen-Modifikatoren für das Grid */
+.galerie-item--wide {
+    grid-column: span 2;
+}
+.galerie-item--tall {
+    grid-row: span 2;
+}
+.galerie-item--big {
+    grid-column: span 2;
+    grid-row: span 2;
+}
+
+/* Animation für die Bilder */
+@keyframes zoomIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+/* ==========================================================================
+   DEKORATIVE WOLKEN
+   ========================================================================== */
+.deko-wolke {
+    position: fixed;
+    bottom: -20px; /* Leicht über den Rand hinausragen lassen */
+    max-width: 700px; /* Verhindert, dass sie auf großen Bildschirmen riesig werden */
+    height: auto;
+    opacity: 0.8; /* Semi-transparent */
+    z-index: 10; /* Über allem anderen */
+    pointer-events: none; /* Klicks "durchlassen", damit der Footer klickbar bleibt */
+    user-select: none; /* Verhindert, dass man sie versehentlich markiert */
+}
+
+.wolke-links {
+    left: -30px; /* Leicht über den Rand hinausragen lassen */
+}
+
+.wolke-rechts {
+    right: -30px; /* Leicht über den Rand hinausragen lassen */
+}
+
 
 /* ==========================================================================
    3. MOBILE ANPASSUNGEN
@@ -229,5 +466,8 @@ body {
     }
     .ordner-inhalt.active {
         display: block;
+    }
+    .deko-wolke {
+        display: none;
     }
 }
