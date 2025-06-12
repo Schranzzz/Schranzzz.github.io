@@ -1,28 +1,3 @@
-/* In style.css */
-body {
-    /* Ihre bestehenden Stile wie font-family, display etc. bleiben erhalten */
-    color: var(--Hintergrund);
-    font-family: var(--font-mono);
-    display: flex;
-    flex-direction: column;
-
-    /* ERSETZEN SIE "background-color: var(--Papier);" MIT DIESEM BLOCK: */
-    background:
-        /* Schicht 1: Die Linie (ein Gradient, der sofort endet) */
-        linear-gradient(
-            to bottom, /* Die Richtung ist hier unwichtig */
-            var(--Hintergrund), /* Die Farbe der Linie */
-            var(--Hintergrund) 0.5px, /* Die Dicke der Linie */
-            transparent 0.5px   /* Der Rest ist durchsichtig */
-        )
-        no-repeat               /* Die Linie soll sich nicht wiederholen */
-        0 30px / 100% 0.5px,   /* Position (links, oben) / Größe (Breite, Höhe) */
-
-        /* Schicht 2: Ihre ursprüngliche Hintergrundfarbe */
-        var(--Papier);
-}
-
-
 /* ==========================================================================
    1. GRUNDEINSTELLUNGEN & CSS-VARIABLEN
    ========================================================================== */
@@ -39,13 +14,16 @@ body {
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body { height: 100%; }
+
 body {
     background-color: var(--Papier);
     color: var(--Hintergrund);
     font-family: var(--font-mono);
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
+
 .page-wrapper { flex: 1 0 auto; display: flex; flex-direction: column; }
 .page-header { padding: 2rem 2rem 1rem 2rem; color: var(--Papier); }
 
@@ -55,7 +33,7 @@ body {
 .ordner-system {
     flex-grow: 1;
     position: relative;
-    margin-top: 2rem;
+    margin-top: -1.5rem;
 }
 
 .no-transition {
@@ -71,11 +49,11 @@ body {
     top: 0;
     border: none;
     min-width: 350px;
+    height: 60px;
     padding: 0.2rem 3rem 1.5rem 3rem;
     font-family: var(--font-script);
     font-size: 3.2rem;
     font-weight: 100;
-    color: var(--Hintergrund);
     background-color: var(--Papier);
     border-top-left-radius: var(--tab-radius);
     border-top-right-radius: var(--tab-radius);
@@ -84,57 +62,40 @@ body {
     color: transparent;
     -webkit-text-stroke: 0.5px var(--Hintergrund);
     text-stroke: 0.5px var(--Hintergrund);
-
-    /* Standard-Schatten für ALLE Tabs */
-     box-shadow: 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
 
-/* Das "Pflaster" UND der Schatten für den AKTIVEN Tab */
 .tab.active {
-    box-shadow: 
-        /* Schicht 1: Das "Pflaster" (liegt oben und verdeckt die Naht) */
-       /* Schicht 2: Der ECHTE Schatten (liegt darunter und ist sichtbar) */
- 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
-    /* Muss über dem Inhalt (z-index: 5) liegen */
-    
+    box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
 
 /* ==========================================================================
    DEKO-ELEMENTE FÜR ALLE TABS
    ========================================================================== */
-
-/* RECHTES Deko-Element (::before) */
 .tab::before {
     content: '';
     position: absolute;
     top: calc(var(--tab-radius) - 10px);
     left: 100%;
     width: 35px;
-    height: 55px;
+    height: 35px;
     background-color: var(--Papier);
     -webkit-mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
     mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-   
     z-index: 7;
-    box-shadow: 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
+    box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
 
-/* LINKES Deko-Element (::after) */
 .tab::after {
     content: '';
     position: absolute;
-     top: calc(var(--tab-radius) - 10px);
+    top: calc(var(--tab-radius) - 10px);
     right: 100%;
     width: 35px;
-    height: 55px;
+    height: 35px;
     background-color: var(--Papier);
     -webkit-mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
     mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-   
     z-index: 10;
     box-shadow: 0 -18px 15px -10px rgb(252, 0, 0);
 }
@@ -142,32 +103,11 @@ body {
 /* ==========================================================================
    WEITERES STYLING & POSITIONIERUNG
    ========================================================================== */
-
-/* Positionierung der Tabs */
 .tab[data-tab-target="startseite"] { left: 0; border-top-left-radius: 0; }
 .tab[data-tab-target="projekte"] { left: 260px; }
 .tab[data-tab-target="about"] { left: 520px; }
-
-/* Ausnahme: Der Start-Tab hat kein linkes Deko-Element */
-.tab[data-tab-target="startseite"]::after {
-    display: none;
-}
-
-.tab:hover {
-    transform: translateY(-8px);
-}
-
-.ordner-inhalt-stapel {
-    position: absolute;
-    top: 60px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 2;
-    border-top-right-radius: var(--inhalt-radius-gross);
-       box-shadow: 0   -18px  15px  -10px   rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease-out;
-}
+.tab[data-tab-target="startseite"]::after { display: none; }
+.tab:hover { transform: translateY(-8px); }
 
 .ordner-inhalt-stapel {
     position: absolute;
@@ -177,297 +117,243 @@ body {
     bottom: 0;
     z-index: 5;
     border-top-right-radius: var(--inhalt-radius-gross);
-    
     transition: transform 0.3s ease-out;
+    box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
+
 .ordner-inhalt {
     position: absolute;
     width: 100%;
     height: 100%;
-    /* NEU: Hintergrund mit Linie und Füllfarbe */
     background:
-        /* Schicht 1: Die horizontale Linie */
-        linear-gradient(
-            var(--Hintergrund), 
-            var(--Hintergrund) 0.5px, 
-            transparent 0.5px
-
-
-      ) 
-        no-repeat
-        0 2.5rem / 100% 0.5px, /* Position: 2.5rem von oben */
-
-        /* Schicht 2: Die zweite, untere Linie */
-        linear-gradient(
-            var(--Hintergrund), 
-            var(--Hintergrund) 0.5px, 
-            transparent 0.5px
-        ) 
-        no-repeat
-        0 calc(2.5rem + 40px) / 100% 0.5px, /* Position: 30px unter der ersten */
-
-        /* Schicht 3: Die Papierfarbe als Füllung (immer die letzte Schicht) */
+        linear-gradient(var(--Hintergrund), var(--Hintergrund) 0.5px, transparent 0.5px) no-repeat 0 0.7rem / 100% 0.5px,
+        linear-gradient(var(--Hintergrund), var(--Hintergrund) 0.5px, transparent 0.5px) no-repeat 0 calc(0.7rem + 40px) / 100% 0.5px,
         var(--Papier);
-
-    padding: 3rem;
+    padding: 0.8rem;
     border-top-right-radius: var(--inhalt-radius-gross);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.2s;
     overflow-y: auto;
+
     
 }
+/* NEU: Maske für die Projekt-Seite, um die Galerie unten auszublenden */
+.ordner-inhalt[data-content="projekte"] {
+-webkit-mask-image: linear-gradient(to bottom, black calc(100% - 1px), transparent 100%);
+mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
+}
+
+
 .ordner-inhalt.active {
     opacity: 1;
     visibility: visible;
 }
-.ordner-inhalt[data-content="startseite"] {
-    border-top-left-radius: 0;
+.ordner-inhalt[data-content="startseite"] { border-top-left-radius: 0; }
+.ordner-inhalt-stapel.is-lifted { transform: translateY(-8px); }
+
+
+/* ==========================================================================
+   ALLGEMEINE TEXTBLÖCKE
+   ========================================================================== */
+.text-block {
+    max-width: 800px;
+    margin: 8rem auto;
+    line-height: 1.6;
+    margin-top: 15rem;
+    position: relative;
+    z-index: 2;
+
+}
+.text-block h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    
+}
+.logo {
+    position: absolute;
+    top: 50%;
+    left: -30%;
+    width: 320px; /* Größe anpassen */
+   
+    opacity: 0.15; /* Transparenz für den Hintergrund-Effekt */
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none; /* Logo bleibt klick-durchlässig */
 }
 
-.ordner-inhalt-stapel.is-lifted {
-    transform: translateY(-8px);
-}
-
-
-.page-footer {
-    flex-shrink: 0;
-    text-align: center;
-    padding: 2rem;
-    color: var(--Papier);
-    z-index: 7;
+.unterschrift-bg {
+    position: fixed;
+    top: -80px;
+    right: 0%;
+    width: 620px;         /* Passe die Größe nach Bedarf an */
+    height: auto;
+    opacity: 1;        /* Sehr transparent */
+    z-index: 0;           /* Ganz hinten */
+    pointer-events: none; /* Nicht anklickbar */
+    user-select: none;    /* Nicht auswählbar */
 }
 
 /* ==========================================================================
    PROJEKTSEITE: MARQUEE & INHALTSWECHSEL
    ========================================================================== */
-
-/* Der "Rahmen" für das Marquee, positioniert zwischen den Linien */
 .marquee-container {
-    position: absolute;
-    top: 2.8rem; /* Genau auf Höhe der ersten Linie */
+    position: sticky; 
+    top: 0.5rem; /* Position auf der ersten Linie */
     left: 0;
     right: 0;
-    height: 30px; /* Die Höhe des Zwischenraums */
-    overflow: hidden; /* Versteckt den Text, der außerhalb ist */
+    width: 100%;
+    
+    height: 20px; 
+    overflow:visible; 
     display: flex;
     align-items: center;
-
-     
+    background-color: var(--Papier);
+    z-index: 0;
+   
 }
 
-/* Der bewegliche Inhalt */
 .marquee-content {
-    display: flex; /* Richtet die Button-Gruppen nebeneinander aus */
-    flex-shrink: 0; /* Verhindert, dass der Inhalt schrumpft */
-    animation: marquee-scroll 100s linear infinite; /* Die Endlos-Animation */
-}
+    display: flex;
+    flex-shrink: 0;
+    animation: marquee-scroll 100s linear infinite;
 
-/* UX-Verbesserung: Marquee pausiert bei Hover */
-.marquee-container:hover .marquee-content {
-    animation-play-state: continue;
 }
-
-/* Die Keyframe-Animation für den Scroll-Effekt */
+.marquee-container:hover .marquee-content { animation-play-state:running; }
 @keyframes marquee-scroll {
-    0% {
-        transform: translateX(0%);
-    }
-    100% {
-        transform: translateX(-50%); /* Bewegt sich um genau eine Inhaltsbreite nach links */
-    }
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-50%); }
 }
 
-/* Styling der Buttons im Marquee */
 .marquee-button {
-    background: none;
-    border: none;
-    font-family: var(--font-mono);
-    font-size: 1.1rem;
-    color: var(--Hintergrund);
-    padding: 0 1rem;
-    cursor: pointer;
-    opacity: 0.6;
-    transition: opacity 0.3s;
+    background: none; border: none; font-family: var(--font-mono);
+    font-size: 1.1rem; color: var(--Hintergrund); padding: 0 1rem;
+    cursor: pointer; opacity: 0.6; transition: opacity 0.3s;
 }
+.marquee-button:hover { opacity: 1; }
+.marquee-button.active { opacity: 3; }
 
+.projekt-details-container { margin-top: 2rem; }
+.projekt-detail { display: none; }
 
-.marquee-button:hover {
-    opacity: 1;
-}
-
-/* Hervorhebung für den aktiven Button */
-.marquee-button.active {
-    opacity: 3;
-   
-   
-}
-
-/* Der Container, der die wechselnden Projekt-Inhalte aufnimmt */
-.projekt-details-container {
-    /* Positioniert den Inhalt unterhalb der zweiten Linie mit etwas Abstand */
-    margin-top: calc(2.5rem + 30px + 2rem);
-}
-
-/* Alle Projekt-Details sind standardmäßig unsichtbar */
-.projekt-detail {
-    display: none;
-}
-
-/* Nur das Detail mit der Klasse "active" wird angezeigt */
 .projekt-detail.active {
-    display: block;
-    animation: fadeIn 0.5s ease-in-out; /* Schöne Einblend-Animation */
+    display: flex;
+    gap: 2rem;
+    align-items: flex-start;
+    animation: fadeIn 0.5s ease-in-out;
 }
-
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-.projekt-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
+.projekt-beschreibung {
+    flex-basis: 350px;
+    flex-shrink: 0;
+    line-height: 1.6;
+    position:-webkit-sticky; position: fixed;
+    height: 500px; 
+    width: 500px;
+}
+.projekt-beschreibung h4 {
+    position: relative;
+    font-size: 1.2rem; margin-bottom: 3rem; }
+
+.projekt-galerie-wrapper {
+    flex-grow: 1;
+    min-width: 0;
 }
 
-.projekt-header h3 {
-    margin: 0;
-    font-size: 1.5rem;
+.projekt-header {
+    display: flex; justify-content: space-between;
+    align-items: center; margin-bottom: 1.5rem;
 }
+.projekt-header h3 { margin: 0; font-size: 1.5rem; }
 
 .rearrange-button {
-    background: none;
-    border: 1px solid var(--Hintergrund);
-    color: var(--Hintergrund);
-    padding: 0.5rem 1rem;
-    font-family: var(--font-mono);
-    cursor: pointer;
-    transition: all 0.2s ease;
+    background: none; border: 1px solid var(--Hintergrund);
+    color: var(--Hintergrund); padding: 0.5rem 1rem;
+    font-family: var(--font-mono); cursor: pointer; transition: all 0.2s ease;
+  
 }
+.rearrange-button:hover { background: var(--Hintergrund); color: var(--Papier); }
 
-.rearrange-button:hover {
-    background: var(--Hintergrund);
-    color: var(--Papier);
-}
-
-/* Das Grid-System für die Galerie */
 .projekt-galerie {
     display: grid;
-    /* Responsive Spalten: füllt auf, min. 150px breit, sonst flexibel */
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    /* Jede Zeile ist standardmässig 150px hoch */
     grid-auto-rows: 350px;
-    gap: 1rem; /* Abstand zwischen den Bildern */
+    gap: -10rem;
+    transition: opacity 0.25s ease-in-out;
+   align: right;
+    margin-left: 30rem;;
 }
+
 
 .galerie-item {
-    overflow: hidden; /* Verhindert, dass Bilder über den Rand ragen */
-    border-radius: 4px;
-    animation: zoomIn 0.4s ease-out; /* Schöner Effekt beim Laden */
+    overflow: hidden;
+    border-radius: 1px;
+    animation: zoomIn 0.4s ease-out;
+    margin-left: auto;
+   
 }
-
-/* Die Bilder füllen ihren Container aus, ohne sich zu verzerren */
 .galerie-item img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100%; height: 100%;
+    object-fit: scale-down;
     display: block;
 }
 
-/* Grössen-Modifikatoren für das Grid */
-.galerie-item--wide {
-    grid-column: span 2;
-}
-.galerie-item--tall {
-    grid-row: span 2;
-}
-.galerie-item--big {
-    grid-column: span 2;
-    grid-row: span 2;
-}
+.galerie-item--wide { grid-column: span 2; }
+.galerie-item--tall { grid-row: span 2; }
 
-/* Animation für die Bilder */
+
 @keyframes zoomIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-    }
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
 
 
+.Verlauf {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;    /* gesamte Bildschirmbreite */
+    height: 120px;   /* Höhe des Verlaufs, nach Bedarf anpassen */
+    pointer-events: none;
+    z-index: 1;      /* unter Überschrift/Marquee, aber über Hintergrund */
+    /* Verlauf von oben nach unten */
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent 100%);
+    mask-image: linear-gradient(to bottom, black, transparent 100%);
+    background: var(--Papier); /* oder gewünschte Farbe */
+}
 /* ==========================================================================
    DEKORATIVE WOLKEN
    ========================================================================== */
 .deko-wolke {
-    position: fixed;
-    bottom: -20px; /* Leicht über den Rand hinausragen lassen */
-    max-width: 700px; /* Verhindert, dass sie auf großen Bildschirmen riesig werden */
-    height: auto;
-    opacity: 0.8; /* Semi-transparent */
-    z-index: 10; /* Über allem anderen */
-    pointer-events: none; /* Klicks "durchlassen", damit der Footer klickbar bleibt */
-    user-select: none; /* Verhindert, dass man sie versehentlich markiert */
+    position: fixed; bottom: -20px; max-width: 700px;
+    height: auto; opacity: 0.8; z-index: 10;
+    pointer-events: none; user-select: none;
 }
-
-.wolke-links {
-    left: -30px; /* Leicht über den Rand hinausragen lassen */
-}
-
-.wolke-rechts {
-    right: -30px; /* Leicht über den Rand hinausragen lassen */
-}
-
+.wolke-links { left: -30px; }
+.wolke-rechts { right: -30px; }
 
 /* ==========================================================================
    3. MOBILE ANPASSUNGEN
    ========================================================================== */
+@media (max-width: 992px) {
+    .projekt-detail.active { flex-direction: column; }
+    .projekt-beschreibung { flex-basis: auto; margin-bottom: 2rem; }
+}
 @media (max-width: 768px) {
-    .ordner-system {
-        position: static;
-        margin-top: 1rem;
-    }
-    .ordner-tabs {
-        height: auto;
-        display: flex;
-        flex-direction: column;
-    }
+    .ordner-system { position: static; margin-top: 1rem; }
+    .ordner-tabs { height: auto; display: flex; flex-direction: column; }
     .tab {
-        position: static;
-        width: 100%;
-        border-radius: 0;
-        margin-bottom: -1px;
-        border: 1px solid var(--Hintergrund);
-        border-bottom: none;
-        box-shadow: none !important;
+        position: static; width: 100%; border-radius: 0; margin-bottom: -1px;
+        border: 1px solid var(--Hintergrund); border-bottom: none; box-shadow: none !important;
     }
-    .tab.active {
-        border-bottom-color: var(--Papier);
-    }
-    .tab::before, .tab::after {
-        display: none !important;
-    }
-    .ordner-inhalt-stapel {
-        position: static;
-        box-shadow: none;
-        border: 1px solid var(--Hintergrund);
-        border-top: none;
-    }
-    .ordner-inhalt {
-        position: static;
-        height: auto;
-        min-height: 300px;
-        display: none;
-    }
-    .ordner-inhalt.active {
-        display: block;
-    }
-    .deko-wolke {
-        display: none;
-    }
+    .tab.active { border-bottom-color: var(--Papier); }
+    .tab::before, .tab::after { display: none !important; }
+    .ordner-inhalt-stapel { position: static; box-shadow: none; border: 1px solid var(--Hintergrund); border-top: none; }
+    .ordner-inhalt { position: static; height: auto; min-height: 300px; display: none; }
+    .ordner-inhalt.active { display: block; }
+    .deko-wolke { display: none; }
 }

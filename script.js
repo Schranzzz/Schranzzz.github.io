@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // ... (Der obere Teil des Codes mit der Tab-Logik bleibt unverändert) ...
+    let galleryInterval = null; 
+
     var tabsContainer = document.querySelector('.ordner-tabs');
     var tabs = document.querySelectorAll('.tab');
     var contentPages = document.querySelectorAll('.ordner-inhalt');
@@ -11,6 +12,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function setActiveState(tabToActivate, isInitialLoad = false) {
         if (!tabToActivate || tabToActivate.classList.contains('active')) return;
+
+        if (tabToActivate.dataset.tabTarget !== 'projekte') {
+            clearInterval(galleryInterval);
+        }
 
         if (!isInitialLoad) {
             ordnerInhaltStapel.classList.add('no-transition');
@@ -71,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'leiter': { anzahl: 4, pfad: 'Projektbilder/Leiter/Bild', dateityp: 'jpg' },
         'faltkarre': { anzahl: 5, pfad: 'Projektbilder/Faltkarre/Bild', dateityp: 'png' },
         'tin-3d': { anzahl: 3, pfad: 'Projektbilder/Tin_3D_Printer/Bild', dateityp: 'jpg' },
-        'movement': { anzahl: 44, pfad: 'Projektbilder/Bewegung zum signal/Bild', dateityp: 'jpg' },
+        'movement': { anzahl: 34, pfad: 'Projektbilder/Bewegung zum signal/Bild', dateityp: 'jpg' },
         'new-tool': { anzahl: 2, pfad: 'Projektbilder/New_Tool/Bild', dateityp: 'png' },
         'sketches': { anzahl: 5, pfad: 'Projektbilder/Sketches/Bild', dateityp: 'jpg' }
     };
@@ -79,50 +84,64 @@ document.addEventListener('DOMContentLoaded', function() {
     const projektSeite = document.querySelector('.ordner-inhalt[data-content="projekte"]');
 
     if (projektSeite) {
+        
+
         function erstelleGalerie(projektId) {
             const galleryContainer = projektSeite.querySelector(`.projekt-detail[data-projekt="${projektId}"] .projekt-galerie`);
             if (!galleryContainer) return;
 
-            galleryContainer.innerHTML = '';
+            galleryContainer.style.opacity = '0.5';
 
-            const daten = projektDaten[projektId];
-            if (!daten || daten.anzahl === 0) {
-                galleryContainer.innerHTML = '<p>Für dieses Projekt sind noch keine Bilder verfügbar.</p>';
-                return;
-            }
+            setTimeout(() => {
+                galleryContainer.innerHTML = '';
 
-            let bilder = [];
-            for (let i = 1; i <= daten.anzahl; i++) {
-                // HIER IST DIE KORREKTUR: Leerzeichen vor der Klammer
-                const bildPfad = `${daten.pfad} (${i}).${daten.dateityp}`;
-                bilder.push(bildPfad);
-            }
-
-            for (let i = bilder.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [bilder[i], bilder[j]] = [bilder[j], bilder[i]];
-            }
-
-            const groessen = ['', '', '', 'galerie-item--wide', 'galerie-item--tall', 'galerie-item--big'];
-
-            bilder.forEach(bildSrc => {
-                const item = document.createElement('div');
-                const zufallsGroesse = groessen[Math.floor(Math.random() * groessen.length)];
-                
-                item.className = 'galerie-item';
-                if(zufallsGroesse) {
-                    item.classList.add(zufallsGroesse);
+                const daten = projektDaten[projektId];
+                if (!daten || daten.anzahl === 0) {
+                    galleryContainer.innerHTML = '<p>Für dieses Projekt sind noch keine Bilder verfügbar.</p>';
+                    return;
                 }
-
-                const img = document.createElement('img');
-                img.src = bildSrc;
-                img.alt = `Bild aus dem Projekt ${projektId}`;
-                img.loading = 'lazy';
-
-                item.appendChild(img);
-                galleryContainer.appendChild(item);
-            });
+    
+                let bilder = [];
+                for (let i = 1; i <= daten.anzahl; i++) {
+                    const bildPfad = `${daten.pfad} (${i}).${daten.dateityp}`;
+                    bilder.push(bildPfad);
+                }
+    
+                for (let i = bilder.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [bilder[i], bilder[j]] = [bilder[j], bilder[i]];
+                }
+    
+                const groessen = ['', '', '', 'galerie-item--wide', 'galerie-item--tall', 'galerie-item--big'];
+    
+                bilder.forEach(bildSrc => {
+                    const item = document.createElement('div');
+                    const zufallsGroesse = groessen[Math.floor(Math.random() * groessen.length)];
+                    
+                    item.className = 'galerie-item';
+                    if(zufallsGroesse) {
+                        item.classList.add(zufallsGroesse);
+                    }
+    
+                    const img = document.createElement('img');
+                    img.src = bildSrc;
+                    img.alt = `Bild aus dem Projekt ${projektId}`;
+                    img.loading = 'lazy';
+    
+                    item.appendChild(img);
+                    galleryContainer.appendChild(item);
+                });
+                galleryContainer.style.opacity = '1';
+            }, 250);
         }
+
+        const startGalleryInterval = (projektId) => {
+            clearInterval(galleryInterval); 
+            erstelleGalerie(projektId); 
+            galleryInterval = setInterval(() => {
+                erstelleGalerie(projektId);
+            }, shuffleIntervalTime);
+        };
 
         const detailsContainer = projektSeite.querySelector('.projekt-details-container');
 
@@ -138,18 +157,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 const targetDetail = detailsContainer.querySelector(`.projekt-detail[data-projekt="${targetProjekt}"]`);
                 if (targetDetail) {
                     targetDetail.classList.add('active');
-                    erstelleGalerie(targetProjekt);
+                    startGalleryInterval(targetProjekt); 
                 }
             }
 
             const clickedRearrangeButton = event.target.closest('.rearrange-button');
             if(clickedRearrangeButton) {
                 const aktivesProjekt = clickedRearrangeButton.closest('.projekt-detail').dataset.projekt;
-                erstelleGalerie(aktivesProjekt);
+                startGalleryInterval(aktivesProjekt); 
             }
         });
 
         const startProjekt = 'ashoka-dupe';
-        erstelleGalerie(startProjekt);
+        if (document.querySelector('.tab[data-tab-target="projekte"]').classList.contains('active')) {
+             startGalleryInterval(startProjekt);
+        } else {
+             erstelleGalerie(startProjekt);
+        }
     }
 });
