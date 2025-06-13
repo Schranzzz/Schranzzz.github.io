@@ -259,38 +259,69 @@ body {
 /* ==========================================================================
    NEU: STAPEL-GALERIE
    ========================================================================== */
-.projekt-galerie {
-    position: relative; /* Wichtig, damit die Bilder darin absolut positioniert werden können */
-    width: 100%;
-    min-height: 70vh; /* Gibt dem Container eine Höhe, auch wenn die Bilder absolut sind */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.25s ease-in-out;
-    perspective: 1000px; /* Fügt eine 3D-Perspektive für die Animation hinzu */
-}
+/* In der Datei style.css */
 
-.projekt-galerie .galerie-item {
+/* ... vorheriger Code bleibt gleich ... */
+
+
+/* ==========================================================================
+   NEU: STAPEL-GALERIE (mit Tiefenunschärfe & Skalierung)
+   ========================================================================== */
+
+/* ... */
+
+ .projekt-galerie .galerie-item {
     position: absolute;
-    max-width: 600px; /* Maximale Breite für ein Bild, behält Seitenverhältnis */
-    max-height: 65vh; /* Maximale Höhe */
-    width: auto;
-    height: auto;
-    cursor: pointer;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border-top: 0px solid rgb(112, 112, 112);
-    border-radius: 0px;
-    -webkit-backface-visibility: hidden; /* Verhindert Flimmern bei 3D-Transformationen */
+    
+     max-width: 600px; 
+     max-height: 65vh;
+     left: 50%; 
+     width: auto;
+     height: auto;
+     cursor: pointer;
+     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+     border: 0px solid var(--Papier);
+     border-radius: 0px;
+    -webkit-backface-visibility: hidden; 
     backface-visibility: hidden;
-    /* Übergang für die Bewegung, wenn ein Bild nach hinten verschoben wird */
-    transition: transform 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+     transition: transform 0.2s cubic-bezier(0.68, -0.6, 0.32, 1.6);
+ }
+ .projekt-galerie .galerie-item {
+     position: center;
+     max-width: 600px;
+     max-height: 65vh;
+     width: auto;
+     height: auto;
+     cursor: default; /* Standardmäßig kein Klick-Cursor */
+     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+     border: 0px solid var(--Papier);
+     border-radius: 0px;
+     -webkit-backface-visibility: hidden;
+     backface-visibility: hidden;
+     
+    /* Standard-Zustand: Unscharf */
+     filter: blur(3px);
+     
+     /* Übergang für ALLE Änderungen (Bewegung, Skalierung, Unschärfe) */
+     transition: transform 0.2s cubic-bezier(0.68, -0.6, 0.32, 1.6), 
+                 filter 0.2s ease-in-out;
+ }
+
+ .projekt-galerie .galerie-item:hover {
+     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+ }
+ /* Spezialklasse für das oberste, aktive Bild */
+ .projekt-galerie .galerie-item.is-top {
+     filter: blur(0);    /* Scharf stellen */
+     cursor: pointer;    /* Klickbar machen */
+ }
+ 
+ /* Leichtes Anheben beim Hovern, aber nur für das oberste Bild */
+.projekt-galerie .galerie-item.is-top:hover {
+     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }
 
-.projekt-galerie .galerie-item:hover {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-    /* Leichtes Anheben beim Hovern, aber nur für das oberste Bild */
-}
-
+/* ... nachfolgender Code bleibt gleich ... */
 .projekt-galerie .galerie-item img {
     width: 100%;
     height: 100%;

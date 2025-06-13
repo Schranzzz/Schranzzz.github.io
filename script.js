@@ -85,7 +85,45 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projektSeite) {
         const detailsContainer = projektSeite.querySelector('.projekt-details-container');
 
-        // Funktion zum Erstellen des Bild-Stapels
+        // NEUE HELFERFUNKTION: Aktualisiert das Aussehen aller Bilder im Stapel
+        function updateGalleryAppearance(galleryContainer) {
+            if (!galleryContainer) return;
+            const allItems = Array.from(galleryContainer.querySelectorAll('.galerie-item'));
+            if (allItems.length === 0) return;
+
+            let topItem = null;
+            let maxZ = -Infinity;
+
+            // 1. Finde das oberste Bild (höchster z-index)
+            allItems.forEach(item => {
+                const z = parseInt(item.style.zIndex || '0', 10);
+                if (z > maxZ) {
+                    maxZ = z;
+                    topItem = item;
+                }
+            });
+
+            // 2. Wende Stile an: Das oberste Bild wird groß & scharf, der Rest klein & unscharf
+            allItems.forEach(item => {
+                const rot = item.dataset.rotation || 0;
+                const transX = item.dataset.offsetX || 0;
+                const transY = item.dataset.offsetY || 0;
+                let scale = 0.95; // Standard-Skalierung für Bilder im Hintergrund
+
+                item.classList.remove('is-top');
+
+                if (item === topItem) {
+                    scale = 1.0; // Das oberste Bild ist 100% groß
+                    item.classList.add('is-top');
+                }
+                
+                // Setze die transform-Eigenschaft mit der korrekten Skalierung
+                item.style.transform = `translate(${transX}px, ${transY}px) rotate(${rot}deg) scale(${scale})`;
+            });
+        }
+
+
+        // Funktion zum Erstellen des Bild-Stapels (leicht angepasst)
         function erstelleGalerie(projektId) {
             if (projektId === 'ashoka-dupe') {
                 return; // Ashoka Dupe hat ein 3D-Modell, keine Galerie
@@ -116,19 +154,23 @@ document.addEventListener('DOMContentLoaded', function() {
                     const item = document.createElement('div');
                     item.className = 'galerie-item';
                     
-                    // Erstellt eine zufällige Transformation für den "unordentlichen" Look
-                    const rotation = Math.random() * 10 - 5; // -5 bis +5 Grad Drehung
-                    const offsetX = Math.random() * 20 - 10; // -10px bis +10px Versatz X
-                    const offsetY = Math.random() * 20 - 10; // -10px bis +10px Versatz Y
-                    item.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+                    // Speichere die zufälligen Werte im Dataset, anstatt sie direkt anzuwenden
+                    const rotation = Math.random() * 10 - 5;
+                    const offsetX = Math.random() * 20 - 10;
+                    const offsetY = Math.random() * 20 - 10;
+                    item.dataset.rotation = rotation;
+                    item.dataset.offsetX = offsetX;
+                    item.dataset.offsetY = offsetY;
                     
-                    // Jedes Bild bekommt einen z-index, das letzte ist zuoberst
                     item.style.zIndex = index + 1;
-
                     item.innerHTML = `<img src="${bildSrc}" alt="Bild aus dem Projekt ${projektId}" loading="lazy">`;
                     galleryContainer.appendChild(item);
                 });
+
+                // Rufe die neue Funktion auf, um initial das Aussehen zu setzen
+                updateGalleryAppearance(galleryContainer);
                 galleryContainer.style.opacity = '1';
+
             }, 250);
         }
         
@@ -164,14 +206,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 erstelleGalerie(aktivesProjekt); 
             }
 
-            // Klick auf ein Bild im Stapel
-            const clickedImageItem = event.target.closest('.galerie-item');
+            // Klick auf ein Bild im Stapel (nur das oberste ist dank CSS klickbar)
+            const clickedImageItem = event.target.closest('.galerie-item.is-top');
             if(clickedImageItem) {
                 const galleryContainer = clickedImageItem.parentElement;
                 const allItems = Array.from(galleryContainer.querySelectorAll('.galerie-item'));
                 if (allItems.length <= 1) return; // Nichts zu tun bei nur einem Bild
 
-                // Finde den niedrigsten z-index im Stapel
                 let minZ = Infinity;
                 allItems.forEach(item => {
                     const z = parseInt(item.style.zIndex || '0', 10);
@@ -183,11 +224,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Setze das geklickte Bild auf einen z-index unter dem niedrigsten
                 clickedImageItem.style.zIndex = minZ - 1;
 
-                // Gib ihm eine neue zufällige Position, wohin es sich bewegen soll
-                const rotation = Math.random() * 10 - 5;
-                const offsetX = Math.random() * 20 - 10;
-                const offsetY = Math.random() * 20 - 10;
-                clickedImageItem.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+                // Aktualisiere das Aussehen aller Bilder. Die Logik findet das neue oberste Bild.
+                updateGalleryAppearance(galleryContainer);
             }
         });
 
