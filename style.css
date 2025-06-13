@@ -194,7 +194,7 @@ body {
     display: flex;
     align-items: center;
     background-color: var(--Papier);
-    z-index: 20; /* Muss über der Galerie liegen */
+    z-index: 20; 
 }
 
 .marquee-content {
@@ -231,15 +231,15 @@ body {
 }
 
 .projekt-galerie-wrapper model-viewer {
-    width: 100%;       /* Nimm die volle Breite der rechten Spalte ein */
-    height: 75vh;      /* Nimm 75% der sichtbaren Browser-Höhe ein */
-    min-height: 500px; /* Sei aber mindestens 500px hoch, auch auf kleinen Bildschirmen */
+    width: 100%;       
+    height: 75vh;     
+    min-height: 500px;
     border-radius: 1px;
 }
 .projekt-galerie-wrapper {
-    flex-grow: 1; /* Wächst, um den verfügbaren Platz zu füllen */
+    flex-grow: 1; 
     min-width: 0;
-    width: 100%; /* Nimmt die volle Breite des Flex-Containers ein */
+    width: 100%;
 }
 
 .projekt-header {
@@ -255,39 +255,48 @@ body {
 }
 .rearrange-button:hover { background: var(--Hintergrund); color: var(--Papier); }
 
+
+/* ==========================================================================
+   NEU: STAPEL-GALERIE
+   ========================================================================== */
 .projekt-galerie {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-    grid-auto-rows: 350px;
-    gap: 1rem;
+    position: relative; /* Wichtig, damit die Bilder darin absolut positioniert werden können */
+    width: 100%;
+    min-height: 70vh; /* Gibt dem Container eine Höhe, auch wenn die Bilder absolut sind */
+    display: flex;
+    justify-content: center;
+    align-items: center;
     transition: opacity 0.25s ease-in-out;
+    perspective: 1000px; /* Fügt eine 3D-Perspektive für die Animation hinzu */
 }
 
-.galerie-item {
-    overflow: hidden;
-    border-radius: 1px;
-    animation: zoomIn 0.4s ease-out;
+.projekt-galerie .galerie-item {
+    position: absolute;
+    max-width: 600px; /* Maximale Breite für ein Bild, behält Seitenverhältnis */
+    max-height: 65vh; /* Maximale Höhe */
+    width: auto;
+    height: auto;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-top: 0px solid rgb(112, 112, 112);
+    border-radius: 0px;
+    -webkit-backface-visibility: hidden; /* Verhindert Flimmern bei 3D-Transformationen */
+    backface-visibility: hidden;
+    /* Übergang für die Bewegung, wenn ein Bild nach hinten verschoben wird */
+    transition: transform 0.8s cubic-bezier(0.68, -0.6, 0.32, 1.6);
 }
-.galerie-item img {
-    width: 100%; height: 100%;
-    object-fit: scale-down;
+
+.projekt-galerie .galerie-item:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+    /* Leichtes Anheben beim Hovern, aber nur für das oberste Bild */
+}
+
+.projekt-galerie .galerie-item img {
+    width: 100%;
+    height: 100%;
     display: block;
-}
-
-.galerie-item--wide { grid-column: span 2; }
-.galerie-item--tall { grid-row: span 2; }
-
-@keyframes zoomIn {
-    from {
-        transform: scale(0.8);
-        opacity: 0;
-        filter: blur(5px);
-    }
-    to {
-        transform: scale(1);
-        opacity: 1;
-        filter: blur(0);
-    }
+    object-fit: contain; /* Stellt sicher, dass das ganze Bild sichtbar ist */
+    pointer-events: none; /* Klicks gehen durch das Bild zum Container-div */
 }
 
 /* ==========================================================================
@@ -321,37 +330,45 @@ body {
     .ordner-inhalt { position: static; height: auto; min-height: 300px; display: none; }
     .ordner-inhalt.active { display: block; }
     .deko-wolke { display: none; }
+    .projekt-galerie .galerie-item { max-width: 80vw; }
 }
 
 /* ==========================================================================
-   ZETTEL-EFFEKT (V4 - Minimalinvasiver Ansatz)
+   ZETTEL-EFFEKT (Angepasst für Hereinrutschen & Größe)
    ========================================================================== */
-.projekt-beschreibung {
-    /* DIESE BEIDEN ZEILEN SIND WICHTIG FÜR DAS 2-SPALTEN-LAYOUT */
-     width: 350px; /* Feste Breite statt flex-basis */
-    flex-shrink: 0;
-    
-    line-height: 1.6;
-    position: relative; 
 
+.projekt-beschreibung {
+    flex-basis: 820px; 
+    min-height: 30%;
+    flex-shrink: 5;
+    line-height: 1.6;
+    position: relative;
     background: var(--Papier);
-    padding: 2rem;
+    padding: 2.5rem; 
     box-shadow: 3px 3px 15px rgba(0,0,0,0.15);
     border-radius: 3px;
     transform-origin: top left;
-    transition: transform 0.5s ease-out, opacity 0.4s ease-out;
+    transform: translateX(-80%) rotate(3deg);
+    opacity: 1;
+    background-color: rgb(162, 248, 43);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
+}
+
+.projekt-beschreibung.is-visible {
+    transform: translateX(110%) rotate(8deg);
+    opacity: 1;
 }
 
 .projekt-beschreibung.is-hidden {
-    transform: translateX(-50px) rotate(-8deg) scale(0.95);
-    opacity: 0;
+    transform: translateX(-110%) rotate(0deg);
+    opacity: 1;
     pointer-events: none;
 }
 
 .beschreibung-toggle {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 15px;
+    right: 15px;
     width: 30px;
     height: 30px;
     background: none;
@@ -367,7 +384,4 @@ body {
 
 .beschreibung-toggle:hover {
     opacity: 1;
-    border-color: var(--Hintergrund);
-    transform: rotate(90deg);
 }
-

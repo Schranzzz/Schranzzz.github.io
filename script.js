@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setActiveState(document.querySelector('.tab'), true);
 
     // =======================================================
-    // LOGIK FÜR PROJEKTSEITE (MARQUEE & GALERIE)
+    // LOGIK FÜR PROJEKTSEITE (MARQUEE & GALERIE-STAPEL)
     // =======================================================
 
     const projektDaten = {
@@ -85,9 +85,10 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projektSeite) {
         const detailsContainer = projektSeite.querySelector('.projekt-details-container');
 
+        // Funktion zum Erstellen des Bild-Stapels
         function erstelleGalerie(projektId) {
             if (projektId === 'ashoka-dupe') {
-                return;
+                return; // Ashoka Dupe hat ein 3D-Modell, keine Galerie
             }
 
             const galleryContainer = projektSeite.querySelector(`.projekt-detail[data-projekt="${projektId}"] .projekt-galerie`);
@@ -105,29 +106,42 @@ document.addEventListener('DOMContentLoaded', function() {
     
                 let bilder = Array.from({length: daten.anzahl}, (_, i) => `${daten.pfad} (${i + 1}).${daten.dateityp}`);
     
+                // Bilder einmalig mischen für eine zufällige Startreihenfolge
                 for (let i = bilder.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [bilder[i], bilder[j]] = [bilder[j], bilder[i]];
                 }
     
-                const groessen = ['', '', '', 'galerie-item--wide', 'galerie-item--tall'];
-                bilder.forEach(bildSrc => {
+                bilder.forEach((bildSrc, index) => {
                     const item = document.createElement('div');
-                    const zufallsGroesse = groessen[Math.floor(Math.random() * groessen.length)];
-                    item.className = `galerie-item ${zufallsGroesse}`;
+                    item.className = 'galerie-item';
+                    
+                    // Erstellt eine zufällige Transformation für den "unordentlichen" Look
+                    const rotation = Math.random() * 10 - 5; // -5 bis +5 Grad Drehung
+                    const offsetX = Math.random() * 20 - 10; // -10px bis +10px Versatz X
+                    const offsetY = Math.random() * 20 - 10; // -10px bis +10px Versatz Y
+                    item.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+                    
+                    // Jedes Bild bekommt einen z-index, das letzte ist zuoberst
+                    item.style.zIndex = index + 1;
+
                     item.innerHTML = `<img src="${bildSrc}" alt="Bild aus dem Projekt ${projektId}" loading="lazy">`;
                     galleryContainer.appendChild(item);
                 });
                 galleryContainer.style.opacity = '1';
             }, 250);
         }
-
+        
+        // Funktion, die aufgerufen wird, wenn ein Projekt-Button geklickt wird
         function zeigeProjektGalerie(projektId) {
             clearInterval(galleryInterval); 
             erstelleGalerie(projektId);
         }
 
+        // Event-Listener für die ganze Projekt-Seite (Event Delegation)
         projektSeite.addEventListener('click', function(event) {
+            
+            // Klick auf einen Marquee-Button (Projektwechsel)
             const clickedMarqueeButton = event.target.closest('.marquee-button');
             if (clickedMarqueeButton) {
                 const targetProjekt = clickedMarqueeButton.dataset.projektTarget;
@@ -143,35 +157,78 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
+            // Klick auf den "Neu anordnen" Button
             const clickedRearrangeButton = event.target.closest('.rearrange-button');
             if(clickedRearrangeButton) {
                 const aktivesProjekt = clickedRearrangeButton.closest('.projekt-detail').dataset.projekt;
                 erstelleGalerie(aktivesProjekt); 
             }
+
+            // Klick auf ein Bild im Stapel
+            const clickedImageItem = event.target.closest('.galerie-item');
+            if(clickedImageItem) {
+                const galleryContainer = clickedImageItem.parentElement;
+                const allItems = Array.from(galleryContainer.querySelectorAll('.galerie-item'));
+                if (allItems.length <= 1) return; // Nichts zu tun bei nur einem Bild
+
+                // Finde den niedrigsten z-index im Stapel
+                let minZ = Infinity;
+                allItems.forEach(item => {
+                    const z = parseInt(item.style.zIndex || '0', 10);
+                    if (z < minZ) {
+                        minZ = z;
+                    }
+                });
+
+                // Setze das geklickte Bild auf einen z-index unter dem niedrigsten
+                clickedImageItem.style.zIndex = minZ - 1;
+
+                // Gib ihm eine neue zufällige Position, wohin es sich bewegen soll
+                const rotation = Math.random() * 10 - 5;
+                const offsetX = Math.random() * 20 - 10;
+                const offsetY = Math.random() * 20 - 10;
+                clickedImageItem.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotation}deg)`;
+            }
         });
 
         // =======================================================
-        // ZETTEL-EFFEKT (V4 - Minimalinvasiver Ansatz)
+        // ZETTEL-EFFEKT (Angepasst für Hereinrutschen)
         // =======================================================
+
+        function hideAllZettel() {
+            detailsContainer.querySelectorAll('.projekt-beschreibung').forEach(zettel => {
+                zettel.classList.remove('is-visible');
+            });
+        }
+
         detailsContainer.querySelectorAll('.beschreibung-toggle').forEach(button => {
             button.addEventListener('click', () => {
-                button.closest('.projekt-beschreibung').classList.toggle('is-hidden');
+                button.closest('.projekt-beschreibung').classList.remove('is-visible');
             });
         });
 
         projektSeite.addEventListener('click', function(event) {
-            if (event.target.closest('.marquee-button')) {
-                detailsContainer.querySelectorAll('.projekt-beschreibung').forEach(zettel => {
-                    zettel.classList.remove('is-hidden');
-                });
+            const clickedMarqueeButton = event.target.closest('.marquee-button');
+            if (clickedMarqueeButton) {
+                hideAllZettel();
+                const targetProjekt = clickedMarqueeButton.dataset.projektTarget;
+                const targetDetail = detailsContainer.querySelector(`.projekt-detail[data-projekt="${targetProjekt}"]`);
+                if(targetDetail) {
+                    const targetZettel = targetDetail.querySelector('.projekt-beschreibung');
+                    if (targetZettel) {
+                        setTimeout(() => {
+                            targetZettel.classList.add('is-visible');
+                        }, 100);
+                    }
+                }
             }
         });
 
-        const startProjekt = 'ashoka-dupe';
-        if (document.querySelector('.tab[data-tab-target="projekte"]').classList.contains('active')) {
-             zeigeProjektGalerie(startProjekt);
-        } else {
-             erstelleGalerie(startProjekt);
-        }
+        window.addEventListener('load', () => {
+            const ersterZettel = document.querySelector('.projekt-detail.active .projekt-beschreibung');
+            if (ersterZettel) {
+                ersterZettel.classList.add('is-visible');
+            }
+        });
     }
 });
