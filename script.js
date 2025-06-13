@@ -1,39 +1,32 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Globale Variable für das Intervall der Galerie
     let galleryInterval = null; 
 
-    // Referenzen zu den DOM-Elementen
     var tabsContainer = document.querySelector('.ordner-tabs');
     var tabs = document.querySelectorAll('.tab');
     var contentPages = document.querySelectorAll('.ordner-inhalt');
     var ordnerInhaltStapel = document.querySelector('.ordner-inhalt-stapel');
     var ordnerInhaltSchatten = document.querySelector('.ordner-inhalt-Schatten');
 
-    // Sicherheitsabfrage, falls Elemente nicht gefunden werden
     if (!tabsContainer || !ordnerInhaltStapel || !ordnerInhaltSchatten) return;
 
-    // Funktion zum Setzen des aktiven Tabs und Inhalts
     function setActiveState(tabToActivate, isInitialLoad = false) {
         if (!tabToActivate || tabToActivate.classList.contains('active')) return;
 
-        // Wenn der neue Tab nicht "projekte" ist, stoppe das Galerie-Intervall
         if (tabToActivate.dataset.tabTarget !== 'projekte') {
             clearInterval(galleryInterval);
         }
 
-        // Simuliert das "Anheben" des Ordners beim Tab-Wechsel
         if (!isInitialLoad) {
             ordnerInhaltStapel.classList.add('no-transition');
             ordnerInhaltSchatten.classList.add('no-transition');
             ordnerInhaltStapel.classList.add('is-lifted');
             ordnerInhaltSchatten.classList.add('is-lifted');
-            ordnerInhaltStapel.offsetHeight; // Erzwingt einen Reflow, damit die Transition danach greift
+            ordnerInhaltStapel.offsetHeight;
             ordnerInhaltStapel.classList.remove('no-transition');
             ordnerInhaltSchatten.classList.remove('no-transition');
         }
 
-        // Klassen für "active" zurücksetzen und neu setzen
         tabs.forEach(function(t) { t.classList.remove('active'); });
         contentPages.forEach(function(p) { p.classList.remove('active'); });
 
@@ -43,7 +36,6 @@ document.addEventListener('DOMContentLoaded', function() {
             targetContent.classList.add('active');
         }
 
-        // z-index der Tabs so anpassen, dass der aktive Tab immer oben liegt
         const contentZIndex = 5; 
         tabToActivate.style.zIndex = contentZIndex + 1;
         let zCounter = contentZIndex - 1;
@@ -55,12 +47,10 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Event Listener für Klicks auf die Tabs
     tabsContainer.addEventListener('click', function(event) {
         setActiveState(event.target.closest('.tab'));
     });
 
-    // Event Listener für Hover-Effekte auf den Tabs
     tabs.forEach(function(tab) {
         tab.addEventListener('mouseenter', function() {
             if (tab.classList.contains('active')) {
@@ -74,16 +64,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Initialen Zustand beim Laden der Seite setzen (ersten Tab aktivieren)
     setActiveState(document.querySelector('.tab'), true);
-
 
     // =======================================================
     // LOGIK FÜR PROJEKTSEITE (MARQUEE & GALERIE)
     // =======================================================
 
     const projektDaten = {
-        'ashoka-dupe': { anzahl: 6, pfad: 'Projektbilder/Ashoka_Dupe/Bild', dateityp: 'jpg' }, // Daten können hier bleiben, werden aber ignoriert
+        'ashoka-dupe': { anzahl: 6, pfad: 'Projektbilder/Ashoka_Dupe/Bild', dateityp: 'jpg' },
         'leiter': { anzahl: 4, pfad: 'Projektbilder/Leiter/Bild', dateityp: 'jpg' },
         'faltkarre': { anzahl: 5, pfad: 'Projektbilder/Faltkarre/Bild', dateityp: 'png' },
         'tin-3d': { anzahl: 3, pfad: 'Projektbilder/Tin_3D_Printer/Bild', dateityp: 'jpg' },
@@ -95,15 +83,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const projektSeite = document.querySelector('.ordner-inhalt[data-content="projekte"]');
 
     if (projektSeite) {
-        
-     
+        const detailsContainer = projektSeite.querySelector('.projekt-details-container');
 
         function erstelleGalerie(projektId) {
-            // =========================================================================
-            // NEUE ÄNDERUNG: Wenn das Projekt das 3D-Modell ist, brich die Funktion ab.
-            // =========================================================================
             if (projektId === 'ashoka-dupe') {
-                return; // Nichts tun, da hier das <model-viewer> Tag im HTML ist.
+                return;
             }
 
             const galleryContainer = projektSeite.querySelector(`.projekt-detail[data-projekt="${projektId}"] .projekt-galerie`);
@@ -113,84 +97,52 @@ document.addEventListener('DOMContentLoaded', function() {
 
             setTimeout(() => {
                 galleryContainer.innerHTML = '';
-
                 const daten = projektDaten[projektId];
                 if (!daten || daten.anzahl === 0) {
                     galleryContainer.innerHTML = '<p>Für dieses Projekt sind noch keine Bilder verfügbar.</p>';
                     return;
                 }
     
-                let bilder = [];
-                for (let i = 1; i <= daten.anzahl; i++) {
-                    const bildPfad = `${daten.pfad} (${i}).${daten.dateityp}`;
-                    bilder.push(bildPfad);
-                }
+                let bilder = Array.from({length: daten.anzahl}, (_, i) => `${daten.pfad} (${i + 1}).${daten.dateityp}`);
     
-                // Bilder mischen (Fisher-Yates shuffle)
                 for (let i = bilder.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [bilder[i], bilder[j]] = [bilder[j], bilder[i]];
                 }
     
-                const groessen = ['', '', '', 'galerie-item--wide', 'galerie-item--tall', 'galerie-item--big'];
-    
+                const groessen = ['', '', '', 'galerie-item--wide', 'galerie-item--tall'];
                 bilder.forEach(bildSrc => {
                     const item = document.createElement('div');
                     const zufallsGroesse = groessen[Math.floor(Math.random() * groessen.length)];
-                    
-                    item.className = 'galerie-item';
-                    if(zufallsGroesse) {
-                        item.classList.add(zufallsGroesse);
-                    }
-    
-                    const img = document.createElement('img');
-                    img.src = bildSrc;
-                    img.alt = `Bild aus dem Projekt ${projektId}`;
-                    img.loading = 'lazy';
-    
-                    item.appendChild(img);
+                    item.className = `galerie-item ${zufallsGroesse}`;
+                    item.innerHTML = `<img src="${bildSrc}" alt="Bild aus dem Projekt ${projektId}" loading="lazy">`;
                     galleryContainer.appendChild(item);
                 });
                 galleryContainer.style.opacity = '1';
             }, 250);
         }
 
-        const startGalleryInterval = (projektId) => {
+        function zeigeProjektGalerie(projektId) {
             clearInterval(galleryInterval); 
-
-            // =========================================================================
-            // NEUE ÄNDERUNG: Starte das Intervall nicht für das 3D-Modell-Projekt.
-            // =========================================================================
-            if (projektId === 'ashoka-dupe') {
-                return;
-            }
-
-            erstelleGalerie(projektId); 
-            galleryInterval = setInterval(() => {
-                erstelleGalerie(projektId);
-            }, shuffleIntervalTime);
-        };
-
-        const detailsContainer = projektSeite.querySelector('.projekt-details-container');
+            erstelleGalerie(projektId);
+        }
 
         projektSeite.addEventListener('click', function(event) {
-            
-            // Logik für Klick auf einen Marquee-Button (Projektwechsel)
             const clickedMarqueeButton = event.target.closest('.marquee-button');
             if (clickedMarqueeButton) {
                 const targetProjekt = clickedMarqueeButton.dataset.projektTarget;
                 projektSeite.querySelectorAll('.marquee-button').forEach(b => b.classList.remove('active'));
-                projektSeite.querySelectorAll(`.marquee-button[data-projekt-target="${targetProjekt}"]`).forEach(b => b.classList.add('active'));
+                clickedMarqueeButton.classList.add('active');
+                
                 detailsContainer.querySelectorAll('.projekt-detail').forEach(d => d.classList.remove('active'));
                 
                 const targetDetail = detailsContainer.querySelector(`.projekt-detail[data-projekt="${targetProjekt}"]`);
                 if (targetDetail) {
                     targetDetail.classList.add('active');
-                    startGalleryInterval(targetProjekt); 
+                    zeigeProjektGalerie(targetProjekt);
                 }
             }
 
-            // Logik für Klick auf den "Neu anordnen"-Button
             const clickedRearrangeButton = event.target.closest('.rearrange-button');
             if(clickedRearrangeButton) {
                 const aktivesProjekt = clickedRearrangeButton.closest('.projekt-detail').dataset.projekt;
@@ -198,13 +150,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Startprojekt initial laden
+        // =======================================================
+        // ZETTEL-EFFEKT (V4 - Minimalinvasiver Ansatz)
+        // =======================================================
+        detailsContainer.querySelectorAll('.beschreibung-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                button.closest('.projekt-beschreibung').classList.toggle('is-hidden');
+            });
+        });
+
+        projektSeite.addEventListener('click', function(event) {
+            if (event.target.closest('.marquee-button')) {
+                detailsContainer.querySelectorAll('.projekt-beschreibung').forEach(zettel => {
+                    zettel.classList.remove('is-hidden');
+                });
+            }
+        });
+
         const startProjekt = 'ashoka-dupe';
-        // Prüfen, ob der Projekte-Tab beim Seitenaufruf aktiv ist
         if (document.querySelector('.tab[data-tab-target="projekte"]').classList.contains('active')) {
-             startGalleryInterval(startProjekt);
+             zeigeProjektGalerie(startProjekt);
         } else {
-             // Nur die erste Galerie erstellen, ohne das Intervall zu starten, wenn der Tab nicht aktiv ist.
              erstelleGalerie(startProjekt);
         }
     }

@@ -69,9 +69,6 @@ body {
     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
 
-/* ==========================================================================
-   DEKO-ELEMENTE FÜR ALLE TABS
-   ========================================================================== */
 .tab::before {
     content: '';
     position: absolute;
@@ -100,9 +97,6 @@ body {
     box-shadow: 0 -18px 15px -10px rgb(252, 0, 0);
 }
 
-/* ==========================================================================
-   WEITERES STYLING & POSITIONIERUNG
-   ========================================================================== */
 .tab[data-tab-target="startseite"] { left: 0; border-top-left-radius: 0; }
 .tab[data-tab-target="projekte"] { left: 260px; }
 .tab[data-tab-target="about"] { left: 520px; }
@@ -135,15 +129,12 @@ body {
     visibility: hidden;
     transition: opacity 0.2s;
     overflow-y: auto;
-
-    
 }
-/* NEU: Maske für die Projekt-Seite, um die Galerie unten auszublenden */
+
 .ordner-inhalt[data-content="projekte"] {
--webkit-mask-image: linear-gradient(to bottom, black calc(100% - 1px), transparent 100%);
-mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 1px), transparent 100%);
+    mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
 }
-
 
 .ordner-inhalt.active {
     opacity: 1;
@@ -151,7 +142,6 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
 }
 .ordner-inhalt[data-content="startseite"] { border-top-left-radius: 0; }
 .ordner-inhalt-stapel.is-lifted { transform: translateY(-8px); }
-
 
 /* ==========================================================================
    ALLGEMEINE TEXTBLÖCKE
@@ -163,71 +153,54 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
     margin-top: 15rem;
     position: relative;
     z-index: 2;
-
 }
 .text-block h2 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    
 }
 .logo {
     position: absolute;
     top: 50%;
     left: -30%;
-    width: 320px; /* Größe anpassen */
-   
-    opacity: 0.15; /* Transparenz für den Hintergrund-Effekt */
+    width: 320px;
+    opacity: 0.15;
     transform: translate(-50%, -50%);
     z-index: 1;
-    pointer-events: none; /* Logo bleibt klick-durchlässig */
+    pointer-events: none;
 }
-
 .unterschrift-bg {
     position: fixed;
     top: -80px;
     right: 0%;
-    width: 620px;         /* Passe die Größe nach Bedarf an */
+    width: 620px;
     height: auto;
-    opacity: 1;        /* Sehr transparent */
-    z-index: 0;           /* Ganz hinten */
-    pointer-events: none; /* Nicht anklickbar */
-    user-select: none;    /* Nicht auswählbar */
+    opacity: 1;
+    z-index: 0;
+    pointer-events: none;
+    user-select: none;
 }
-
-
-.projekt-galerie-wrapper model-viewer {
-    width: 100%;
-    height: 100vh; /* Nimm 75% der Browserfenster-Höhe */
-    min-height: 500px; /* Aber sei mindestens 500px hoch */
-    border-radius: 1px;
-}
-
 
 /* ==========================================================================
    PROJEKTSEITE: MARQUEE & INHALTSWECHSEL
    ========================================================================== */
 .marquee-container {
-    margin-top: -38px;
     position: sticky; 
-    top: 0.5rem; /* Position auf der ersten Linie */
+    top: 0.5rem;
     left: 0;
     right: 0;
     width: 100%;
-    
     height: 20px; 
     overflow:visible; 
     display: flex;
     align-items: center;
     background-color: var(--Papier);
-    z-index: 0;
-   
+    z-index: 20; /* Muss über der Galerie liegen */
 }
 
 .marquee-content {
     display: flex;
     flex-shrink: 0;
     animation: marquee-scroll 100s linear infinite;
-
 }
 .marquee-container:hover .marquee-content { animation-play-state:running; }
 @keyframes marquee-scroll {
@@ -257,21 +230,16 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
     to { opacity: 1; transform: translateY(0); }
 }
 
-.projekt-beschreibung {
-    flex-basis: 350px;
-    flex-shrink: 0;
-    line-height: 1.6;
-    position:-webkit-sticky; position: fixed;
-    height: 500px; 
-    width: 500px;
+.projekt-galerie-wrapper model-viewer {
+    width: 100%;       /* Nimm die volle Breite der rechten Spalte ein */
+    height: 75vh;      /* Nimm 75% der sichtbaren Browser-Höhe ein */
+    min-height: 500px; /* Sei aber mindestens 500px hoch, auch auf kleinen Bildschirmen */
+    border-radius: 1px;
 }
-.projekt-beschreibung h4 {
-    position: relative;
-    font-size: 1.2rem; margin-bottom: 3rem; }
-
 .projekt-galerie-wrapper {
-    flex-grow: 1;
+    flex-grow: 1; /* Wächst, um den verfügbaren Platz zu füllen */
     min-width: 0;
+    width: 100%; /* Nimmt die volle Breite des Flex-Containers ein */
 }
 
 .projekt-header {
@@ -284,7 +252,6 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
     background: none; border: 1px solid var(--Hintergrund);
     color: var(--Hintergrund); padding: 0.5rem 1rem;
     font-family: var(--font-mono); cursor: pointer; transition: all 0.2s ease;
-  
 }
 .rearrange-button:hover { background: var(--Hintergrund); color: var(--Papier); }
 
@@ -292,19 +259,14 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
     grid-auto-rows: 350px;
-    gap: -10rem;
+    gap: 1rem;
     transition: opacity 0.25s ease-in-out;
-   align: right;
-    margin-left: 30rem;;
 }
-
 
 .galerie-item {
     overflow: hidden;
     border-radius: 1px;
     animation: zoomIn 0.4s ease-out;
-    margin-left: auto;
-   
 }
 .galerie-item img {
     width: 100%; height: 100%;
@@ -315,33 +277,19 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
 .galerie-item--wide { grid-column: span 2; }
 .galerie-item--tall { grid-row: span 2; }
 
-
 @keyframes zoomIn {
     from {
-        transform: scale(1);
-        opacity: 0.5;
-        filter: blur(3px); /* NEU: Das Element startet unscharf */
+        transform: scale(0.8);
+        opacity: 0;
+        filter: blur(5px);
     }
     to {
         transform: scale(1);
         opacity: 1;
-        filter: blur(0);   /* NEU: Das Element endet komplett scharf */
+        filter: blur(0);
     }
 }
 
-.Verlauf {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100vw;    /* gesamte Bildschirmbreite */
-    height: 120px;   /* Höhe des Verlaufs, nach Bedarf anpassen */
-    pointer-events: none;
-    z-index: 1;      /* unter Überschrift/Marquee, aber über Hintergrund */
-    /* Verlauf von oben nach unten */
-    -webkit-mask-image: linear-gradient(to bottom, black, transparent 100%);
-    mask-image: linear-gradient(to bottom, black, transparent 100%);
-    background: var(--Papier); /* oder gewünschte Farbe */
-}
 /* ==========================================================================
    DEKORATIVE WOLKEN
    ========================================================================== */
@@ -375,4 +323,51 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
     .deko-wolke { display: none; }
 }
 
+/* ==========================================================================
+   ZETTEL-EFFEKT (V4 - Minimalinvasiver Ansatz)
+   ========================================================================== */
+.projekt-beschreibung {
+    /* DIESE BEIDEN ZEILEN SIND WICHTIG FÜR DAS 2-SPALTEN-LAYOUT */
+     width: 350px; /* Feste Breite statt flex-basis */
+    flex-shrink: 0;
+    
+    line-height: 1.6;
+    position: relative; 
+
+    background: var(--Papier);
+    padding: 2rem;
+    box-shadow: 3px 3px 15px rgba(0,0,0,0.15);
+    border-radius: 3px;
+    transform-origin: top left;
+    transition: transform 0.5s ease-out, opacity 0.4s ease-out;
+}
+
+.projekt-beschreibung.is-hidden {
+    transform: translateX(-50px) rotate(-8deg) scale(0.95);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.beschreibung-toggle {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    line-height: 1;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+.beschreibung-toggle:hover {
+    opacity: 1;
+    border-color: var(--Hintergrund);
+    transform: rotate(90deg);
+}
 

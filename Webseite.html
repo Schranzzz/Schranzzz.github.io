@@ -11,8 +11,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Pinyon+Script&display=swap" rel="stylesheet">
-
-      <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
+    
+    <!-- Model-Viewer Skript für 3D-Modelle -->
+    <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.4.0/model-viewer.min.js"></script>
 </head>
 <body>
    
@@ -50,9 +51,7 @@ Mein Ziel ist es, Produkte zu gestalten, die nicht nur ästhetisch und funktiona
                         
                         <div class="marquee-container">
                             <div class="marquee-content">
-                                <div class="verlauf"></div>
-                                
-                                <!-- Marquee-Inhalt bleibt unverändert -->
+                                <!-- Marquee Buttons (gekürzt für Übersicht) -->
                                 <span>
                                     <button class="marquee-button active" data-projekt-target="ashoka-dupe">Ashoka Dupe </button>
                                     <button class="marquee-button" data-projekt-target="leiter">Dekorierte Leiter </button>
@@ -71,137 +70,132 @@ Mein Ziel ist es, Produkte zu gestalten, die nicht nur ästhetisch und funktiona
                                     <button class="marquee-button" data-projekt-target="new-tool">New tool </button>
                                     <button class="marquee-button" data-projekt-target="sketches">Sketches |</button>
                                 </span>
-                                <span>
-                                    <button class="marquee-button" data-projekt-target="ashoka-dupe">Ashoka Dupe </button>
-                                    <button class="marquee-button" data-projekt-target="leiter">Dekorierte Leiter </button>
-                                    <button class="marquee-button" data-projekt-target="faltkarre">Faltkarre </button>
-                                    <button class="marquee-button" data-projekt-target="tin-3d">Tin 3D Printer </button>
-                                    <button class="marquee-button" data-projekt-target="movement">Movement to signal </button>
-                                    <button class="marquee-button" data-projekt-target="new-tool">New tool </button>
-                                    <button class="marquee-button" data-projekt-target="sketches">Sketches |</button>
-                                </span>
-                                 <span>
-                                    <button class="marquee-button" data-projekt-target="ashoka-dupe">Ashoka Dupe </button>
-                                    <button class="marquee-button" data-projekt-target="leiter">Dekorierte Leiter </button>
-                                    <button class="marquee-button" data-projekt-target="faltkarre">Faltkarre </button>
-                                    <button class="marquee-button" data-projekt-target="tin-3d">Tin 3D Printer </button>
-                                    <button class="marquee-button" data-projekt-target="movement">Movement to signal </button>
-                                    <button class="marquee-button" data-projekt-target="new-tool">New tool </button>
-                                    <button class="marquee-button" data-projekt-target="sketches">Sketches |</button>
-                                </span>
                             </div>
                         </div>
                     
-                        <div class="projekt-details-container">
-                            <div class="projekt-detail active" data-projekt="ashoka-dupe">
-    <div class="projekt-beschreibung">
-        <h4>Ashoka Dupe</h4>
-        <p>Hier kommt Ihre Beschreibung für das Projekt "Ashoka Dupe" hin. [...]</p>
-        <p style="margin-top: 1rem; opacity: 0.7;"><em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em></p>
-    </div>
-    <div class="projekt-galerie-wrapper">
-        <div class="projekt-header">
-            <h3></h3>
+                        <!-- DIESEN GESAMTEN BLOCK IN Webseite.html ERSETZEN -->
+
+<div class="projekt-details-container">
+    <!-- Projekt 1: Ashoka Dupe (mit 3D-Modell) -->
+    <div class="projekt-detail active" data-projekt="ashoka-dupe">
+        <div class="projekt-beschreibung">
+            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
+            <h4>Projekt: Ashoka Dupe</h4>
+            <p>Hier kommt Ihre Beschreibung für das Projekt "Ashoka Dupe" hin. Erläutern Sie die Aufgabenstellung, den Prozess und das Ergebnis. Was war die Herausforderung? Welche Techniken haben Sie verwendet?</p>
+            <p style="margin-top: 1rem; opacity: 0.7;"><em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em></p>
         </div>
-        
-        <!-- HIER PASSIERT DIE REFERENZIERUNG -->
-        <model-viewer 
-            src="data/Ashoka-Dupe.glb" 
-            alt="Ein 3D-Modell des Ashoka Dupe Projekts"
-             orientation="0deg 0deg 180deg"  
-            camera-orbit="0deg 75deg 80m" 
-            camera-controls
-            auto-rotate
-            ar
-            shadow-intensity="1">
-        </model-viewer>
+        <div class="projekt-galerie-wrapper">
+            <div class="projekt-header">
+                <h3>Ashoka Dupe</h3>
+            </div>
+           <model-viewer 
+    src="data/Ashoka-dupe.glb" 
+    alt="Ein 3D-Modell des Ashoka Dupe Projekts"
+    orientation="0deg 0deg 180deg"  
+    camera-controls
+    auto-rotate
+    ar
+    shadow-intensity="1">
+</model-viewer>
+        </div>
+    </div>
+
+    <!-- Projekt 2: Dekorierte Leiter -->
+    <div class="projekt-detail" data-projekt="leiter">
+        <div class="projekt-beschreibung">
+            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
+            <h4>Dekorierte Leiter</h4>
+            <p>Was wäre, wenn nicht der Christbaum, sondern eine Leiter das Zentrum weihnachtlicher Rituale bildete? Welche Artefakte würden aus einer solchen Tradition entstehen?...</p>
+        </div>
+        <div class="projekt-galerie-wrapper">
+            <div class="projekt-header">
+                <h3>Dekorierte Leiter</h3>
+                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+            </div>
+            <div class="projekt-galerie"></div>
+        </div>
+    </div>
+
+    <!-- Projekt 3: Faltkarre -->
+    <div class="projekt-detail" data-projekt="faltkarre">
+        <div class="projekt-beschreibung">
+            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
+            <h4>Projekt: Faltkarre</h4>
+            <p>Text über das Faltkarren-Projekt. Fokus auf Mechanik, Design oder Benutzerfreundlichkeit?</p>
+        </div>
+        <div class="projekt-galerie-wrapper">
+             <div class="projekt-header">
+                <h3>Faltkarre</h3>
+                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+            </div>
+            <div class="projekt-galerie"></div>
+        </div>
+    </div>
+
+    <!-- Projekt 4: Tin 3D Printer -->
+     <div class="projekt-detail" data-projekt="tin-3d">
+        <div class="projekt-beschreibung">
+            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
+            <h4>Projekt: Tin 3D Printer</h4>
+            <p>Beschreibung für den 3D-Drucker.</p>
+        </div>
+        <div class="projekt-galerie-wrapper">
+             <div class="projekt-header">
+                <h3>Tin 3D Printer</h3>
+                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+            </div>
+            <div class="projekt-galerie"></div>
+        </div>
+    </div>
+
+    <!-- Projekt 5: Movement to signal -->
+    <div class="projekt-detail" data-projekt="movement">
+        <div class="projekt-beschreibung">
+            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
+            <h4>Movement to signal</h4>
+            <p>Was wäre, wenn nicht der Christbaum, sondern eine Leiter das Zentrum weihnachtlicher Rituale bildete? Welche Artefakte würden aus einer solchen Tradition entstehen?...</p>
+        </div>
+        <div class="projekt-galerie-wrapper">
+             <div class="projekt-header">
+                <h3>Movement to signal</h3>
+                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+            </div>
+            <div class="projekt-galerie"></div>
+        </div>
+    </div>
+
+    <!-- Projekt 6: New tool -->
+    <div class="projekt-detail" data-projekt="new-tool">
+        <div class="projekt-beschreibung">
+            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
+            <h4>Projekt: New tool</h4>
+            <p>Beschreibung für New tool.</p>
+        </div>
+        <div class="projekt-galerie-wrapper">
+             <div class="projekt-header">
+                <h3>New tool</h3>
+                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+            </div>
+            <div class="projekt-galerie"></div>
+        </div>
+    </div>
+
+    <!-- Projekt 7: Sketches -->
+    <div class="projekt-detail" data-projekt="sketches">
+        <div class="projekt-beschreibung">
+            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
+            <h4>Projekt: Sketches</h4>
+            <p>Beschreibung für Sketches.</p>
+        </div>
+        <div class="projekt-galerie-wrapper">
+             <div class="projekt-header">
+                <h3>Sketches</h3>
+                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+            </div>
+            <div class="projekt-galerie"></div>
+        </div>
     </div>
 </div>
-                            <div class="projekt-detail" data-projekt="leiter">
-                                <div class="projekt-beschreibung">
-                                    <h4></h4>
-                                    <p>Was wäre, wenn nicht der Christbaum, sondern eine Leiter das Zentrum weihnachtlicher Rituale bildete? Welche Artefakte würden aus einer solchen Tradition entstehen?
-Aus einer vermeintlich einfachen Aufgabe wurde eine Suche nach Ursprüngen, Bedeutungen und Möglichkeiten. Die Leiter, jahrhundertelang unverändert, wurde auf den Kopf gestellt im wörtlichen wie im übertragenen Sinn. Plötzlich war sie angreifbar, verletzlich, voller offener Stellen und unausgesprochener Versprechen.
-Ein Objekt hacken, in es eindringen, es umdeuten. Aus seinem funktionalen Schatten eine neue Geschichte formen. Der Moment, in dem aus altem Material eine eigene Tradition entsteht.
-Dekoration wird hier zum Mittel, nicht zum Zweck. Die Leiter bleibt Leiter, wird aber zugleich etwas anderes. Ein fragiles Denkmodell zwischen Festlichkeit und Fiktion.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                    <div class="projekt-header">
-                                        <h3>Dekorierte Leiter</h3>
-                                        <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-                                    </div>
-                                    <div class="projekt-galerie"></div>
-                                </div>
-                            </div>
-                            <div class="projekt-detail" data-projekt="faltkarre">
-                                <div class="projekt-beschreibung">
-                                    <h4>Projekt: Faltkarre</h4>
-                                    <p>Text über das Faltkarren-Projekt. Fokus auf Mechanik, Design oder Benutzerfreundlichkeit?</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                     <div class="projekt-header">
-                                        <h3>Faltkarre</h3>
-                                        <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-                                    </div>
-                                    <div class="projekt-galerie"></div>
-                                </div>
-                            </div>
-                             <div class="projekt-detail" data-projekt="tin-3d">
-                                <div class="projekt-beschreibung">
-                                    <h4>Projekt: Tin 3D Printer</h4>
-                                    <p>Beschreibung für den 3D-Drucker.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                     <div class="projekt-header">
-                                        <h3>Tin 3D Printer</h3>
-                                        <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-                                    </div>
-                                    <div class="projekt-galerie"></div>
-                                </div>
-                            </div>
-                            <div class="projekt-detail" data-projekt="movement">
-                                <div class="projekt-beschreibung">
-                                    <h4></h4>
-                                    <p>Was wäre, wenn nicht der Christbaum, sondern eine Leiter das Zentrum weihnachtlicher Rituale bildete? Welche Artefakte würden aus einer solchen Tradition entstehen?
-Aus einer vermeintlich einfachen Aufgabe wurde eine Suche nach Ursprüngen, Bedeutungen und Möglichkeiten. Die Leiter, jahrhundertelang unverändert, wurde auf den Kopf gestellt im wörtlichen wie im übertragenen Sinn. Plötzlich war sie angreifbar, verletzlich, voller offener Stellen und unausgesprochener Versprechen.
-Ein Objekt hacken, in es eindringen, es umdeuten. Aus seinem funktionalen Schatten eine neue Geschichte formen. Der Moment, in dem aus altem Material eine eigene Tradition entsteht.
-Dekoration wird hier zum Mittel, nicht zum Zweck. Die Leiter bleibt Leiter, wird aber zugleich etwas anderes. Ein fragiles Denkmodell zwischen Festlichkeit und Fiktion.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                     <div class="projekt-header">
-                                        <h3></h3>
-                                        <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-                                    </div>
-                                    <div class="projekt-galerie"></div>
-                                </div>
-                            </div>
-                            <div class="projekt-detail" data-projekt="new-tool">
-                                <div class="projekt-beschreibung">
-                                    <h4>Projekt: New tool</h4>
-                                    <p>Beschreibung für New tool.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                     <div class="projekt-header">
-                                        <h3>New tool</h3>
-                                        <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-                                    </div>
-                                    <div class="projekt-galerie"></div>
-                                </div>
-                            </div>
-                            <div class="projekt-detail" data-projekt="sketches">
-                                <div class="projekt-beschreibung">
-                                    <h4>Projekt: Sketches</h4>
-                                    <p>Beschreibung für Sketches.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                     <div class="projekt-header">
-                                        <h3>Sketches</h3>
-                                        <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-                                    </div>
-                                    <div class="projekt-galerie"></div>
-                                </div>
-                            </div>
-                        </div>
                      </main>
 
                     <main class="ordner-inhalt" data-content="about">
@@ -216,7 +210,6 @@ He is engaged intensively with other artistic disciplines such as photography, p
                             <br>
                                 leonremmert1@gmail.com<p></p>
                                 @leonard0_tornado
-
                             </p>
                         </div>
                     </main>
@@ -225,10 +218,9 @@ He is engaged intensively with other artistic disciplines such as photography, p
         </div>
     </div>
    
-
     <!-- Dekorative Wolken -->
-   <!-- <img src="Data/wolke-links.png" alt="" class="deko-wolke wolke-links"> -->
-   <!-- <img src="Data/wolke-rechts.png" alt="" class="deko-wolke wolke-rechts"> -->
+    <img src="Data/wolke-links.png" alt="" class="deko-wolke wolke-links">
+    <img src="Data/wolke-rechts.png" alt="" class="deko-wolke wolke-rechts">
 
     <script src="script.js"></script>
 </body>
