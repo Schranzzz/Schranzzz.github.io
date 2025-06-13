@@ -8,7 +8,7 @@
     --Schatten-Farbe-Inhalt: rgba(0, 0, 0, 0.25);
 
     --font-script: 'Pinyon Script', cursive;
-    --font-mono: 'Courier Prime', monospace;
+    --font-mono: 'Helvetica', monospace;
     --tab-radius: 35px;
     --inhalt-radius-gross: 80px;
 }
@@ -194,10 +194,20 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
     user-select: none;    /* Nicht auswählbar */
 }
 
+
+.projekt-galerie-wrapper model-viewer {
+    width: 100%;
+    height: 100vh; /* Nimm 75% der Browserfenster-Höhe */
+    min-height: 500px; /* Aber sei mindestens 500px hoch */
+    border-radius: 1px;
+}
+
+
 /* ==========================================================================
    PROJEKTSEITE: MARQUEE & INHALTSWECHSEL
    ========================================================================== */
 .marquee-container {
+    margin-top: -38px;
     position: sticky; 
     top: 0.5rem; /* Position auf der ersten Linie */
     left: 0;
@@ -307,10 +317,17 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
 
 
 @keyframes zoomIn {
-    from { transform: scale(0.8); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
+    from {
+        transform: scale(1);
+        opacity: 0.5;
+        filter: blur(3px); /* NEU: Das Element startet unscharf */
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+        filter: blur(0);   /* NEU: Das Element endet komplett scharf */
+    }
 }
-
 
 .Verlauf {
     position: absolute;
@@ -357,3 +374,5 @@ mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
     .ordner-inhalt.active { display: block; }
     .deko-wolke { display: none; }
 }
+
+
