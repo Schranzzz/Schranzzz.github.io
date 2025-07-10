@@ -287,7 +287,7 @@ body {
      transition: transform 0.2s cubic-bezier(0.68, -0.6, 0.32, 1.6);
  }
  .projekt-galerie .galerie-item {
-     position: center;
+     
      max-width: 600px;
      max-height: 65vh;
      width: auto;
@@ -303,7 +303,7 @@ body {
      filter: blur(3px);
      
      /* Übergang für ALLE Änderungen (Bewegung, Skalierung, Unschärfe) */
-     transition: transform 0.2s cubic-bezier(0.68, -0.6, 0.32, 1.6), 
+     transition: transform 0.2s cubic-bezier(0, 0, 0, 1), 
                  filter 0.2s ease-in-out;
  }
 
@@ -314,6 +314,9 @@ body {
  .projekt-galerie .galerie-item.is-top {
      filter: blur(0);    /* Scharf stellen */
      cursor: pointer;    /* Klickbar machen */
+     z-index: 10; /* Höchste Priorität */
+     cursor: pointer;
+    
  }
  
  /* Leichtes Anheben beim Hovern, aber nur für das oberste Bild */
@@ -328,6 +331,11 @@ body {
     display: block;
     object-fit: contain; /* Stellt sicher, dass das ganze Bild sichtbar ist */
     pointer-events: none; /* Klicks gehen durch das Bild zum Container-div */
+    user-select: none;        /* Kein Text auswählbar */
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    outline: none;    
+
 }
 
 /* ==========================================================================
