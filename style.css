@@ -6,6 +6,7 @@
     --Hintergrund: #434C63;
     --Schatten-Farbe: rgba(0, 0, 0, 0.45);
     --Schatten-Farbe-Inhalt: rgba(0, 0, 0, 0.25);
+    --Eselsohr-Farbe: #D0D0D0; /* Eine etwas dunklere Papierfarbe für die Rückseite */
 
     --font-script: 'Pinyon Script', cursive;
     --font-mono: 'Helvetica', monospace;
@@ -154,10 +155,6 @@ body {
     position: relative;
     z-index: 2;
 }
-.text-block h2 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-}
 .logo {
     position: absolute;
     top: 50%;
@@ -181,7 +178,7 @@ body {
 }
 
 /* ==========================================================================
-   PROJEKTSEITE: MARQUEE & INHALTSWECHSEL
+   PROJEKTSEITE: MARQUEE & ZETTEL
    ========================================================================== */
 .marquee-container {
     position: sticky; 
@@ -222,7 +219,8 @@ body {
 .projekt-detail.active {
     display: flex;
     gap: 2rem;
-    align-items: flex-start;
+    align-items: center;
+    justify-content: center;
     animation: fadeIn 0.5s ease-in-out;
 }
 @keyframes fadeIn {
@@ -230,21 +228,132 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Ersetze die alten Zettel-Regeln in deiner style.css mit DIESEM finalen Block: */
+
+/* Ersetze die alten Zettel-Regeln in deiner style.css mit DIESEM finalen Block: */
+
+.projekt-beschreibung {
+    flex-basis: 35%;
+    max-width: 500px;
+    aspect-ratio: 1 / 1;
+    flex-shrink: 0;
+    position: relative;
+    padding: 2.5rem; 
+    box-shadow: 3px 3px 15px rgba(0,0,0,0.15);
+    border-radius: 3px;
+    transform-origin: top left;
+    transform: translateX(-80%) rotate(3deg);
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), clip-path 0.3s ease; /* Transition für clip-path hinzugefügt */
+    z-index: 10;
+    cursor: pointer;
+    background-color: rgb(162, 248, 43);
+
+    /* HIER WIRD DIE ECKE BUCHSTÄBLICH ABGESCHNITTEN (Startzustand) */
+    clip-path: polygon(0% 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, 0% 100%);
+}
+
+.projekt-beschreibung.is-visible {
+    transform: translateX(110%) rotate(8deg);
+}
+
+/* Das ist das sichtbare Eselsohr (die Rückseite) */
+.projekt-beschreibung::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    background-color: var(--Eselsohr-Farbe);
+    /* Ein leichter Gradient für mehr Tiefe auf der Rückseite */
+    background-image: linear-gradient(135deg, transparent, rgba(0,0,0,0.1));
+    transition: width 0.3s ease, height 0.3s ease;
+    /* Dies ist die korrekte Form für das Dreieck, das die Ecke füllt */
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+}
+
+/* Der Schatten wird jetzt unter der Ecke positioniert */
+.projekt-beschreibung::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+    background: rgba(0,0,0,0.2);
+    /* Schneidet den Schatten ebenfalls in die Dreiecksform */
+    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    /* Legt den Schatten hinter die Ecke */
+    transform: translate(3px, 3px);
+    z-index: -1;
+    transition: width 0.3s ease, height 0.3s ease, transform 0.3s ease;
+}
+
+/* JETZT WIRD ALLES BEIM HOVER GEÄNDERT */
+.projekt-beschreibung:hover {
+    /* Der Knick wandert, indem wir die Form des grünen Zettels ändern */
+    clip-path: polygon(0% 0%, calc(100% - 60px) 0%, 100% 60px, 100% 100%, 0% 100%);
+}
+
+.projekt-beschreibung:hover::before {
+    /* Die sichtbare Ecke wächst mit */
+    width: 60px;
+    height: 60px;
+}
+
+.projekt-beschreibung:hover::after {
+    /* Der Schatten wächst mit */
+    width: 60px;
+    height: 60px;
+}
+.projekt-beschreibung.is-visible {
+    transform: translateX(110%) rotate(8deg);
+}
+
+.projekt-titel-bild {
+    display: block;
+    max-width: 80%;
+    height: auto;
+    margin-bottom: 1.5rem;
+}
+
+/* ==========================================================================
+   GALERIE, VIDEO & 3D-MODELLE
+   ========================================================================== */
+.projekt-galerie-wrapper {
+    flex-basis: 60%;
+    flex-grow: 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.projekt-galerie-wrapper > div {
+    flex: 1;
+    min-width: 0;
+}
+
 .projekt-galerie-wrapper model-viewer {
-    width: 100%;       
-    height: 75vh;     
+    width: 100%;
+    height: 75vh;
     min-height: 500px;
     border-radius: 1px;
 }
-.projekt-galerie-wrapper {
-    flex-grow: 1; 
-    min-width: 0;
-    width: 100%;
+
+.projekt-video {
+    flex-shrink: 0;
+    max-height: 70vh;
+    width: auto;
+    border-radius: 3px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .projekt-header {
-    display: flex; justify-content: space-between;
-    align-items: center; margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
 }
 .projekt-header h3 { margin: 0; font-size: 1.5rem; }
 
@@ -255,107 +364,64 @@ body {
 }
 .rearrange-button:hover { background: var(--Hintergrund); color: var(--Papier); }
 
-
-/* ==========================================================================
-   NEU: STAPEL-GALERIE
-   ========================================================================== */
-/* In der Datei style.css */
-
-/* ... vorheriger Code bleibt gleich ... */
-
-
-/* ==========================================================================
-   NEU: STAPEL-GALERIE (mit Tiefenunschärfe & Skalierung)
-   ========================================================================== */
-
-/* ... */
-
- .projekt-galerie .galerie-item {
-    position: absolute;
-    
-     max-width: 600px; 
-     max-height: 65vh;
-     left: 50%; 
-     width: auto;
-     height: auto;
-     cursor: pointer;
-     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-     border: 0px solid var(--Papier);
-     border-radius: 0px;
-    -webkit-backface-visibility: hidden; 
-    backface-visibility: hidden;
-     transition: transform 0.2s cubic-bezier(0.68, -0.6, 0.32, 1.6);
- }
- .projekt-galerie .galerie-item {
-     
-     max-width: 600px;
-     max-height: 65vh;
-     width: auto;
-     height: auto;
-     cursor: default; /* Standardmäßig kein Klick-Cursor */
-     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-     border: 0px solid var(--Papier);
-     border-radius: 0px;
-     -webkit-backface-visibility: hidden;
-     backface-visibility: hidden;
-     
-    /* Standard-Zustand: Unscharf */
-     filter: blur(3px);
-     
-     /* Übergang für ALLE Änderungen (Bewegung, Skalierung, Unschärfe) */
-     transition: transform 0.2s cubic-bezier(0, 0, 0, 1), 
-                 filter 0.2s ease-in-out;
- }
-
- .projekt-galerie .galerie-item:hover {
-     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
- }
- /* Spezialklasse für das oberste, aktive Bild */
- .projekt-galerie .galerie-item.is-top {
-     filter: blur(0);    /* Scharf stellen */
-     cursor: pointer;    /* Klickbar machen */
-     z-index: 10; /* Höchste Priorität */
-     cursor: pointer;
-    
- }
- 
- /* Leichtes Anheben beim Hovern, aber nur für das oberste Bild */
-.projekt-galerie .galerie-item.is-top:hover {
-     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+.projekt-galerie {
+    position: relative;
+    width: 100%;
+    min-height: 70vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.25s ease-in-out;
+    perspective: 1000px;
 }
 
-/* ... nachfolgender Code bleibt gleich ... */
+.projekt-galerie .galerie-item {
+    position: absolute;
+    max-width: 600px;
+    max-height: 65vh;
+    width: auto;
+    height: auto;
+    cursor: default;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 0px solid var(--Papier);
+    border-radius: 0px;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    filter: blur(3px);
+    transition: transform 0.2s cubic-bezier(0, 0, 0, 1), 
+                filter 0.2s ease-in-out;
+}
+
+.projekt-galerie .galerie-item.is-top {
+    filter: blur(0);
+    cursor: pointer;
+}
+ 
+.projekt-galerie .galerie-item.is-top:hover {
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
 .projekt-galerie .galerie-item img {
     width: 100%;
     height: 100%;
     display: block;
-    object-fit: contain; /* Stellt sicher, dass das ganze Bild sichtbar ist */
-    pointer-events: none; /* Klicks gehen durch das Bild zum Container-div */
-    user-select: none;        /* Kein Text auswählbar */
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
     outline: none;    
-
 }
 
 /* ==========================================================================
-   DEKORATIVE WOLKEN
-   ========================================================================== */
-.deko-wolke {
-    position: fixed; bottom: -20px; max-width: 700px;
-    height: auto; opacity: 0.8; z-index: 10;
-    pointer-events: none; user-select: none;
-}
-.wolke-links { left: -30px; }
-.wolke-rechts { right: -30px; }
-
-/* ==========================================================================
-   3. MOBILE ANPASSUNGEN
+   MOBILE ANPASSUNGEN
    ========================================================================== */
 @media (max-width: 992px) {
     .projekt-detail.active { flex-direction: column; }
-    .projekt-beschreibung { flex-basis: auto; margin-bottom: 2rem; }
+    .projekt-beschreibung { flex-basis: auto; margin-bottom: 2rem; max-width: 100%;}
+    .projekt-galerie-wrapper { flex-direction: column; flex-basis: auto; }
 }
+
 @media (max-width: 768px) {
     .ordner-system { position: static; margin-top: 1rem; }
     .ordner-tabs { height: auto; display: flex; flex-direction: column; }
@@ -368,59 +434,5 @@ body {
     .ordner-inhalt-stapel { position: static; box-shadow: none; border: 1px solid var(--Hintergrund); border-top: none; }
     .ordner-inhalt { position: static; height: auto; min-height: 300px; display: none; }
     .ordner-inhalt.active { display: block; }
-    .deko-wolke { display: none; }
     .projekt-galerie .galerie-item { max-width: 80vw; }
-}
-
-/* ==========================================================================
-   ZETTEL-EFFEKT (Angepasst für Hereinrutschen & Größe)
-   ========================================================================== */
-
-.projekt-beschreibung {
-    flex-basis: 820px; 
-    min-height: 30%;
-    flex-shrink: 5;
-    line-height: 1.6;
-    position: relative;
-    background: var(--Papier);
-    padding: 2.5rem; 
-    box-shadow: 3px 3px 15px rgba(0,0,0,0.15);
-    border-radius: 3px;
-    transform-origin: top left;
-    transform: translateX(-80%) rotate(3deg);
-    opacity: 1;
-    background-color: rgb(162, 248, 43);
-    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.5s ease;
-}
-
-.projekt-beschreibung.is-visible {
-    transform: translateX(110%) rotate(8deg);
-    opacity: 1;
-}
-
-.projekt-beschreibung.is-hidden {
-    transform: translateX(-110%) rotate(0deg);
-    opacity: 1;
-    pointer-events: none;
-}
-
-.beschreibung-toggle {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    width: 30px;
-    height: 30px;
-    background: none;
-    border: 1px solid transparent;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    line-height: 1;
-    text-align: center;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: all 0.3s ease;
-}
-
-.beschreibung-toggle:hover {
-    opacity: 1;
 }

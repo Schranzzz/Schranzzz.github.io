@@ -30,28 +30,22 @@
                 <button class="tab" data-tab-target="about">About</button>
             </nav>
             <div class="ordner-inhalt-Schatten">
-                
-                 <div class="ordner-inhalt-stapel">
-                      <main class="ordner-inhalt" data-content="startseite">
+                <div class="ordner-inhalt-stapel">
+                    <main class="ordner-inhalt" data-content="startseite">
                         <div class="text-block">
                              <div class="logo">
                                 <img src="Data/Logo.png" alt="Leon Remmert Logo">
                             </div>
                             <h2></h2>
                             <p>Ich verstehe Gestaltung als die Suche nach Potenzialen, die mehr können als nur ein Problem zu lösen. Es geht mir darum, Überschneidungspunkte zwischen unterschiedlichen Anforderungen zu finden und so ein Objekt zu schaffen, das selbstverständlich wirkt, weil es in Material, Form und Funktion nachvollziehbar ist. Gestaltung bedeutet für mich Verantwortung, gegenüber der Umwelt, den Menschen und dem Prozess selbst.
-
-Ehrliche, bewusste Entscheidungen sind der Kern meines Designs. Objekte sollten keine falschen Versprechen machen, sondern durch Klarheit und mutige Reduktion überzeugen. Ich arbeite experimentell, lasse mich von Materialien und ihren Eigenschaften inspirieren und sehe im Skizzieren, Modellbauen und digitalen Entwerfen gleichwertige Werkzeuge, um Ideen zu präzisieren und Potenziale auszuloten.
-
-Mein Ziel ist es, Produkte zu gestalten, die nicht nur ästhetisch und funktional sind, sondern auch durch ihre Logik und Offenheit begeistern.</p>
-                            <p>Dieser Block kann mehrere Absätze, Listen oder andere Elemente enthalten, um den Inhalt ansprechend zu gestalten.</p>
-                           
-                      </main>
+                            Ehrliche, bewusste Entscheidungen sind der Kern meines Designs. Objekte sollten keine falschen Versprechen machen, sondern durch Klarheit und mutige Reduktion überzeugen. Ich arbeite experimentell, lasse mich von Materialien und ihren Eigenschaften inspirieren und sehe im Skizzieren, Modellbauen und digitalen Entwerfen gleichwertige Werkzeuge, um Ideen zu präzisieren und Potenziale auszuloten.
+                            Mein Ziel ist es, Produkte zu gestalten, die nicht nur ästhetisch und funktional sind, sondern auch durch ihre Logik und Offenheit begeistern.</p>
+                        </div>
+                    </main>
 
                     <main class="ordner-inhalt" data-content="projekte">
-                        
                         <div class="marquee-container">
                             <div class="marquee-content">
-                                <!-- Marquee Buttons (gekürzt für Übersicht) -->
                                 <span>
                                     <button class="marquee-button active" data-projekt-target="ashoka-dupe">ASHOKA DUPE</button>
                                     <button class="marquee-button" data-projekt-target="leiter">DEKORIERTE LEITER</button>
@@ -73,155 +67,148 @@ Mein Ziel ist es, Produkte zu gestalten, die nicht nur ästhetisch und funktiona
                             </div>
                         </div>
                     
-                        <!-- DIESEN GESAMTEN BLOCK IN Webseite.html ERSETZEN -->
+                        <div class="projekt-details-container">
 
-<div class="projekt-details-container">
-    <!-- Projekt 1: Ashoka Dupe (mit 3D-Modell) -->
-    <div class="projekt-detail active" data-projekt="ashoka-dupe">
-        <div class="projekt-beschreibung">
-            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
-            <h4>Projekt: Ashoka Dupe</h4>
-            <p>Hier kommt Ihre Beschreibung für das Projekt "Ashoka Dupe" hin. Erläutern Sie die Aufgabenstellung, den Prozess und das Ergebnis. Was war die Herausforderung? Welche Techniken haben Sie verwendet?</p>
-            <p style="margin-top: 1rem; opacity: 0.7;"><em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em></p>
-        </div>
-        <div class="projekt-galerie-wrapper">
-            <div class="projekt-header">
-                <h3></h3>
-            </div>
-           <model-viewer 
-    src="data/Ashoka-dupe.glb" 
-    alt="Ein 3D-Modell des Ashoka Dupe Projekts"
-    orientation="0deg 0deg 180deg"  
-    camera-controls
-    auto-rotate
-    ar
-    shadow-intensity="1">
-</model-viewer>
-        </div>
-    </div>
+                            <!-- Projekt 1: Ashoka Dupe (mit 3D-Modell) -->
+                            <div class="projekt-detail active" data-projekt="ashoka-dupe">
+                                <div class="projekt-beschreibung">
+                                    <img src="Handwritten_Titles/Ashoka_Dupe.png" alt="Titel des Projekts Ashoka Dupe" class="projekt-titel-bild">
+                                    <p>Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation.</p>
+                                    <p style="margin-top: 1rem; opacity: 0.7;"><em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em></p>
+                                </div>
+                                <div class="projekt-galerie-wrapper">
+                                   <model-viewer 
+                                        src="data/Ashoka-dupe.glb" 
+                                        alt="Ein 3D-Modell des Ashoka Dupe Projekts"
+                                        orientation="0deg 0deg 180deg"  
+                                        camera-controls auto-rotate ar shadow-intensity="1">
+                                    </model-viewer>
+                                </div>
+                            </div>
 
-    <!-- Projekt 2: Dekorierte Leiter -->
-    <div class="projekt-detail" data-projekt="leiter">
-        <div class="projekt-beschreibung">
-            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
-            <h4>Dekorierte Leiter</h4>
-            <p>Was wäre, wenn nicht der Christbaum, sondern eine Leiter das Zentrum weihnachtlicher Rituale bildete? Welche Artefakte würden aus einer solchen Tradition entstehen?...</p>
-        </div>
-        <div class="projekt-galerie-wrapper">
-            <div class="projekt-header">
-                <h3>Dekorierte Leiter</h3>
-                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-            </div>
-            <div class="projekt-galerie"></div>
-        </div>
-    </div>
+                            <!-- Projekt 2: Dekorierte Leiter (mit Video) -->
+                            <div class="projekt-detail" data-projekt="leiter">
+                                <div class="projekt-beschreibung">
+                                    <img src="Handwritten_Titles/Decorated_Ladder.png" alt="Titel des Projekts Dekorierte Leiter" class="projekt-titel-bild">
+                                    <p>What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?</p>
+                                </div>
+                                <div class="projekt-galerie-wrapper">
+                                    <video src="Projektvideos/leiter.mp4" class="projekt-video" autoplay loop muted playsinline></video>
+                                    <div>
+                                        <div class="projekt-header">
+                                            <h3></h3>
+                                            <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                        </div>
+                                        <div class="projekt-galerie"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Projekt 3: Faltkarre -->
-    <div class="projekt-detail" data-projekt="faltkarre">
-        <div class="projekt-beschreibung">
-            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
-            <h4>Projekt: Faltkarre</h4>
-            <p>Text über das Faltkarren-Projekt. Fokus auf Mechanik, Design oder Benutzerfreundlichkeit?</p>
-        </div>
-        <div class="projekt-galerie-wrapper">
-             <div class="projekt-header">
-                <h3>Faltkarre</h3>
-                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-            </div>
-            <div class="projekt-galerie"></div>
-        </div>
-    </div>
+                            <!-- Projekt 3: Faltkarre (ohne Video) -->
+                            <div class="projekt-detail" data-projekt="faltkarre">
+                                <div class="projekt-beschreibung">
+                                    <img src="Handwritten_Titles/faltkarre.png" alt="Titel des Projekts Faltkarre" class="projekt-titel-bild">
+                                    <p>The wheelbarrow in private use can take up a lot of space. Not everyone has a cellar or shed to store them. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.</p>
+                                </div>
+                                <div class="projekt-galerie-wrapper">
+                                    <div>
+                                        <div class="projekt-header">
+                                            <h3></h3>
+                                            <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                        </div>
+                                        <div class="projekt-galerie"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Projekt 4: Tin 3D Printer -->
-     <div class="projekt-detail" data-projekt="tin-3d">
-        <div class="projekt-beschreibung">
-            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
-            <h4>Projekt: Tin 3D Printer</h4>
-            <p>Beschreibung für den 3D-Drucker.</p>
-        </div>
-        <div class="projekt-galerie-wrapper">
-             <div class="projekt-header">
-                <h3>Tin 3D Printer</h3>
-                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-            </div>
-            <div class="projekt-galerie"></div>
-        </div>
-    </div>
+                            <!-- Projekt 4: Tin 3D Printer (mit Video) -->
+                            <div class="projekt-detail" data-projekt="tin-3d">
+                                <div class="projekt-beschreibung">
+                                    <img src="Handwritten_Titles/Tin_3D_Printer.png" alt="Titel des Projekts Tin 3D Printer" class="projekt-titel-bild">
+                                    <p>Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error. Ultimately, my experimental machine highlights the contrast between the precise, millimeter-accurate G-code and the semi-controlled melting and dripping of the tin—a contrast reflected in the resulting objects.</p>
+                                </div>
+                                <div class="projekt-galerie-wrapper">
+                                    <video src="Projektvideos/tin-3d.mp4" class="projekt-video" autoplay loop muted playsinline></video>
+                                    <div>
+                                        <div class="projekt-header">
+                                            <h3></h3>
+                                            <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                        </div>
+                                        <div class="projekt-galerie"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Projekt 5: Movement to signal -->
-    <div class="projekt-detail" data-projekt="movement">
-        <div class="projekt-beschreibung">
-            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
-            <h4></h4>
-            <p>Was wäre, wenn nicht der Christbaum, sondern eine Leiter das Zentrum weihnachtlicher Rituale bildete? Welche Artefakte würden aus einer solchen Tradition entstehen?...</p>
-        </div>
-        <div class="projekt-galerie-wrapper">
-             <div class="projekt-header">
-                <h3></h3>
-                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-            </div>
-            <div class="projekt-galerie"></div>
-        </div>
-    </div>
+                            <!-- Projekt 5: Movement to signal (ohne Video) -->
+                            <div class="projekt-detail" data-projekt="movement">
+                                <div class="projekt-beschreibung">
+                                    <img src="Handwritten_Titles/Movement_to_signal.png" alt="Titel des Projekts Movement to signal" class="projekt-titel-bild">
+                                    <p>The “Movement to signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. The project consists of three parts: the transmitter, the receiver and the sensor foil. The movement is recorded by two flex sensors and visualized as a rotating LED effect. The project invites you to consciously movements and to explore the variations and gradations of the visual effects.</p>
+                                </div>
+                                <div class="projekt-galerie-wrapper">
+                                    <div>
+                                        <div class="projekt-header">
+                                            <h3></h3>
+                                            <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                        </div>
+                                        <div class="projekt-galerie"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Projekt 6: New tool -->
-    <div class="projekt-detail" data-projekt="new-tool">
-        <div class="projekt-beschreibung">
-            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
-            <h4>Projekt: New tool</h4>
-            <p>Beschreibung für New tool.</p>
-        </div>
-        <div class="projekt-galerie-wrapper">
-             <div class="projekt-header">
-                <h3>New tool</h3>
-                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-            </div>
-            <div class="projekt-galerie"></div>
-        </div>
-    </div>
+                            <!-- Projekt 6: New tool (ohne Video) -->
+                            <div class="projekt-detail" data-projekt="new-tool">
+                                <div class="projekt-beschreibung">
+                                    <img src="Handwritten_Titles/Slide.png" alt="Titel des Projekts SLIDE" class="projekt-titel-bild">
+                                    <p>SLIDE is a bag filling aid for people with motor and/or mental disabilities. Especially for people with one arm. The project was developed in cooperation with the Gottessegen workshops in Dortmund.</p>
+                                </div>
+                                <div class="projekt-galerie-wrapper">
+                                    <div>
+                                        <div class="projekt-header">
+                                            <h3></h3>
+                                            <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                        </div>
+                                        <div class="projekt-galerie"></div>
+                                    </div>
+                                </div>
+                            </div>
 
-    <!-- Projekt 7: Sketches -->
-    <div class="projekt-detail" data-projekt="sketches">
-        <div class="projekt-beschreibung">
-            <button class="beschreibung-toggle" aria-label="Beschreibung ein-/ausblenden">×</button>
-            <h4>Projekt: Sketches</h4>
-            <p>Beschreibung für Sketches.</p>
-        </div>
-        <div class="projekt-galerie-wrapper">
-             <div class="projekt-header">
-                <h3>Sketches</h3>
-                <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
-            </div>
-            <div class="projekt-galerie"></div>
-        </div>
-    </div>
-</div>
-                     </main>
+                            <!-- Projekt 7: Sketches (ohne Video) -->
+                            <div class="projekt-detail" data-projekt="sketches">
+                                <div class="projekt-beschreibung">
+                                    <img src="Handwritten_Titles/Sketches.png" alt="Titel des Projekts Sketches" class="projekt-titel-bild">
+                                    <p>Some sketches I created over the years.</p>
+                                </div>
+                                <div class="projekt-galerie-wrapper">
+                                    <div>
+                                        <div class="projekt-header">
+                                            <h3></h3>
+                                            <button class="rearrange-button" aria-label="Galerie neu anordnen">Neu anordnen</button>
+                                        </div>
+                                        <div class="projekt-galerie"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </main>
 
                     <main class="ordner-inhalt" data-content="about">
                         <div class="text-block">
                             <h2></h2>
                             <p>Leon Remmert has been studying Product Design at the University of the Arts Berlin since 2023. 
-He is engaged intensively with other artistic disciplines such as photography, painting, and drawing. In his current practice, he is interested in themes like transformation, technology, and recontextualizing established narratives.He follows an experimental and material-driven approach.
-</p>
-                            <p>
-                            <p></p>
+                            He is engaged intensively with other artistic disciplines such as photography, painting, and drawing. In his current practice, he is interested in themes like transformation, technology, and recontextualizing established narratives.He follows an experimental and material-driven approach.</p>
                             <br>	
                             <br>
-                                leonremmert1@gmail.com<p></p>
-                                @leonard0_tornado
-                            </p>
+                            <p>leonremmert1@gmail.com</p>
+                            <p>@leonard0_tornado</p>
                         </div>
                     </main>
-                 </div>     
+                </div>     
             </div>
         </div>
     </div>
    
-    <!-- Dekorative Wolken -->
-   <!-- <img src="Data/wolke-links.png" alt="" class="deko-wolke wolke-links">
-    <img src="Data/wolke-rechts.png" alt="" class="deko-wolke wolke-rechts"> -->
-
     <script src="script.js"></script>
 </body>
 </html>
