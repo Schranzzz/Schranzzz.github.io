@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
         'faltkarre': { anzahl: 8, pfad: 'Projektbilder/Faltkarre/Bild', dateityp: 'jpg' },
         'tin-3d': { anzahl: 3, pfad: 'Projektbilder/Tin_3D_Printer/Bild', dateityp: 'jpg' },
         'movement': { anzahl: 34, pfad: 'Projektbilder/Bewegung zum signal/Bild', dateityp: 'jpg' },
-        'new-tool': { anzahl: 2, pfad: 'Projektbilder/New_Tool/Bild', dateityp: 'png' },
+        'new-tool': { anzahl: 19, pfad: 'Projektbilder/New_Tool/Bild', dateityp: 'jpg' },
         'sketches': { anzahl: 5, pfad: 'Projektbilder/Sketches/Bild', dateityp: 'jpg' }
     };
 
