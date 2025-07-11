@@ -6,7 +6,7 @@
     --Hintergrund: #434C63;
     --Schatten-Farbe: rgba(0, 0, 0, 0.45);
     --Schatten-Farbe-Inhalt: rgba(0, 0, 0, 0.25);
-    --Eselsohr-Farbe: #87d958; /* Eine etwas dunklere Papierfarbe für die Rückseite */
+    --Eselsohr-Farbe: var(--Papier); /* Eine etwas dunklere Papierfarbe für die Rückseite */
 
     --font-script: 'Pinyon Script', cursive;
     --font-mono: 'Helvetica', monospace;
@@ -265,8 +265,9 @@ body {
     transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), clip-path 0.3s ease; /* Transition für clip-path hinzugefügt */
     z-index: 10;
     cursor: pointer;
-    background-color: rgb(162, 248, 43);
-
+    background-color:  rgb(193, 209, 213);
+    /* Ein leichter Schatten für mehr Tiefe */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     /* HIER WIRD DIE ECKE BUCHSTÄBLICH ABGESCHNITTEN (Startzustand) */
     clip-path: polygon(0% 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, 0% 100%);
      box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
