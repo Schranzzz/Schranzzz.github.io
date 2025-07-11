@@ -6,7 +6,7 @@
     --Hintergrund: #434C63;
     --Schatten-Farbe: rgba(0, 0, 0, 0.45);
     --Schatten-Farbe-Inhalt: rgba(0, 0, 0, 0.25);
-    --Eselsohr-Farbe: #D0D0D0; /* Eine etwas dunklere Papierfarbe für die Rückseite */
+    --Eselsohr-Farbe: #87d958; /* Eine etwas dunklere Papierfarbe für die Rückseite */
 
     --font-script: 'Pinyon Script', cursive;
     --font-mono: 'Helvetica', monospace;
@@ -17,7 +17,7 @@
 html, body { height: 100%; }
 
 body {
-    background-color: var(--Papier);
+    background-color: rgb(215, 215, 215);
     color: var(--Hintergrund);
     font-family: var(--font-mono);
     display: flex;
@@ -50,7 +50,7 @@ body {
     top: 0;
     border: none;
     min-width: 350px;
-    height: 60px;
+    height: 70px;
     padding: 0.2rem 3rem 1.5rem 3rem;
     font-family: var(--font-script);
     font-size: 3.2rem;
@@ -76,12 +76,13 @@ body {
     top: calc(var(--tab-radius) - 10px);
     left: 100%;
     width: 35px;
-    height: 35px;
+    height: 45px;
     background-color: var(--Papier);
     -webkit-mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
     mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
     z-index: 7;
     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
+    background-color: rgb(225, 225, 225);
 }
 
 .tab::after {
@@ -90,19 +91,29 @@ body {
     top: calc(var(--tab-radius) - 10px);
     right: 100%;
     width: 35px;
-    height: 35px;
+    height: 45px;
     background-color: var(--Papier);
     -webkit-mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
     mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
     z-index: 10;
-    box-shadow: 0 -18px 15px -10px rgb(252, 0, 0);
+     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
+    
+
 }
 
-.tab[data-tab-target="startseite"] { left: 0; border-top-left-radius: 0; }
-.tab[data-tab-target="projekte"] { left: 260px; }
-.tab[data-tab-target="about"] { left: 520px; }
+.active.tab::before {
+    
+    background-color: var(--Papier);
+}
+
+.tab[data-tab-target="startseite"] { left: 0; border-top-left-radius: 0; background-color: rgb(225, 225, 225); }
+.tab[data-tab-target="projekte"] { left: 260px;background-color: rgb(225, 225, 225) }
+.tab[data-tab-target="about"] { left: 520px;background-color: rgb(225, 225, 225) }
 .tab[data-tab-target="startseite"]::after { display: none; }
 .tab:hover { transform: translateY(-8px); }
+.tab.tab.active {
+ background-color: var(--Papier);
+}
 
 .ordner-inhalt-stapel {
     position: absolute;
@@ -128,7 +139,7 @@ body {
     border-top-right-radius: var(--inhalt-radius-gross);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s;
+    transition: opacity 0.0s;
     overflow-y: auto;
 }
 
@@ -140,7 +151,12 @@ body {
 .ordner-inhalt.active {
     opacity: 1;
     visibility: visible;
+    
 }
+.ordner-inhalt[data-content="startseite"] { border-top-left-radius: 0; }
+.ordner-inhalt-stapel.is-lifted { transform: translateY(-8px); }
+
+
 .ordner-inhalt[data-content="startseite"] { border-top-left-radius: 0; }
 .ordner-inhalt-stapel.is-lifted { transform: translateY(-8px); }
 
@@ -211,7 +227,10 @@ body {
     cursor: pointer; opacity: 0.6; transition: opacity 0.3s;
 }
 .marquee-button:hover { opacity: 1; }
-.marquee-button.active { opacity: 3; }
+.marquee-button.active { opacity: 3; 
+
+ }
+
 
 .projekt-details-container { margin-top: 2rem; }
 .projekt-detail { display: none; }
@@ -250,10 +269,12 @@ body {
 
     /* HIER WIRD DIE ECKE BUCHSTÄBLICH ABGESCHNITTEN (Startzustand) */
     clip-path: polygon(0% 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, 0% 100%);
+     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
 
+
 .projekt-beschreibung.is-visible {
-    transform: translateX(110%) rotate(8deg);
+    transform: translateX(110%) rotate(6deg);
 }
 
 /* Das ist das sichtbare Eselsohr (die Rückseite) */
@@ -269,45 +290,33 @@ body {
     background-image: linear-gradient(135deg, transparent, rgba(0,0,0,0.1));
     transition: width 0.3s ease, height 0.3s ease;
     /* Dies ist die korrekte Form für das Dreieck, das die Ecke füllt */
-    clip-path: polygon(0 0, 100% 0, 100% 100%);
+    clip-path: polygon(10 10, 100% 0, 100% 100%);
+    box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
 
-/* Der Schatten wird jetzt unter der Ecke positioniert */
-.projekt-beschreibung::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 50px;
-    height: 50px;
-    background: rgba(0,0,0,0.2);
-    /* Schneidet den Schatten ebenfalls in die Dreiecksform */
-    clip-path: polygon(0 0, 100% 0, 100% 100%);
-    /* Legt den Schatten hinter die Ecke */
-    transform: translate(3px, 3px);
-    z-index: -1;
-    transition: width 0.3s ease, height 0.3s ease, transform 0.3s ease;
-}
+
 
 /* JETZT WIRD ALLES BEIM HOVER GEÄNDERT */
 .projekt-beschreibung:hover {
     /* Der Knick wandert, indem wir die Form des grünen Zettels ändern */
-    clip-path: polygon(0% 0%, calc(100% - 60px) 0%, 100% 60px, 100% 100%, 0% 100%);
+    clip-path: polygon(0% 0%, calc(100% - 70px) 0%, 100% 70px, 100% 100%, 0% 100%);
 }
 
 .projekt-beschreibung:hover::before {
     /* Die sichtbare Ecke wächst mit */
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
+    background-color: var(--Eselsohr-Farbe);
 }
 
 .projekt-beschreibung:hover::after {
     /* Der Schatten wächst mit */
-    width: 60px;
-    height: 60px;
+    width: 80px;
+    height: 80px;
+    background-color: #434C63;
 }
 .projekt-beschreibung.is-visible {
-    transform: translateX(110%) rotate(8deg);
+    transform: translateX(110%) rotate(6deg);
 }
 
 .projekt-titel-bild {
