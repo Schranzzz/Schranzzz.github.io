@@ -425,25 +425,111 @@ body {
 }
 
 /* ==========================================================================
-   MOBILE ANPASSUNGEN
+   MOBILE ANPASSUNGEN (NEUE, SKALIERBARE VERSION)
    ========================================================================== */
-@media (max-width: 992px) {
-    .projekt-detail.active { flex-direction: column; }
-    .projekt-beschreibung { flex-basis: auto; margin-bottom: 2rem; max-width: 100%;}
-    .projekt-galerie-wrapper { flex-direction: column; flex-basis: auto; }
-}
 
-@media (max-width: 768px) {
-    .ordner-system { position: static; margin-top: -2rem; }
-    .ordner-tabs { height: auto; display: flex; flex-direction: column; }
-    .tab {
-        position: static; width: 100%; border-radius: 0; margin-bottom: -1px;
-        border: 1px solid var(--Hintergrund); border-bottom: none; box-shadow: none !important;
+/* Ab 992px Bildschirmbreite und darunter beginnen wir mit der Skalierung */
+@media (max-width: 992px) {
+
+     .ordner-system {
+        margin-top: -2.3rem; /* Passt den Ordner nach oben an. Experimentieren Sie mit diesem Wert! */
     }
-    .tab.active { border-bottom-color: var(--Papier); }
-    .tab::before, .tab::after { display: none !important; }
-    .ordner-inhalt-stapel { position: static; box-shadow: none; border: 1px solid var(--Hintergrund); border-top: none; }
-    .ordner-inhalt { position: static; height: auto; min-height: 300px; display: none; }
-    .ordner-inhalt.active { display: block; }
-    .projekt-galerie .galerie-item { max-width: 80vw; }
+
+    
+    /* Ändern Sie die Positionierung und Größe der Tabs auf flexible vw-Einheiten */
+       .tab {
+        min-width: 29vw; 
+        height: 8vw; /* NEU: Deutlich höher (war 5.8vw) */
+        padding: 1vw 2.5vw 1.5vw 2.5vw; /* NEU: Mehr vertikales Padding für Luft */
+        border-top-left-radius: 4vw; /* NEU: Radius an die neue Höhe angepasst (Hälfte der Höhe) */
+        border-top-right-radius: 4vw; /* NEU: Radius an die neue Höhe angepasst */
+        
+        /* Optional: Schrift etwas vergrößern, damit sie zur neuen Höhe passt */
+        font-size: clamp(1.6rem, 4vw, 2.8rem); 
+    }
+
+    /* Passen Sie die Positionen der Tabs an die neuen vw-Einheiten an */
+    .tab[data-tab-target="projekte"] {
+        left: 21.6vw; /* war 260px -> 260/1200 = 21.6vw */
+    }
+    .tab[data-tab-target="about"] {
+        left: 43.2vw; /* war 520px -> 520/1200 = 43.2vw */
+    }
+
+       /* Skalieren Sie auch die abgerundeten Ecken-Effekte */
+    .tab::before, .tab::after {
+        width: 2.9vw;  /* war 35px */
+        height: 3.75vw; /* war 45px */
+        
+        /* NEU: Passen Sie die vertikale Position an */
+        /* Wir setzen sie relativ zur Tab-Höhe und dem Radius */
+        top: 4.12vw; /* Setzt den Startpunkt auf die Höhe des Radius */
+    }
+    .tab::before {
+         /* Die Maske muss ebenfalls skaliert werden */
+        -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw);
+        mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw);
+    }
+    .tab::after {
+        -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw);
+        mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw);
+    }
+
+
+    /* Der Haupt-Inhaltsbereich muss sich an die neuen Tab-Größen anpassen */
+    .ordner-inhalt-stapel {
+        top: 7vw; /* war 60px, jetzt an die Tab-Höhe angepasst */
+    }
+    
+    .ordner-inhalt {
+        border-top-right-radius: 6.6vw; /* war 80px */
+    }
+
+    /* Das Logo auf der Startseite anpassen, damit es nicht überlappt */
+    .logo {
+        width: 20vw;
+        left: -20vw; /* Positionieren Sie es links außerhalb des Bildschirms */
+        top: 50%;
+    }
+    
+    .text-block {
+        margin-top: 10rem;
+        padding: 0 1rem; /* Etwas seitlicher Abstand auf kleineren Geräten */
+    }
+
+    /* Die Unterschrift im Hintergrund etwas verkleinern und neu positionieren */
+    .unterschrift-bg {
+        width: 50vw;
+        top: -40px;
+    }
+
+    /* Projekt-Detailansicht für Mobilgeräte optimieren */
+    .projekt-detail.active {
+        flex-direction: column;
+        padding: 0 1rem; /* Etwas Abstand zum Rand */
+    }
+
+    .projekt-beschreibung {
+        /* Verhindern, dass der Zettel rotiert und aus dem Bildschirm ragt */
+        transform: translateX(0) rotate(0) !important;
+        position: relative; /* Wichtig, um die absolute Positionierung aufzuheben */
+        flex-basis: auto;
+        margin-bottom: 2rem;
+        max-width: 100%;
+        aspect-ratio: auto; /* Seitenverhältnis aufheben */
+    }
+    /* Die sichtbare Animation auf Mobilgeräten deaktivieren */
+    .projekt-beschreibung.is-visible {
+        transform: translateX(0) rotate(0) !important;
+    }
+
+    .projekt-galerie-wrapper {
+        flex-direction: column;
+        flex-basis: auto;
+        width: 100%;
+    }
+
+    .projekt-galerie {
+        min-height: 50vh;
+    }
 }
