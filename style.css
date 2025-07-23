@@ -434,7 +434,7 @@ body {
 }
 
 @media (max-width: 768px) {
-    .ordner-system { position: static; margin-top: 1rem; }
+    .ordner-system { position: static; margin-top: -2rem; }
     .ordner-tabs { height: auto; display: flex; flex-direction: column; }
     .tab {
         position: static; width: 100%; border-radius: 0; margin-bottom: -1px;
