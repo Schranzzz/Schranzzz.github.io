@@ -132,8 +132,7 @@ body {
     width: 100%;
     height: 100%;
     background:
-        linear-gradient(var(--Hintergrund), var(--Hintergrund) 0.5px, transparent 0.5px) no-repeat 0 0.7rem / 100% 0.5px,
-        linear-gradient(var(--Hintergrund), var(--Hintergrund) 0.5px, transparent 0.5px) no-repeat 0 calc(0.7rem + 40px) / 100% 0.5px,
+  
         var(--Papier);
     padding: 0.8rem;
     border-top-right-radius: var(--inhalt-radius-gross);
@@ -143,10 +142,93 @@ body {
     overflow-y: auto;
 }
 
+/* ==========================================================================
+   FADE-OVERLAYS FÜR PROJEKTSEITE
+   ========================================================================== */
+
+/* Diese Regel suchen und anpassen */
 .ordner-inhalt[data-content="projekte"] {
-    -webkit-mask-image: linear-gradient(to bottom, black calc(100% - 1px), transparent 100%);
-    mask-image: linear-gradient(to bottom, black calc(90% - 5px), transparent 100%);
+    display: flex; /* NEU: Macht den Container zur Flexbox */
+    flex-direction: column; /* Ordnet Kinder (Overlays, Wrapper) untereinander an */
+    padding: 0; /* Wichtig: Padding hier entfernen, kommt in den inneren Wrapper */
+    /* position: relative; bleibt wichtig, falls es schon da ist */
+    position: relative; 
 }
+
+/* NEU: Regeln für den neuen Wrapper hinzufügen */
+.projekte-scroll-wrapper {
+    flex-grow: 1; /* Nimmt den gesamten verfügbaren Platz ein */
+    overflow-y: auto; /* Macht NUR diesen Container scrollbar */
+    min-height: 0; /* Wichtiger Flexbox-Fix, um unkontrolliertes Wachsen zu verhindern */
+    
+    /* Das Padding kommt jetzt hierher, um Abstand zum Rand zu schaffen */
+    padding: 3rem 0.8rem; 
+}
+
+
+
+/* Diese Regeln sollten bereits existieren, hier zur Überprüfung */
+.fade-overlay-top,
+.fade-overlay-bottom {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 4rem; /* Höhe des Fade-Effekts */
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Passen Sie diese Regel an: */
+.fade-overlay-top {
+    position: absolute;
+    top: 1.5rem; /* WICHTIG: Beginnt jetzt genau am unteren Rand des .top-bar */
+    left: 0;
+    right: 0;
+    height: 4.5rem; /* Die verbleibende Höhe des Effekts (1.5rem + 4.5rem = 6rem gesamt) */
+    z-index: 2; /* Liegt unter dem Balken, aber über dem Inhalt */
+    pointer-events: none;
+    
+      background: linear-gradient(
+        to bottom,
+        rgba(232, 232, 232, 1) 0%, 
+        
+        rgba(232, 232, 232, 0.95) 10%,
+        rgba(232, 232, 232, 0.9) 15%,
+       rgba(232, 232, 232, 0.2) 70%,
+        rgba(232, 232, 232, 0.1) 80%,
+        rgba(232, 232, 232, 0.05) 90%,
+        rgba(232, 232, 232, 0) 100%/* Endet voll transparent */
+    );
+}
+
+.fade-overlay-bottom {
+    bottom: 0;
+    background: linear-gradient(
+       to Top,
+        rgba(232, 232, 232, 1) 0%, 
+        
+        rgba(232, 232, 232, 0.95) 10%,
+        rgba(232, 232, 232, 0.9) 15%,
+       rgba(232, 232, 232, 0.2) 70%,
+        rgba(232, 232, 232, 0.1) 80%,
+        rgba(232, 232, 232, 0.05) 90%,
+        rgba(232, 232, 232, 0) 100%/* Endet voll transparent */
+    );
+}
+
+/* NEU: Regel für den soliden Balken oben */
+.top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.5rem; /* Höhe des Balkens, passen Sie diesen Wert an */
+    background-color: var(--Papier); /* Solide Papierfarbe */
+    z-index: 3; /* Liegt über allem, auch über dem Fade */
+    pointer-events: none;
+}
+
+
 
 .ordner-inhalt.active {
     opacity: 1;
@@ -194,131 +276,18 @@ body {
 }
 
 /* ==========================================================================
-   PROJEKTSEITE: MARQUEE & ZETTEL
+   PROJEKTSEITE: ZETTEL
    ========================================================================== */
-.marquee-container {
-    position: sticky; 
-    top: 0.5rem;
-    left: 0;
-    right: 0;
-    width: 100%;
-    height: 20px; 
-    overflow:visible; 
-    display: flex;
-    align-items: center;
-    background-color: var(--Papier);
-    z-index: 20; 
-}
-
-.marquee-content {
-    display: flex;
-    flex-shrink: 0;
-    animation: marquee-scroll 100s linear infinite;
-}
-.marquee-container:hover .marquee-content { animation-play-state:running; }
-@keyframes marquee-scroll {
-    0% { transform: translateX(0%); }
-    100% { transform: translateX(-50%); }
-}
-
-.marquee-button {
-    background: none; border: none; font-family: var(--font-mono);
-    font-size: 1.1rem; color: var(--Hintergrund); padding: 0 1rem;
-    cursor: pointer; opacity: 0.6; transition: opacity 0.3s;
-}
-.marquee-button:hover { opacity: 1; }
-.marquee-button.active { opacity: 3; 
-
- }
 
 
-.projekt-details-container { margin-top: 2rem; }
-.projekt-detail { display: none; }
-
-.projekt-detail.active {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.5s ease-in-out;
-}
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* Ersetze die alten Zettel-Regeln in deiner style.css mit DIESEM finalen Block: */
-
-/* Ersetze die alten Zettel-Regeln in deiner style.css mit DIESEM finalen Block: */
+/* ERSETZEN SIE DEN ALTEN, KOMPLEXEN .projekt-beschreibung BLOCK HIERMIT: */
 
 .projekt-beschreibung {
-    flex-basis: 35%;
+    flex-basis: 35%; /* Behält eine gute Breite bei */
     max-width: 500px;
-    aspect-ratio: 1 / 1;
     flex-shrink: 0;
-    position: relative;
-    padding: 2.5rem; 
-    box-shadow: 3px 3px 15px rgba(0,0,0,0.15);
-    border-radius: 3px;
-    transform-origin: top left;
-    transform: translateX(-80%) rotate(3deg);
-    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), clip-path 0.3s ease; /* Transition für clip-path hinzugefügt */
-    z-index: 10;
-    cursor: pointer;
-    background-color:  rgb(193, 209, 213);
-    /* Ein leichter Schatten für mehr Tiefe */
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    
-    /* HIER WIRD DIE ECKE BUCHSTÄBLICH ABGESCHNITTEN (Startzustand) */
-    clip-path: polygon(0% 0%, calc(100% - 50px) 0%, 100% 50px, 100% 100%, 0% 100%);
-     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
-}
-
-
-.projekt-beschreibung.is-visible {
-    transform: translateX(110%) rotate(6deg);
-}
-
-/* Das ist das sichtbare Eselsohr (die Rückseite) */
-.projekt-beschreibung::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 50px;
-    height: 50px;
-    background-color: var(--Eselsohr-Farbe);
-    /* Ein leichter Gradient für mehr Tiefe auf der Rückseite */
-    background-image: linear-gradient(135deg, transparent, rgba(0,0,0,0.1));
-    transition: width 0.3s ease, height 0.3s ease;
-    /* Dies ist die korrekte Form für das Dreieck, das die Ecke füllt */
-    clip-path: polygon(10 10, 100% 0, 100% 100%);
-    box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
-}
-
-
-
-/* JETZT WIRD ALLES BEIM HOVER GEÄNDERT */
-.projekt-beschreibung:hover {
-    /* Der Knick wandert, indem wir die Form des grünen Zettels ändern */
-    clip-path: polygon(0% 0%, calc(100% - 70px) 0%, 100% 70px, 100% 100%, 0% 100%);
-}
-
-.projekt-beschreibung:hover::before {
-    /* Die sichtbare Ecke wächst mit */
-    width: 70px;
-    height: 70px;
-    background-color: var(--Eselsohr-Farbe);
-}
-
-.projekt-beschreibung:hover::after {
-    /* Der Schatten wächst mit */
-    width: 80px;
-    height: 80px;
-    background-color: #434C63;
-}
-.projekt-beschreibung.is-visible {
-    transform: translateX(110%) rotate(6deg);
+    padding: 1.5rem;
+    /* Wir entfernen alle transform, rotate, clip-path, box-shadow und transition Eigenschaften */
 }
 
 .projekt-titel-bild {
@@ -331,99 +300,29 @@ body {
 /* ==========================================================================
    GALERIE, VIDEO & 3D-MODELLE
    ========================================================================== */
-.projekt-galerie-wrapper {
-    flex-basis: 60%;
-    flex-grow: 0;
-    min-width: 0;
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.projekt-galerie-wrapper > div {
-    flex: 1;
-    min-width: 0;
-}
-
-.projekt-galerie-wrapper model-viewer {
-    width: 100%;
-    height: 75vh;
-    min-height: 500px;
-    border-radius: 1px;
-}
-
-.projekt-video {
-    flex-shrink: 0;
-    max-height: 70vh;
-    width: auto;
-    border-radius: 3px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-}
-
-.projekt-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-.projekt-header h3 { margin: 0; font-size: 1.5rem; }
-
-.rearrange-button {
-    background: none; border: 1px solid var(--Hintergrund);
-    color: var(--Hintergrund); padding: 0.5rem 1rem;
-    font-family: var(--font-mono); cursor: pointer; transition: all 0.2s ease;
-}
-.rearrange-button:hover { background: var(--Hintergrund); color: var(--Papier); }
+/* ERSETZEN SIE ALLE ALTEN .projekt-galerie... REGELN HIERMIT: */
 
 .projekt-galerie {
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1rem;
     width: 100%;
-    min-height: 70vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.25s ease-in-out;
-    perspective: 1000px;
 }
 
 .projekt-galerie .galerie-item {
-    position: absolute;
-    max-width: 600px;
-    max-height: 65vh;
-    width: auto;
+    /* Keine absolute Positionierung, keine Transformationen mehr */
+    width: 100%;
     height: auto;
-    cursor: default;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    border: 0px solid var(--Papier);
-    border-radius: 0px;
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    filter: blur(3px);
-    transition: transform 0.2s cubic-bezier(0, 0, 0, 1), 
-                filter 0.2s ease-in-out;
-}
-
-.projekt-galerie .galerie-item.is-top {
-    filter: blur(0);
-    cursor: pointer;
-}
- 
-.projekt-galerie .galerie-item.is-top:hover {
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
 }
 
 .projekt-galerie .galerie-item img {
     width: 100%;
     height: 100%;
     display: block;
-    object-fit: contain;
-    pointer-events: none;
-    user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
-    outline: none;    
+    object-fit: cover; /* Bilder füllen den Grid-Bereich schön aus */
+    border-radius: 3px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
-
 /* ==========================================================================
    MOBILE ANPASSUNGEN (NEUE, SKALIERBARE VERSION)
    ========================================================================== */
