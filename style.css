@@ -6,7 +6,7 @@
     --Hintergrund: #434C63;
     --Schatten-Farbe: rgba(0, 0, 0, 0.45);
     --Schatten-Farbe-Inhalt: rgba(0, 0, 0, 0.25);
-    --Eselsohr-Farbe: var(--Papier); /* Eine etwas dunklere Papierfarbe für die Rückseite */
+    --Eselsohr-Farbe: var(--Papier);
 
     --font-script: 'Pinyon Script', cursive;
     --font-mono: 'Helvetica', monospace;
@@ -37,9 +37,7 @@ body {
     margin-top: -1.5rem;
 }
 
-.no-transition {
-    transition: none !important;
-}
+.no-transition { transition: none !important; }
 
 .ordner-tabs {
     position: relative;
@@ -66,54 +64,38 @@ body {
     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
 }
 
-.tab.active {
-    box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
-}
+.tab.active { box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2); }
 
-.tab::before {
+.tab::before, .tab::after {
     content: '';
     position: absolute;
-    top: calc(var(--tab-radius) - 10px);
-    left: 100%;
     width: 35px;
     height: 45px;
-    background-color: var(--Papier);
-    -webkit-mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
-    mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
-    z-index: 7;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
     background-color: rgb(225, 225, 225);
 }
-
+.tab::before {
+    top: calc(var(--tab-radius) - 10px);
+    left: 100%;
+    -webkit-mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
+    mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
+}
 .tab::after {
-    content: '';
-    position: absolute;
     top: calc(var(--tab-radius) - 10px);
     right: 100%;
-    width: 35px;
-    height: 45px;
-    background-color: var(--Papier);
     -webkit-mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
     mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
-    z-index: 10;
-     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
-    
-
 }
-
-.active.tab::before {
-    
-    background-color: var(--Papier);
-}
+.active.tab::before, .active.tab::after { background-color: var(--Papier); }
 
 .tab[data-tab-target="startseite"] { left: 0; border-top-left-radius: 0; background-color: rgb(225, 225, 225); }
-.tab[data-tab-target="projekte"] { left: 260px;background-color: rgb(225, 225, 225) }
-.tab[data-tab-target="about"] { left: 520px;background-color: rgb(225, 225, 225) }
+.tab[data-tab-target="projekte"] { left: 260px; background-color: rgb(225, 225, 225) }
+.tab[data-tab-target="about"] { left: 520px; background-color: rgb(225, 225, 225) }
 .tab[data-tab-target="startseite"]::after { display: none; }
 .tab:hover { transform: translateY(-8px); }
-.tab.tab.active {
- background-color: var(--Papier);
-}
+.tab.tab.active { background-color: var(--Papier); }
 
 .ordner-inhalt-stapel {
     position: absolute;
@@ -131,119 +113,24 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
-    background:
-  
-        var(--Papier);
+    background: var(--Papier);
     padding: 0.8rem;
     border-top-right-radius: var(--inhalt-radius-gross);
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.0s;
-    overflow-y: auto;
+    overflow: auto;
 }
-
-/* ==========================================================================
-   FADE-OVERLAYS FÜR PROJEKTSEITE
-   ========================================================================== */
-
-/* Diese Regel suchen und anpassen */
-.ordner-inhalt[data-content="projekte"] {
-    display: flex; /* NEU: Macht den Container zur Flexbox */
-    flex-direction: column; /* Ordnet Kinder (Overlays, Wrapper) untereinander an */
-    padding: 0; /* Wichtig: Padding hier entfernen, kommt in den inneren Wrapper */
-    /* position: relative; bleibt wichtig, falls es schon da ist */
-    position: relative; 
-}
-
-/* NEU: Regeln für den neuen Wrapper hinzufügen */
-.projekte-scroll-wrapper {
-    flex-grow: 1; /* Nimmt den gesamten verfügbaren Platz ein */
-    overflow-y: auto; /* Macht NUR diesen Container scrollbar */
-    min-height: 0; /* Wichtiger Flexbox-Fix, um unkontrolliertes Wachsen zu verhindern */
-    
-    /* Das Padding kommt jetzt hierher, um Abstand zum Rand zu schaffen */
-    padding: 3rem 0.8rem; 
-}
-
-
-
-/* Diese Regeln sollten bereits existieren, hier zur Überprüfung */
-.fade-overlay-top,
-.fade-overlay-bottom {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 4rem; /* Höhe des Fade-Effekts */
-    z-index: 2;
-    pointer-events: none;
-}
-
-/* Passen Sie diese Regel an: */
-.fade-overlay-top {
-    position: absolute;
-    top: 1.5rem; /* WICHTIG: Beginnt jetzt genau am unteren Rand des .top-bar */
-    left: 0;
-    right: 0;
-    height: 4.5rem; /* Die verbleibende Höhe des Effekts (1.5rem + 4.5rem = 6rem gesamt) */
-    z-index: 2; /* Liegt unter dem Balken, aber über dem Inhalt */
-    pointer-events: none;
-    
-      background: linear-gradient(
-        to bottom,
-        rgba(232, 232, 232, 1) 0%, 
-        
-        rgba(232, 232, 232, 0.95) 10%,
-        rgba(232, 232, 232, 0.9) 15%,
-       rgba(232, 232, 232, 0.2) 70%,
-        rgba(232, 232, 232, 0.1) 80%,
-        rgba(232, 232, 232, 0.05) 90%,
-        rgba(232, 232, 232, 0) 100%/* Endet voll transparent */
-    );
-}
-
-.fade-overlay-bottom {
-    bottom: 0;
-    background: linear-gradient(
-       to Top,
-        rgba(232, 232, 232, 1) 0%, 
-        
-        rgba(232, 232, 232, 0.95) 10%,
-        rgba(232, 232, 232, 0.9) 15%,
-       rgba(232, 232, 232, 0.2) 70%,
-        rgba(232, 232, 232, 0.1) 80%,
-        rgba(232, 232, 232, 0.05) 90%,
-        rgba(232, 232, 232, 0) 100%/* Endet voll transparent */
-    );
-}
-
-/* NEU: Regel für den soliden Balken oben */
-.top-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 1.5rem; /* Höhe des Balkens, passen Sie diesen Wert an */
-    background-color: var(--Papier); /* Solide Papierfarbe */
-    z-index: 3; /* Liegt über allem, auch über dem Fade */
-    pointer-events: none;
-}
-
-
 
 .ordner-inhalt.active {
     opacity: 1;
     visibility: visible;
-    
 }
 .ordner-inhalt[data-content="startseite"] { border-top-left-radius: 0; }
 .ordner-inhalt-stapel.is-lifted { transform: translateY(-8px); }
 
-
-.ordner-inhalt[data-content="startseite"] { border-top-left-radius: 0; }
-.ordner-inhalt-stapel.is-lifted { transform: translateY(-8px); }
-
 /* ==========================================================================
-   ALLGEMEINE TEXTBLÖCKE
+   ALLGEMEINE TEXTBLÖCKE & HINTERGRUND
    ========================================================================== */
 .text-block {
     max-width: 800px;
@@ -276,159 +163,207 @@ body {
 }
 
 /* ==========================================================================
-   PROJEKTSEITE: ZETTEL
+   PROJEKT-LAYOUT (FILMSTREIFEN)
    ========================================================================== */
-
-
-/* ERSETZEN SIE DEN ALTEN, KOMPLEXEN .projekt-beschreibung BLOCK HIERMIT: */
-
-.projekt-beschreibung {
-    flex-basis: 35%; /* Behält eine gute Breite bei */
-    max-width: 500px;
-    flex-shrink: 0;
-    padding: 1.5rem;
-    /* Wir entfernen alle transform, rotate, clip-path, box-shadow und transition Eigenschaften */
+.ordner-inhalt[data-content="projekte"] {
+    padding: 0;
+    overflow: hidden;
 }
 
-.projekt-titel-bild {
-    display: block;
-    max-width: 80%;
-    height: auto;
-    margin-bottom: 1.5rem;
-}
-
-/* ==========================================================================
-   GALERIE, VIDEO & 3D-MODELLE
-   ========================================================================== */
-/* ERSETZEN SIE ALLE ALTEN .projekt-galerie... REGELN HIERMIT: */
-
-.projekt-galerie {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1rem;
-    width: 100%;
-}
-
-.projekt-galerie .galerie-item {
-    /* Keine absolute Positionierung, keine Transformationen mehr */
-    width: 100%;
-    height: auto;
-}
-
-.projekt-galerie .galerie-item img {
+.projekte-container {
+    position: relative;
     width: 100%;
     height: 100%;
-    display: block;
-    object-fit: cover; /* Bilder füllen den Grid-Bereich schön aus */
-    border-radius: 3px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    background-color: #333;
 }
+
+.projekt-slides-container {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 1;
+}
+.projekt-slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s;
+    z-index: 1;
+}
+.projekt-slide.active {
+    opacity: 1; visibility: visible;
+    z-index: 2;
+}
+
+.media-filmstrip {
+    display: flex;
+    height: 100%;
+    position: absolute;
+    top: 0; left: 0;
+    transform: translateX(0);
+}
+
+.media-filmstrip.transitioning {
+    transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.media-filmstrip > * {
+    flex-shrink: 0;
+    height: 100%;
+    width: auto;
+    filter: blur(4px);
+    transition: filter 0.6s ease;
+}
+
+.media-filmstrip > .media-active {
+    filter: none;
+}
+
+/* === UI-OVERLAYS === */
+.top-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1.5rem;
+    background-color: var(--Papier);
+    z-index: 6;
+}
+
+.fade-overlay-top, .fade-overlay-bottom {
+    position: absolute;
+    left: 0; right: 0;
+    height: 6rem;
+    z-index: 5;
+    pointer-events: none;
+}
+.fade-overlay-top {
+    top: 1.5rem;
+    background: linear-gradient(
+        to bottom,
+        rgba(232, 232, 232, 1) 0%, 
+        rgba(232, 232, 232, 0.95) 10%,
+        rgba(232, 232, 232, 0.9) 15%,
+        rgba(232, 232, 232, 0.2) 70%,
+        rgba(232, 232, 232, 0.1) 80%,
+        rgba(232, 232, 232, 0.05) 90%,
+        rgba(232, 232, 232, 0) 100%
+    );
+}
+.fade-overlay-bottom {
+    bottom: 0;
+    background: linear-gradient(
+        to top,
+        rgba(232, 232, 232, 1) 0%, 
+        rgba(232, 232, 232, 0.95) 10%,
+        rgba(232, 232, 232, 0.9) 15%,
+        rgba(232, 232, 232, 0.2) 70%,
+        rgba(232, 232, 232, 0.1) 80%,
+        rgba(232, 232, 232, 0.05) 90%,
+        rgba(232, 232, 232, 0) 100%
+    );
+}
+
+.projekt-navigation-links {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 1rem;
+    gap: 1rem;
+    z-index: 10;
+    overflow-y: auto;
+    pointer-events: none;
+}
+.projekt-nav-link {
+    cursor: pointer;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    opacity: 0.4;
+    transform: translateX(-10px);
+    pointer-events: auto;
+}
+.projekt-nav-link img { max-width: 120px; height: auto; display: block; }
+.projekt-nav-link.active { opacity: 1; transform: translateX(0); }
+.projekt-nav-link:hover { opacity: 0.8; }
+
+.pfeil {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 15;
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s, opacity 0.3s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--Hintergrund);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pfeil.sichtbar {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.pfeil:hover { background-color: rgba(255, 255, 255, 0.8); }
+.pfeil-links { left: 1rem; }
+.pfeil-rechts { right: 1rem; }
+
+.projekt-info-box {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(232, 232, 232, 0.85);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1rem 1.5rem;
+    border-radius: 8px;
+    max-width: 60%;
+    text-align: center;
+    z-index: 15;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    transition: opacity 0.4s ease;
+}
+
 /* ==========================================================================
-   MOBILE ANPASSUNGEN (NEUE, SKALIERBARE VERSION)
+   MOBILE ANPASSUNGEN
    ========================================================================== */
-
-/* Ab 992px Bildschirmbreite und darunter beginnen wir mit der Skalierung */
 @media (max-width: 992px) {
-
-     .ordner-system {
-        margin-top: -2.3rem; /* Passt den Ordner nach oben an. Experimentieren Sie mit diesem Wert! */
-    }
-
-    
-    /* Ändern Sie die Positionierung und Größe der Tabs auf flexible vw-Einheiten */
-       .tab {
-        min-width: 29vw; 
-        height: 8vw; /* NEU: Deutlich höher (war 5.8vw) */
-        padding: 1vw 2.5vw 1.5vw 2.5vw; /* NEU: Mehr vertikales Padding für Luft */
-        border-top-left-radius: 4vw; /* NEU: Radius an die neue Höhe angepasst (Hälfte der Höhe) */
-        border-top-right-radius: 4vw; /* NEU: Radius an die neue Höhe angepasst */
-        
-        /* Optional: Schrift etwas vergrößern, damit sie zur neuen Höhe passt */
+    .ordner-system { margin-top: -2.3rem; }
+    .tab {
+        min-width: 29vw; height: 8vw;
+        padding: 1vw 2.5vw 1.5vw 2.5vw;
+        border-top-left-radius: 4vw; border-top-right-radius: 4vw;
         font-size: clamp(1.6rem, 4vw, 2.8rem); 
     }
-
-    /* Passen Sie die Positionen der Tabs an die neuen vw-Einheiten an */
-    .tab[data-tab-target="projekte"] {
-        left: 21.6vw; /* war 260px -> 260/1200 = 21.6vw */
-    }
-    .tab[data-tab-target="about"] {
-        left: 43.2vw; /* war 520px -> 520/1200 = 43.2vw */
-    }
-
-       /* Skalieren Sie auch die abgerundeten Ecken-Effekte */
-    .tab::before, .tab::after {
-        width: 2.9vw;  /* war 35px */
-        height: 3.75vw; /* war 45px */
-        
-        /* NEU: Passen Sie die vertikale Position an */
-        /* Wir setzen sie relativ zur Tab-Höhe und dem Radius */
-        top: 4.12vw; /* Setzt den Startpunkt auf die Höhe des Radius */
-    }
-    .tab::before {
-         /* Die Maske muss ebenfalls skaliert werden */
-        -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw);
-        mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw);
-    }
-    .tab::after {
-        -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw);
-        mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw);
-    }
-
-
-    /* Der Haupt-Inhaltsbereich muss sich an die neuen Tab-Größen anpassen */
-    .ordner-inhalt-stapel {
-        top: 7vw; /* war 60px, jetzt an die Tab-Höhe angepasst */
-    }
-    
-    .ordner-inhalt {
-        border-top-right-radius: 6.6vw; /* war 80px */
-    }
-
-    /* Das Logo auf der Startseite anpassen, damit es nicht überlappt */
-    .logo {
-        width: 20vw;
-        left: -20vw; /* Positionieren Sie es links außerhalb des Bildschirms */
-        top: 50%;
-    }
-    
-    .text-block {
-        margin-top: 10rem;
-        padding: 0 1rem; /* Etwas seitlicher Abstand auf kleineren Geräten */
-    }
-
-    /* Die Unterschrift im Hintergrund etwas verkleinern und neu positionieren */
-    .unterschrift-bg {
-        width: 50vw;
-        top: -40px;
-    }
-
-    /* Projekt-Detailansicht für Mobilgeräte optimieren */
-    .projekt-detail.active {
-        flex-direction: column;
-        padding: 0 1rem; /* Etwas Abstand zum Rand */
-    }
-
-    .projekt-beschreibung {
-        /* Verhindern, dass der Zettel rotiert und aus dem Bildschirm ragt */
-        transform: translateX(0) rotate(0) !important;
-        position: relative; /* Wichtig, um die absolute Positionierung aufzuheben */
-        flex-basis: auto;
-        margin-bottom: 2rem;
-        max-width: 100%;
-        aspect-ratio: auto; /* Seitenverhältnis aufheben */
-    }
-    /* Die sichtbare Animation auf Mobilgeräten deaktivieren */
-    .projekt-beschreibung.is-visible {
-        transform: translateX(0) rotate(0) !important;
-    }
-
-    .projekt-galerie-wrapper {
-        flex-direction: column;
-        flex-basis: auto;
-        width: 100%;
-    }
-
-    .projekt-galerie {
-        min-height: 50vh;
+    .tab[data-tab-target="projekte"] { left: 21.6vw; }
+    .tab[data-tab-target="about"] { left: 43.2vw; }
+    .tab::before, .tab::after { width: 2.9vw; height: 3.75vw; top: 4.12vw; }
+    .tab::before { -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); }
+    .tab::after { -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); }
+    .ordner-inhalt-stapel { top: 7vw; }
+    .ordner-inhalt { border-top-right-radius: 6.6vw; }
+    .logo { width: 20vw; left: -20vw; }
+    .text-block { margin-top: 10rem; padding: 0 1rem; }
+    .unterschrift-bg { width: 50vw; top: -40px; }
+    .projekt-navigation-links { width: 120px; padding: 0.5rem; }
+    .projekt-nav-link img { max-width: 80px; }
+    .pfeil { width: 40px; height: 40px; font-size: 1.2rem; }
+    .projekt-info-box {
+        max-width: calc(100% - 2rem);
+        bottom: 1rem; left: 50%;
+        font-size: 0.8rem;
     }
 }

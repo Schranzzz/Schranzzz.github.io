@@ -44,138 +44,26 @@
                     </main>
 
                     <main class="ordner-inhalt" data-content="projekte">
-                        
-                         <div class="top-bar"></div> 
-                       <!-- NEU: Die Overlays kommen hierhin, an den Anfang des Hauptcontainers -->
-    <div class="fade-overlay-top"></div>
-    <div class="fade-overlay-bottom"></div>
-
-    <!-- NEU: Ein innerer Wrapper, der den scrollbaren Inhalt umschließt -->
-    <div class="projekte-scroll-wrapper"> 
-        <div class="projekt-details-container">
-                        <div class="projekt-details-container">
-
-                            <!-- Projekt 1: Ashoka Dupe (mit 3D-Modell) -->
-                            <div class="projekt-detail active" data-projekt="ashoka-dupe">
-                                <div class="projekt-beschreibung">
-                                    <img src="Handwritten_Titles/Ashoka_Dupe.png" alt="Titel des Projekts Ashoka Dupe" class="projekt-titel-bild">
-                                    <p>Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation.</p>
-                                    <p style="margin-top: 1rem; opacity: 0.7;"><em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em></p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                   <model-viewer 
-                                        src="data/Ashoka-dupe.glb" 
-                                        alt="Ein 3D-Modell des Ashoka Dupe Projekts"
-                                        orientation="0deg 0deg 180deg"  
-                                        camera-controls auto-rotate ar shadow-intensity="1">
-                                    </model-viewer>
-                                </div>
+                        <!-- Bildschirmfüllende Projekt-Struktur -->
+                        <div class="projekte-container">
+                            <!-- 1. Medien-Slides im Hintergrund -->
+                            <div class="projekt-slides-container" id="projekt-slides">
+                                <!-- Projekt-Slides werden hier per JS eingefügt -->
                             </div>
+                    
+                            <!-- 2. UI-Overlays -->
+                            <div class="top-bar"></div>
+                            <div class="fade-overlay-top"></div>
+                            <div class="fade-overlay-bottom"></div>
 
-                            <!-- Projekt 2: Dekorierte Leiter (mit Video) -->
-                            <div class="projekt-detail" data-projekt="leiter">
-                                <div class="projekt-beschreibung">
-                                    <img src="Handwritten_Titles/Decorated_Ladder.png" alt="Titel des Projekts Dekorierte Leiter" class="projekt-titel-bild">
-                                    <p>What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                    <video src="Projektvideos/leiter.mp4" class="projekt-video" autoplay loop muted playsinline></video>
-                                    <div>
-                                        <div class="projekt-header">
-                                            <h3></h3>
-                                            
-                                        </div>
-                                        <div class="projekt-galerie"></div>
-                                    </div>
-                                </div>
+                            <nav class="projekt-navigation-links" id="projekt-nav"></nav>
+                    
+                            <button class="pfeil pfeil-links" id="pfeil-links" aria-label="Vorheriger Inhalt"><</button>
+                            <button class="pfeil pfeil-rechts" id="pfeil-rechts" aria-label="Nächster Inhalt">></button>
+                    
+                            <div class="projekt-info-box" id="projekt-info">
+                                <!-- Projekt-Beschreibung wird hier per JS eingefügt -->
                             </div>
-
-                            <!-- Projekt 3: Faltkarre (ohne Video) -->
-                            <div class="projekt-detail" data-projekt="faltkarre">
-                                <div class="projekt-beschreibung">
-                                    <img src="Handwritten_Titles/faltkarre.png" alt="Titel des Projekts Faltkarre" class="projekt-titel-bild">
-                                    <p>The wheelbarrow in private use can take up a lot of space. Not everyone has a cellar or shed to store them. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                    <div>
-                                        <div class="projekt-header">
-                                            <h3></h3>
-                                            
-                                        </div>
-                                        <div class="projekt-galerie"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Projekt 4: Tin 3D Printer (mit Video) -->
-                            <div class="projekt-detail" data-projekt="tin-3d">
-                                <div class="projekt-beschreibung">
-                                    <img src="Handwritten_Titles/Tin_3D_Printer.png" alt="Titel des Projekts Tin 3D Printer" class="projekt-titel-bild">
-                                    <p>Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error. Ultimately, my experimental machine highlights the contrast between the precise, millimeter-accurate G-code and the semi-controlled melting and dripping of the tin—a contrast reflected in the resulting objects.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                    <video src="Projektvideos/tin-3d.mp4" class="projekt-video" autoplay loop muted playsinline></video>
-                                    <div>
-                                        <div class="projekt-header">
-                                            <h3></h3>
-                                            
-                                        </div>
-                                        <div class="projekt-galerie"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Projekt 5: Movement to signal (ohne Video) -->
-                            <div class="projekt-detail" data-projekt="movement">
-                                <div class="projekt-beschreibung">
-                                    <img src="Handwritten_Titles/Movement_to_signal.png" alt="Titel des Projekts Movement to signal" class="projekt-titel-bild">
-                                    <p>The “Movement to signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. The project consists of three parts: the transmitter, the receiver and the sensor foil. The movement is recorded by two flex sensors and visualized as a rotating LED effect. The project invites you to consciously movements and to explore the variations and gradations of the visual effects.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                    <div>
-                                        <div class="projekt-header">
-                                            <h3></h3>
-                                            
-                                        </div>
-                                        <div class="projekt-galerie"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Projekt 6: New tool (ohne Video) -->
-                            <div class="projekt-detail" data-projekt="new-tool">
-                                <div class="projekt-beschreibung">
-                                    <img src="Handwritten_Titles/Slide.png" alt="Titel des Projekts SLIDE" class="projekt-titel-bild">
-                                    <p>SLIDE is a bag filling aid for people with motor and/or mental disabilities. Especially for people with one arm. The project was developed in cooperation with the Gottessegen workshops in Dortmund.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                    <div>
-                                        <div class="projekt-header">
-                                            <h3></h3>
-                                           
-                                        </div>
-                                        <div class="projekt-galerie"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Projekt 7: Sketches (ohne Video) -->
-                            <div class="projekt-detail" data-projekt="sketches">
-                                <div class="projekt-beschreibung">
-                                    <img src="Handwritten_Titles/Sketches.png" alt="Titel des Projekts Sketches" class="projekt-titel-bild">
-                                    <p>Some sketches I created over the years.</p>
-                                </div>
-                                <div class="projekt-galerie-wrapper">
-                                    <div>
-                                        <div class="projekt-header">
-                                            <h3></h3>
-                                            
-                                        </div>
-                                        <div class="projekt-galerie"></div>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                     </main>
 
