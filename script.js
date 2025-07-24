@@ -41,6 +41,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const projektContainer = document.querySelector('.ordner-inhalt[data-content="projekte"]');
 
     if (projektContainer) {
+        const customCursor = document.getElementById('custom-cursor');
+
         function muteAllVideos() {
             const videos = document.querySelectorAll('video');
             videos.forEach(video => {
@@ -50,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // KORREKTUR: Zurück zur Version ohne .title Eigenschaften
         const projektDaten = {
             'ashoka-dupe': {
                 titelBild: 'Handwritten_Titles/Ashoka_Dupe.png',
@@ -98,9 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const projektNav = document.getElementById('projekt-nav');
         const projektSlidesContainer = document.getElementById('projekt-slides');
         const projektInfoBox = document.getElementById('projekt-info');
-        const pfeilLinks = document.getElementById('pfeil-links');
-        const pfeilRechts = document.getElementById('pfeil-rechts');
-
+        
         const projektKeys = Object.keys(projektDaten);
         let aktuellerProjektIndex = 0;
         let isNavigating = false;
@@ -117,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 const navLink = document.createElement('a');
                 navLink.className = 'projekt-nav-link';
                 navLink.dataset.index = index;
-                // KORREKTUR: Zurück zu <img> Tags für die Titel
                 navLink.innerHTML = `<img src="${projekt.titelBild}" alt="${key}">`;
                 navLink.addEventListener('click', () => zeigeProjekt(index));
                 projektNav.appendChild(navLink);
@@ -202,14 +200,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 if(medien[newIndex]) medien[newIndex].classList.add('media-active');
             }
 
-            const realCount = parseInt(slide.dataset.realCount, 10);
-            if (realCount > 1) {
-                pfeilLinks.classList.add('sichtbar');
-                pfeilRechts.classList.add('sichtbar');
-            } else {
-                pfeilLinks.classList.remove('sichtbar');
-                pfeilRechts.classList.remove('sichtbar');
-            }
             if (medien.length === 0) return;
 
             slide.dataset.currentIndex = newIndex;
@@ -227,27 +217,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         function handleTransitionEnd(slide) {
-            isNavigating = false;
-
-            const oldActive = slide.querySelector('.was-active');
-            if (oldActive) {
-                oldActive.classList.remove('media-active', 'was-active');
-            }
-
             let currentIndex = parseInt(slide.dataset.currentIndex, 10);
             const prependedClones = parseInt(slide.dataset.prependedClones, 10);
             const realCount = parseInt(slide.dataset.realCount, 10);
             
-            if (realCount <= 1) return;
+            if (realCount <= 1) {
+                isNavigating = false;
+                return;
+            }
 
             const anfangDerEchtenBilder = prependedClones;
             const endeDerEchtenBilder = prependedClones + realCount - 1;
 
-            if (currentIndex > endeDerEchtenBilder) {
-                positioniereFilmstreifen(slide, anfangDerEchtenBilder, false);
-            } else if (currentIndex < anfangDerEchtenBilder) {
-                positioniereFilmstreifen(slide, endeDerEchtenBilder, false);
+            if (currentIndex > endeDerEchtenBilder || currentIndex < anfangDerEchtenBilder) {
+                const neuerEchterIndex = (currentIndex - prependedClones + realCount) % realCount + prependedClones;
+                positioniereFilmstreifen(slide, neuerEchterIndex, false);
             }
+            
+            setTimeout(() => {
+                isNavigating = false;
+            }, 20); 
         }
 
         const handleNav = (direction) => {
@@ -283,8 +272,37 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => { isVScrolling = false; }, 700);
         });
         
-        pfeilRechts.addEventListener('click', () => handleNav(1));
-        pfeilLinks.addEventListener('click', () => handleNav(-1));
+        projektContainer.addEventListener('mousemove', (event) => {
+            if (!customCursor) return;
+            customCursor.style.left = `${event.clientX}px`;
+            customCursor.style.top = `${event.clientY}px`;
+            if (isNavigating) return;
+            const rect = projektContainer.getBoundingClientRect();
+            const midpoint = rect.left + rect.width / 2;
+            if (event.clientX < midpoint) {
+                customCursor.textContent = '<';
+            } else {
+                customCursor.textContent = '>';
+            }
+        });
+        
+        projektContainer.addEventListener('mouseenter', () => {
+            if(customCursor) customCursor.style.opacity = '1';
+        });
+
+        projektContainer.addEventListener('mouseleave', () => {
+            if(customCursor) customCursor.style.opacity = '0';
+        });
+        
+        projektContainer.addEventListener('click', (event) => {
+            const rect = projektContainer.getBoundingClientRect();
+            const midpoint = rect.left + rect.width / 2;
+            if (event.clientX < midpoint) {
+                handleNav(-1);
+            } else {
+                handleNav(1);
+            }
+        });
 
         window.addEventListener('resize', () => {
             const aktiverSlide = document.querySelector('.projekt-slide.active');
@@ -296,4 +314,57 @@ document.addEventListener('DOMContentLoaded', function() {
 
         initProjekte();
     }
+
+
+
+    // =======================================================
+// NEU: LOGIK FÜR TOUCH-GESTEN
+// =======================================================
+let touchStartX = 0;
+let touchStartY = 0;
+let touchEndX = 0;
+let touchEndY = 0;
+
+projektContainer.addEventListener('touchstart', function(event) {
+    // Nur den ersten Touch-Punkt registrieren
+    touchStartX = event.changedTouches[0].screenX;
+    touchStartY = event.changedTouches[0].screenY;
+}, false);
+
+projektContainer.addEventListener('touchend', function(event) {
+    touchEndX = event.changedTouches[0].screenX;
+    touchEndY = event.changedTouches[0].screenY;
+    handleSwipe();
+}, false); 
+
+function handleSwipe() {
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+    const swipeThreshold = 50; // Mindest-Wischdistanz in Pixeln
+
+    // Prüfen, ob die Geste primär horizontal oder vertikal war
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontale Geste
+        if (Math.abs(deltaX) > swipeThreshold) {
+            if (deltaX > 0) {
+                // Wischen nach rechts -> vorheriges Bild
+                handleNav(-1);
+            } else {
+                // Wischen nach links -> nächstes Bild
+                handleNav(1);
+            }
+        }
+    } else {
+        // Vertikale Geste
+        if (Math.abs(deltaY) > swipeThreshold) {
+            if (deltaY > 0) {
+                // Wischen nach unten -> vorheriges Projekt
+                zeigeProjekt(aktuellerProjektIndex - 1);
+            } else {
+                // Wischen nach oben -> nächstes Projekt
+                zeigeProjekt(aktuellerProjektIndex + 1);
+            }
+        }
+    }
+}
 });
