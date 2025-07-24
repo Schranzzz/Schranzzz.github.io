@@ -36,11 +36,21 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // =======================================================
-    // LOGIK FÜR PROJEKTSEITE (FILMSTREIFEN MIT VERZÖGERTEM BLUR)
+    // LOGIK FÜR PROJEKTSEITE
     // =======================================================
     const projektContainer = document.querySelector('.ordner-inhalt[data-content="projekte"]');
 
     if (projektContainer) {
+        function muteAllVideos() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => {
+                video.muted = true;
+                video.volume = 0;
+                video.play().catch(error => {});
+            });
+        }
+
+        // KORREKTUR: Zurück zur Version ohne .title Eigenschaften
         const projektDaten = {
             'ashoka-dupe': {
                 titelBild: 'Handwritten_Titles/Ashoka_Dupe.png',
@@ -107,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const navLink = document.createElement('a');
                 navLink.className = 'projekt-nav-link';
                 navLink.dataset.index = index;
+                // KORREKTUR: Zurück zu <img> Tags für die Titel
                 navLink.innerHTML = `<img src="${projekt.titelBild}" alt="${key}">`;
                 navLink.addEventListener('click', () => zeigeProjekt(index));
                 projektNav.appendChild(navLink);
@@ -127,10 +138,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     if(mediaElement) {
                         if (mediaElement.tagName === 'IMG') mediaElement.loading = 'lazy';
-                        if (mediaElement.tagName === 'VIDEO') {
-                            Object.assign(mediaElement, { autoplay: true, loop: true, muted: true, playsInline: true });
-                            mediaElement.muted = true; // Doppelt hält besser
-                        }
+                        if (mediaElement.tagName === 'VIDEO') Object.assign(mediaElement, { autoplay: true, loop: true, muted: true, playsInline: true });
                         if (mediaElement.tagName === 'MODEL-VIEWER') {
                              mediaElement.setAttribute('camera-controls', '');
                              mediaElement.setAttribute('auto-rotate', '');
@@ -158,6 +166,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 slide.appendChild(filmstrip);
                 projektSlidesContainer.appendChild(slide);
             });
+
+            muteAllVideos();
             zeigeProjekt(0);
         }
 
@@ -179,6 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             setTimeout(() => {
                 positioniereFilmstreifen(aktiverSlide, prependedClones, false);
+                muteAllVideos();
             }, 50); 
         }
         
@@ -187,7 +198,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const medien = Array.from(filmstrip.children);
             
             if (!mitAnimation) {
-                medien.forEach(el => el.classList.remove('media-active'));
+                medien.forEach(el => el.classList.remove('media-active', 'was-active'));
                 if(medien[newIndex]) medien[newIndex].classList.add('media-active');
             }
 
@@ -217,8 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function handleTransitionEnd(slide) {
             isNavigating = false;
-            
-            // KORREKTUR: Das vorherige Bild (falls vorhanden) die Klasse entziehen
+
             const oldActive = slide.querySelector('.was-active');
             if (oldActive) {
                 oldActive.classList.remove('media-active', 'was-active');
@@ -253,12 +263,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentElement = medien[currentIndex];
             const nextElement = medien[nextIndex];
             
-            // KORREKTUR: Logik für den verzögerten Blur
             if (currentElement) {
-                currentElement.classList.add('was-active'); // Markieren, um es später zu finden
+                currentElement.classList.add('was-active');
             }
             if (nextElement) {
-                nextElement.classList.add('media-active'); // Das neue Bild sofort scharf machen
+                nextElement.classList.add('media-active');
             }
             
             positioniereFilmstreifen(aktiverSlide, nextIndex, true);
