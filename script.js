@@ -313,58 +313,57 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         initProjekte();
-    }
+        
+        
+        // =======================================================
+        // NEU: LOGIK FÜR TOUCH-GESTEN (AN DIE KORREKTE STELLE VERSCHOBEN)
+        // =======================================================
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
 
+        projektContainer.addEventListener('touchstart', function(event) {
+            // Nur den ersten Touch-Punkt registrieren
+            touchStartX = event.changedTouches[0].screenX;
+            touchStartY = event.changedTouches[0].screenY;
+        }, false);
 
+        projektContainer.addEventListener('touchend', function(event) {
+            touchEndX = event.changedTouches[0].screenX;
+            touchEndY = event.changedTouches[0].screenY;
+            handleSwipe();
+        }, false); 
 
-    // =======================================================
-// NEU: LOGIK FÜR TOUCH-GESTEN
-// =======================================================
-let touchStartX = 0;
-let touchStartY = 0;
-let touchEndX = 0;
-let touchEndY = 0;
+        function handleSwipe() {
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const swipeThreshold = 50; // Mindest-Wischdistanz in Pixeln
 
-projektContainer.addEventListener('touchstart', function(event) {
-    // Nur den ersten Touch-Punkt registrieren
-    touchStartX = event.changedTouches[0].screenX;
-    touchStartY = event.changedTouches[0].screenY;
-}, false);
-
-projektContainer.addEventListener('touchend', function(event) {
-    touchEndX = event.changedTouches[0].screenX;
-    touchEndY = event.changedTouches[0].screenY;
-    handleSwipe();
-}, false); 
-
-function handleSwipe() {
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-    const swipeThreshold = 50; // Mindest-Wischdistanz in Pixeln
-
-    // Prüfen, ob die Geste primär horizontal oder vertikal war
-    if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        // Horizontale Geste
-        if (Math.abs(deltaX) > swipeThreshold) {
-            if (deltaX > 0) {
-                // Wischen nach rechts -> vorheriges Bild
-                handleNav(-1);
+            // Prüfen, ob die Geste primär horizontal oder vertikal war
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontale Geste
+                if (Math.abs(deltaX) > swipeThreshold) {
+                    if (deltaX > 0) {
+                        // Wischen nach rechts -> vorheriges Bild
+                        handleNav(-1);
+                    } else {
+                        // Wischen nach links -> nächstes Bild
+                        handleNav(1);
+                    }
+                }
             } else {
-                // Wischen nach links -> nächstes Bild
-                handleNav(1);
+                // Vertikale Geste
+                if (Math.abs(deltaY) > swipeThreshold) {
+                    if (deltaY > 0) {
+                        // Wischen nach unten -> vorheriges Projekt
+                        zeigeProjekt(aktuellerProjektIndex - 1);
+                    } else {
+                        // Wischen nach oben -> nächstes Projekt
+                        zeigeProjekt(aktuellerProjektIndex + 1);
+                    }
+                }
             }
         }
-    } else {
-        // Vertikale Geste
-        if (Math.abs(deltaY) > swipeThreshold) {
-            if (deltaY > 0) {
-                // Wischen nach unten -> vorheriges Projekt
-                zeigeProjekt(aktuellerProjektIndex - 1);
-            } else {
-                // Wischen nach oben -> nächstes Projekt
-                zeigeProjekt(aktuellerProjektIndex + 1);
-            }
-        }
     }
-}
 });

@@ -362,11 +362,32 @@ body {
     .tab::after { -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); }
     .ordner-inhalt-stapel { top: 7vw; }
 
+    /* NEU: Schatten für mobile Geräte mit relativen Einheiten (vw) anpassen */
+    .tab,
+    .tab.active,
+    .tab::before,
+    .tab::after,
+    .ordner-inhalt-stapel {
+        box-shadow: 0 -2vw 1.5vw -1.2vw rgba(0, 0, 0, 0.2);
+    }
+
+    .ordner-inhalt-stapel.is-lifted {
+        transform: none;
+    }
+
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
     
     .logo { width: 20vw; left: -20vw; }
     .text-block { margin-top: 10rem; padding: 0 1rem; }
     .unterschrift-bg { width: 50vw; top: -40px; }
+    
+    .projekte-container {
+        cursor: auto;
+    }
+    .custom-cursor {
+        display: none !important;
+    }
+
     .projekt-navigation-links { width: 120px; padding: 0.5rem; }
     .projekt-nav-link img { max-width: 80px; }
     .projekt-info-box {
