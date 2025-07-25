@@ -157,8 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 if (originalMedien.length > 1) {
                     const count = originalMedien.length;
-                    const clonesToPrepend = originalMedien.slice(-CLONE_COUNT).map(el => el.cloneNode(true));
-                    const clonesToAppend = originalMedien.slice(0, CLONE_COUNT).map(el => el.cloneNode(true));
+                    const actualCloneCount = Math.min(count, CLONE_COUNT);
+                    const clonesToPrepend = originalMedien.slice(-actualCloneCount).map(el => el.cloneNode(true));
+                    const clonesToAppend = originalMedien.slice(0, actualCloneCount).map(el => el.cloneNode(true));
                     
                     [...clonesToPrepend, ...originalMedien, ...clonesToAppend].forEach(el => filmstrip.appendChild(el));
                     slide.dataset.prependedClones = clonesToPrepend.length;
@@ -169,7 +170,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     slide.dataset.realCount = originalMedien.length;
                 }
 
-                filmstrip.addEventListener('transitionend', () => handleTransitionEnd(slide));
+                filmstrip.addEventListener('transitionend', (e) => {
+                    if (e.target === filmstrip) {
+                        handleTransitionEnd(slide);
+                    }
+                });
                 slide.appendChild(filmstrip);
                 projektSlidesContainer.appendChild(slide);
             });
@@ -197,7 +202,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const performCrossfade = () => {
                 neuerSlide.classList.add('active');
-                positioniereFilmstreifen(neuerSlide, parseInt(neuerSlide.dataset.prependedClones, 10), false);
+                
+                const filmstrip = neuerSlide.querySelector('.media-filmstrip');
+                const medien = Array.from(filmstrip.children);
+                medien.forEach(el => el.classList.remove('media-active'));
+                medien[parseInt(neuerSlide.dataset.prependedClones, 10)].classList.add('media-active');
+                
+                positioniereFilmstreifen(neuerSlide, parseInt(neuerSlide.dataset.prependedClones, 10));
                 muteAllVideos();
 
                 if (alterSlide) {
@@ -221,23 +232,16 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        function positioniereFilmstreifen(slide, newIndex, mitAnimation) {
+        function positioniereFilmstreifen(slide, newIndex) {
             const filmstrip = slide.querySelector('.media-filmstrip');
             if (!filmstrip) return;
-            const medien = Array.from(filmstrip.children);
             
-            if (!mitAnimation) {
-                medien.forEach(el => el.classList.remove('media-active'));
-                if(medien[newIndex]) medien[newIndex].classList.add('media-active');
-            }
-
-            if (medien.length === 0) return;
             slide.dataset.currentIndex = newIndex;
-            const targetMedium = medien[newIndex];
+            const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
             
             if (targetMedium.offsetWidth === 0 && targetMedium.tagName === "IMG") {
-                 setTimeout(() => positioniereFilmstreifen(slide, newIndex, mitAnimation), 50);
+                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50);
                  return;
             }
 
@@ -246,11 +250,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const mediumOffsetLeft = targetMedium.offsetLeft;
             const translateX = (containerWidth / 2) - (mediumWidth / 2) - mediumOffsetLeft;
 
-            filmstrip.classList.toggle('transitioning', mitAnimation);
             filmstrip.style.transform = `translateX(${translateX}px)`;
         }
         
         function handleTransitionEnd(slide) {
+            const filmstrip = slide.querySelector('.media-filmstrip');
             let currentIndex = parseInt(slide.dataset.currentIndex, 10);
             const prependedClones = parseInt(slide.dataset.prependedClones, 10);
             const realCount = parseInt(slide.dataset.realCount, 10);
@@ -262,13 +266,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const anfangDerEchtenBilder = prependedClones;
             const endeDerEchtenBilder = prependedClones + realCount - 1;
+            
+            let neuerEchterIndex = -1;
 
-            if (currentIndex > endeDerEchtenBilder || currentIndex < anfangDerEchtenBilder) {
-                const neuerEchterIndex = (currentIndex - prependedClones + realCount) % realCount + prependedClones;
-                positioniereFilmstreifen(slide, neuerEchterIndex, false);
+            if (currentIndex > endeDerEchtenBilder) {
+                neuerEchterIndex = anfangDerEchtenBilder + (currentIndex - 1 - endeDerEchtenBilder);
+            }
+            if (currentIndex < anfangDerEchtenBilder) {
+                 neuerEchterIndex = endeDerEchtenBilder - (anfangDerEchtenBilder - 1 - currentIndex);
+            }
+
+            if (neuerEchterIndex !== -1) {
+                // Schritt 1: Den perfekten Endzustand vorbereiten (IHR VORSCHLAG)
+                const medien = Array.from(filmstrip.children);
+                medien.forEach(el => el.classList.remove('media-active'));
+                medien[neuerEchterIndex].classList.add('media-active'); // Erst scharf machen...
+                
+                // Schritt 2: Animation deaktivieren, springen, und sofort rendern.
+                filmstrip.classList.add('no-transition');
+                positioniereFilmstreifen(slide, neuerEchterIndex); // ...dann springen.
+                filmstrip.offsetHeight; 
+                
+                // Schritt 3: Animation für die nächste Bewegung wieder aktivieren.
+                filmstrip.classList.remove('no-transition');
             }
             
-            setTimeout(() => { isNavigating = false; }, 20); 
+            isNavigating = false;
         }
 
         const handleNav = (direction) => {
@@ -284,22 +307,18 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentElement = medien[currentIndex];
             const nextElement = medien[nextIndex];
             
-            // ===== FINALE KORREKTUR HIER =====
             if (currentElement) {
-                // Wir starten die Unschärfe-Animation mit einer kleinen Verzögerung.
-                // Das Bild bewegt sich also erst ein Stück, bevor es unscharf wird.
                 setTimeout(() => {
                     currentElement.classList.remove('media-active');
-                }, 250); // Ein Wert zwischen 100 und 200 Millisekunden ist ideal.
+                }, 250);
             }
-            // ===== ENDE DER KORREKTUR =====
 
             if (nextElement) {
-                // Das neue Bild wird sofort scharf gestellt.
                 nextElement.classList.add('media-active');
             }
             
-            positioniereFilmstreifen(aktiverSlide, nextIndex, true);
+            filmstrip.classList.add('transitioning');
+            positioniereFilmstreifen(aktiverSlide, nextIndex);
         };
         
         // Event Listeners
@@ -338,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const aktiverSlide = document.querySelector('.projekt-slide.active');
             if(aktiverSlide) {
                 const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-                positioniereFilmstreifen(aktiverSlide, currentIndex, false);
+                positioniereFilmstreifen(aktiverSlide, currentIndex);
             }
         });
 
