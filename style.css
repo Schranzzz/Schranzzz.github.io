@@ -118,7 +118,7 @@ body {
     border-top-right-radius: var(--inhalt-radius-gross);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.0s;
+    transition: opacity 0.5s ease-in-out, visibility 0.5s; /* Dauer muss mit Timeout in JS übereinstimmen */
     overflow: auto;
 }
 
@@ -311,7 +311,6 @@ body {
     
 }
 
-/* Cursor beim Hover auf .projekt-nav-link unsichtbar machen */
 .projekt-nav-link:hover {
     cursor: none;
 }
@@ -324,7 +323,7 @@ body {
 }
 
 .pfeil {
-    display: none; /* Pfeile komplett ausblenden */
+    display: none;
 }
 
 .projekt-info-box {
@@ -356,7 +355,6 @@ body {
         font-size: clamp(1.6rem, 4vw, 2.8rem); 
     }
 	
-	/* NEU: Deaktiviert den Schwebeeffekt der Tabs auf Mobilgeräten */
 	.tab:hover {
         transform: none;
     }
@@ -368,7 +366,6 @@ body {
     .tab::after { -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); }
     .ordner-inhalt-stapel { top: 7vw; }
 
-    /* NEU: Schatten für mobile Geräte mit relativen Einheiten (vw) anpassen */
     .tab,
     .tab.active,
     .tab::before,

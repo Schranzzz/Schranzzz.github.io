@@ -103,8 +103,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const projektKeys = Object.keys(projektDaten);
         let aktuellerProjektIndex = 0;
         let isNavigating = false;
-        let isVScrolling = false;
+        let isChangingProject = false;
         const CLONE_COUNT = 5;
+
+        // Startet das Herunterladen der Startbilder im Hintergrund.
+        // Wir warten nicht darauf, die Seite wird sofort aufgebaut.
+        function preloadInitialImages() {
+            Object.values(projektDaten).forEach(projekt => {
+                const firstMedium = projekt.medien[0];
+                if (firstMedium && firstMedium.type === 'image') {
+                    new Image().src = firstMedium.src;
+                }
+            });
+        }
 
         function initProjekte() {
             projektNav.innerHTML = '';
@@ -165,34 +176,66 @@ document.addEventListener('DOMContentLoaded', function() {
                 projektSlidesContainer.appendChild(slide);
             });
 
-            muteAllVideos();
-            zeigeProjekt(0);
+            // Das erste Projekt sofort anzeigen.
+            zeigeProjekt(0, true);
+            // Das Preloading für die anderen Projekte im Hintergrund starten.
+            preloadInitialImages();
         }
+        
+        function zeigeProjekt(index, isInitial = false) {
+            if (isChangingProject || index < 0 || index >= projektKeys.length || (!isInitial && index === aktuellerProjektIndex)) {
+                return;
+            }
+            isChangingProject = true;
 
-        function zeigeProjekt(index) {
-            if (index < 0 || index >= projektKeys.length) return;
-            aktuellerProjektIndex = index;
+            const alterSlide = document.querySelector('.projekt-slide.active');
             const key = projektKeys[index];
-            
+            const neuerSlide = document.querySelector(`.projekt-slide[data-key="${key}"]`);
+
             document.querySelectorAll('.projekt-nav-link').forEach(n => n.classList.remove('active'));
             document.querySelector(`.projekt-nav-link[data-index="${index}"]`).classList.add('active');
             
-            document.querySelectorAll('.projekt-slide').forEach(s => s.classList.remove('active'));
-            const aktiverSlide = document.querySelector(`.projekt-slide[data-key="${key}"]`);
-            aktiverSlide.classList.add('active');
-            
             projektInfoBox.innerHTML = projektDaten[key].beschreibung;
-            
-            const prependedClones = parseInt(aktiverSlide.dataset.prependedClones, 10);
-            
-            setTimeout(() => {
-                positioniereFilmstreifen(aktiverSlide, prependedClones, false);
+
+            const firstMediaElement = neuerSlide.querySelector('img, video, model-viewer');
+
+            // Dies ist die Funktion, die die eigentliche Überblendung durchführt.
+            // Sie wird erst aufgerufen, wenn alles bereit ist.
+            const performCrossfade = () => {
+                neuerSlide.classList.add('active');
+                positioniereFilmstreifen(neuerSlide, parseInt(neuerSlide.dataset.prependedClones, 10), false);
                 muteAllVideos();
-            }, 50); 
+
+                if (alterSlide) {
+                    alterSlide.classList.remove('active');
+                }
+                
+                aktuellerProjektIndex = index;
+                // Sperre nach der Dauer der CSS-Animation wieder freigeben.
+                setTimeout(() => { isChangingProject = false; }, 500);
+            };
+
+            // Für den allerersten Aufruf gibt es nichts zu überprüfen.
+            if (isInitial) {
+                performCrossfade();
+                return;
+            }
+            
+            // Der "Türsteher"-Check: Prüft, ob das Bild wirklich fertig ist.
+            if (!firstMediaElement || firstMediaElement.tagName !== 'IMG' || firstMediaElement.complete) {
+                // Ja, es ist ein Video, 3D-Modell oder bereits komplett geladenes Bild. Sofort loslegen.
+                performCrossfade();
+            } else {
+                // Nein, es ist ein Bild, das noch nicht fertig ist.
+                // Der alte Slide bleibt sichtbar, während wir auf das 'onload'-Signal warten.
+                firstMediaElement.onload = performCrossfade;
+                firstMediaElement.onerror = performCrossfade; // Sicherheitsnetz, falls das Bild nicht lädt
+            }
         }
         
         function positioniereFilmstreifen(slide, newIndex, mitAnimation) {
             const filmstrip = slide.querySelector('.media-filmstrip');
+            if (!filmstrip) return;
             const medien = Array.from(filmstrip.children);
             
             if (!mitAnimation) {
@@ -201,14 +244,19 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (medien.length === 0) return;
-
             slide.dataset.currentIndex = newIndex;
-
             const targetMedium = medien[newIndex];
             if (!targetMedium) return;
+            
+            // Dieser Check ist wichtig für den Fall, dass das Bild noch keine vom Browser berechnete Breite hat.
+            if (targetMedium.offsetWidth === 0 && targetMedium.tagName === "IMG") {
+                 // Warten, bis der Browser die Layout-Berechnung abgeschlossen hat, und dann erneut versuchen.
+                 setTimeout(() => positioniereFilmstreifen(slide, newIndex, mitAnimation), 50);
+                 return;
+            }
 
             const containerWidth = slide.offsetWidth;
-            const mediumWidth = targetMedium.offsetWidth || containerWidth;
+            const mediumWidth = targetMedium.offsetWidth;
             const mediumOffsetLeft = targetMedium.offsetLeft;
             const translateX = (containerWidth / 2) - (mediumWidth / 2) - mediumOffsetLeft;
 
@@ -234,9 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 positioniereFilmstreifen(slide, neuerEchterIndex, false);
             }
             
-            setTimeout(() => {
-                isNavigating = false;
-            }, 20); 
+            setTimeout(() => { isNavigating = false; }, 20); 
         }
 
         const handleNav = (direction) => {
@@ -252,12 +298,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentElement = medien[currentIndex];
             const nextElement = medien[nextIndex];
             
-            if (currentElement) {
-                currentElement.classList.add('was-active');
-            }
-            if (nextElement) {
-                nextElement.classList.add('media-active');
-            }
+            if (currentElement) currentElement.classList.add('was-active');
+            if (nextElement) nextElement.classList.add('media-active');
             
             positioniereFilmstreifen(aktiverSlide, nextIndex, true);
         };
@@ -265,11 +307,10 @@ document.addEventListener('DOMContentLoaded', function() {
         // Event Listeners
         projektContainer.addEventListener('wheel', (event) => {
             event.preventDefault();
-            if (isVScrolling) return;
-            isVScrolling = true;
+            if (isChangingProject) return;
+            
             if (event.deltaY > 20) zeigeProjekt(aktuellerProjektIndex + 1);
             else if (event.deltaY < -20) zeigeProjekt(aktuellerProjektIndex - 1);
-            setTimeout(() => { isVScrolling = false; }, 700);
         });
         
         projektContainer.addEventListener('mousemove', (event) => {
@@ -286,22 +327,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        projektContainer.addEventListener('mouseenter', () => {
-            if(customCursor) customCursor.style.opacity = '1';
-        });
-
-        projektContainer.addEventListener('mouseleave', () => {
-            if(customCursor) customCursor.style.opacity = '0';
-        });
+        projektContainer.addEventListener('mouseenter', () => { if(customCursor) customCursor.style.opacity = '1'; });
+        projektContainer.addEventListener('mouseleave', () => { if(customCursor) customCursor.style.opacity = '0'; });
         
         projektContainer.addEventListener('click', (event) => {
             const rect = projektContainer.getBoundingClientRect();
             const midpoint = rect.left + rect.width / 2;
-            if (event.clientX < midpoint) {
-                handleNav(-1);
-            } else {
-                handleNav(1);
-            }
+            if (event.clientX < midpoint) handleNav(-1); else handleNav(1);
         });
 
         window.addEventListener('resize', () => {
@@ -314,59 +346,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
         initProjekte();
         
-        
-        // =======================================================
-        // NEU: LOGIK FÜR TOUCH-GESTEN
-        // =======================================================
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchEndX = 0;
-        let touchEndY = 0;
+        let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
 
-        projektContainer.addEventListener('touchstart', function(event) {
-            touchStartX = event.changedTouches[0].screenX;
-            touchStartY = event.changedTouches[0].screenY;
+        projektContainer.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
         }, false);
 		
-		// NEU: Verhindert das "Pull-to-Refresh"-Verhalten auf Mobilgeräten
-        projektContainer.addEventListener('touchmove', function(event) {
-            event.preventDefault();
-        }, { passive: false });
+        projektContainer.addEventListener('touchmove', (e) => { e.preventDefault(); }, { passive: false });
 
-        projektContainer.addEventListener('touchend', function(event) {
-            touchEndX = event.changedTouches[0].screenX;
-            touchEndY = event.changedTouches[0].screenY;
+        projektContainer.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            touchEndY = e.changedTouches[0].screenY;
             handleSwipe();
         }, false); 
 
         function handleSwipe() {
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-            const swipeThreshold = 50; // Mindest-Wischdistanz in Pixeln
-
-            // Prüfen, ob die Geste primär horizontal oder vertikal war
+            const deltaX = touchEndX - touchStartX, deltaY = touchEndY - touchStartY, swipeThreshold = 50;
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                // Horizontale Geste
-                if (Math.abs(deltaX) > swipeThreshold) {
-                    if (deltaX > 0) {
-                        // Wischen nach rechts -> vorheriges Bild
-                        handleNav(-1);
-                    } else {
-                        // Wischen nach links -> nächstes Bild
-                        handleNav(1);
-                    }
-                }
+                if (Math.abs(deltaX) > swipeThreshold) { if (deltaX > 0) handleNav(-1); else handleNav(1); }
             } else {
-                // Vertikale Geste
-                if (Math.abs(deltaY) > swipeThreshold) {
-                    if (deltaY > 0) {
-                        // Wischen nach unten -> vorheriges Projekt
-                        zeigeProjekt(aktuellerProjektIndex - 1);
-                    } else {
-                        // Wischen nach oben -> nächstes Projekt
-                        zeigeProjekt(aktuellerProjektIndex + 1);
-                    }
-                }
+                if (Math.abs(deltaY) > swipeThreshold) { if (deltaY > 0) zeigeProjekt(aktuellerProjektIndex - 1); else zeigeProjekt(aktuellerProjektIndex + 1); }
             }
         }
     }
