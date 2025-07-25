@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         
         // =======================================================
-        // NEU: LOGIK FÜR TOUCH-GESTEN (AN DIE KORREKTE STELLE VERSCHOBEN)
+        // NEU: LOGIK FÜR TOUCH-GESTEN
         // =======================================================
         let touchStartX = 0;
         let touchStartY = 0;
@@ -324,10 +324,14 @@ document.addEventListener('DOMContentLoaded', function() {
         let touchEndY = 0;
 
         projektContainer.addEventListener('touchstart', function(event) {
-            // Nur den ersten Touch-Punkt registrieren
             touchStartX = event.changedTouches[0].screenX;
             touchStartY = event.changedTouches[0].screenY;
         }, false);
+		
+		// NEU: Verhindert das "Pull-to-Refresh"-Verhalten auf Mobilgeräten
+        projektContainer.addEventListener('touchmove', function(event) {
+            event.preventDefault();
+        }, { passive: false });
 
         projektContainer.addEventListener('touchend', function(event) {
             touchEndX = event.changedTouches[0].screenX;
