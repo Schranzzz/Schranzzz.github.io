@@ -56,43 +56,43 @@ document.addEventListener('DOMContentLoaded', function() {
             'ashoka-dupe': {
                 titelBild: 'Handwritten_Titles/Ashoka_Dupe.png',
                 beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. <em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em>',
-                medien: [ { type: 'model', src: 'data/Ashoka-dupe.glb' } ]
+                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
             },
             'leiter': {
                 titelBild: 'Handwritten_Titles/Decorated_Ladder.png',
                 beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?',
                 medien: [
                     { type: 'video', src: 'Projektvideos/leiter.mp4' },
-                    ...Array.from({ length: 4 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
+                    ...Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
                 ]
             },
             'faltkarre': {
                 titelBild: 'Handwritten_Titles/faltkarre.png',
                 beschreibung: 'The wheelbarrow in private use can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.',
-                medien: Array.from({ length: 8 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
             },
             'tin-3d': {
                 titelBild: 'Handwritten_Titles/Tin_3D_Printer.png',
                 beschreibung: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error.',
                 medien: [
                     { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
-                    ...Array.from({ length: 3 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
+                    ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
                 ]
             },
             'movement': {
                 titelBild: 'Handwritten_Titles/Movement_to_signal.png',
                 beschreibung: 'The “Movement to signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. It invites you to consciously movements and to explore the variations and gradations of the visual effects.',
-                medien: Array.from({ length: 34 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung zum signal/Bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung zum signal/Bild (${i + 1}).jpg` }))
             },
             'new-tool': {
                 titelBild: 'Handwritten_Titles/Slide.png',
                 beschreibung: 'SLIDE is a bag filling aid for people with motor and/or mental disabilities. Especially for people with one arm. The project was developed in cooperation with the Gottessegen workshops in Dortmund.',
-                medien: Array.from({ length: 19 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 9 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
             },
             'sketches': {
                 titelBild: 'Handwritten_Titles/Sketches.png',
                 beschreibung: 'Some sketches I created over the years.',
-                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/Sketches/Bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Sketches/Bild (${i + 1}).jpg` }))
             }
         };
 
@@ -106,8 +106,6 @@ document.addEventListener('DOMContentLoaded', function() {
         let isChangingProject = false;
         const CLONE_COUNT = 5;
 
-        // Startet das Herunterladen der Startbilder im Hintergrund.
-        // Wir warten nicht darauf, die Seite wird sofort aufgebaut.
         function preloadInitialImages() {
             Object.values(projektDaten).forEach(projekt => {
                 const firstMedium = projekt.medien[0];
@@ -176,9 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 projektSlidesContainer.appendChild(slide);
             });
 
-            // Das erste Projekt sofort anzeigen.
             zeigeProjekt(0, true);
-            // Das Preloading für die anderen Projekte im Hintergrund starten.
             preloadInitialImages();
         }
         
@@ -199,8 +195,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const firstMediaElement = neuerSlide.querySelector('img, video, model-viewer');
 
-            // Dies ist die Funktion, die die eigentliche Überblendung durchführt.
-            // Sie wird erst aufgerufen, wenn alles bereit ist.
             const performCrossfade = () => {
                 neuerSlide.classList.add('active');
                 positioniereFilmstreifen(neuerSlide, parseInt(neuerSlide.dataset.prependedClones, 10), false);
@@ -211,25 +205,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 
                 aktuellerProjektIndex = index;
-                // Sperre nach der Dauer der CSS-Animation wieder freigeben.
                 setTimeout(() => { isChangingProject = false; }, 500);
             };
 
-            // Für den allerersten Aufruf gibt es nichts zu überprüfen.
             if (isInitial) {
                 performCrossfade();
                 return;
             }
             
-            // Der "Türsteher"-Check: Prüft, ob das Bild wirklich fertig ist.
             if (!firstMediaElement || firstMediaElement.tagName !== 'IMG' || firstMediaElement.complete) {
-                // Ja, es ist ein Video, 3D-Modell oder bereits komplett geladenes Bild. Sofort loslegen.
                 performCrossfade();
             } else {
-                // Nein, es ist ein Bild, das noch nicht fertig ist.
-                // Der alte Slide bleibt sichtbar, während wir auf das 'onload'-Signal warten.
                 firstMediaElement.onload = performCrossfade;
-                firstMediaElement.onerror = performCrossfade; // Sicherheitsnetz, falls das Bild nicht lädt
+                firstMediaElement.onerror = performCrossfade;
             }
         }
         
@@ -239,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const medien = Array.from(filmstrip.children);
             
             if (!mitAnimation) {
-                medien.forEach(el => el.classList.remove('media-active', 'was-active'));
+                medien.forEach(el => el.classList.remove('media-active'));
                 if(medien[newIndex]) medien[newIndex].classList.add('media-active');
             }
 
@@ -248,9 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetMedium = medien[newIndex];
             if (!targetMedium) return;
             
-            // Dieser Check ist wichtig für den Fall, dass das Bild noch keine vom Browser berechnete Breite hat.
             if (targetMedium.offsetWidth === 0 && targetMedium.tagName === "IMG") {
-                 // Warten, bis der Browser die Layout-Berechnung abgeschlossen hat, und dann erneut versuchen.
                  setTimeout(() => positioniereFilmstreifen(slide, newIndex, mitAnimation), 50);
                  return;
             }
@@ -298,8 +284,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const currentElement = medien[currentIndex];
             const nextElement = medien[nextIndex];
             
-            if (currentElement) currentElement.classList.add('was-active');
-            if (nextElement) nextElement.classList.add('media-active');
+            // ===== FINALE KORREKTUR HIER =====
+            if (currentElement) {
+                // Wir starten die Unschärfe-Animation mit einer kleinen Verzögerung.
+                // Das Bild bewegt sich also erst ein Stück, bevor es unscharf wird.
+                setTimeout(() => {
+                    currentElement.classList.remove('media-active');
+                }, 250); // Ein Wert zwischen 100 und 200 Millisekunden ist ideal.
+            }
+            // ===== ENDE DER KORREKTUR =====
+
+            if (nextElement) {
+                // Das neue Bild wird sofort scharf gestellt.
+                nextElement.classList.add('media-active');
+            }
             
             positioniereFilmstreifen(aktiverSlide, nextIndex, true);
         };
