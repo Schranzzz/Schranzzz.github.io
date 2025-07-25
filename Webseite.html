@@ -45,7 +45,7 @@
                     </main>
 
                     <main class="ordner-inhalt" data-content="projekte">
-                        <div class="projekte-container">
+                        <div class="projekte-container" id="projekte-container">
                             <div class="projekt-slides-container" id="projekt-slides"></div>
                             
                             <div id="custom-cursor" class="custom-cursor"></div>
@@ -55,10 +55,17 @@
 
                             <nav class="projekt-navigation-links" id="projekt-nav"></nav>
                             
-                            <button class="pfeil pfeil-links" id="pfeil-links" aria-label="Vorheriger Inhalt"><</button>
-                            <button class="pfeil pfeil-rechts" id="pfeil-rechts" aria-label="Nächster Inhalt">></button>
-                            
-                            <div class="projekt-info-box" id="projekt-info"></div>
+                            <div class="info-overlay" id="info-overlay">
+                                <div class="info-overlay-content">
+                                    <div class="info-overlay-title-container">
+                                        <img id="overlay-title-img" src="" alt="Projekttitel">
+                                    </div>
+                                    <p id="overlay-description"></p>
+                                </div>
+                            </div>
+                    
+                            <button class="info-toggle-button" id="info-toggle-button">Information</button>
+
                         </div>
                     </main>
 
