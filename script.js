@@ -121,14 +121,14 @@ document.addEventListener('DOMContentLoaded', function() {
             if (event) event.stopPropagation();
             isInfoOverlayOpen = !isInfoOverlayOpen;
             projekteContainer.classList.toggle('info-overlay-active');
+
             if (isInfoOverlayOpen) {
                 const aktuellesProjekt = projektDaten[projektKeys[aktuellerProjektIndex]];
                 overlayTitleImg.src = aktuellesProjekt.titelBild;
                 overlayTitleImg.alt = aktuellesProjekt.titel;
                 overlayDescription.innerHTML = aktuellesProjekt.beschreibung;
-                infoToggleButton.textContent = 'Close';
+                // GEÄNDERT: Kein Ändern des Textes mehr nötig
             } else {
-                infoToggleButton.textContent = 'Information';
                 if (customCursor) customCursor.style.opacity = '0';
             }
         }
