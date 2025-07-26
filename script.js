@@ -58,51 +58,51 @@ document.addEventListener('DOMContentLoaded', function() {
         const projektDaten = {
             'ashoka-dupe': {
                 titel: 'Ashoka Dupe',
-                titelBild: 'handwritten_titles/ashoka_dupe.png',
+                titelBild: 'handwritten_titles/Ashoka_Dupe.png',
                 beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. <em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em>',
-                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `projektbilder/ashoka_dupe/bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
             },
             'leiter': {
                 titel: 'Decorated Ladder',
-                titelBild: 'handwritten_titles/decorated_ladder.png',
+                titelBild: 'Handwritten_Titles/Decorated_Ladder.png',
                 beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?',
                 medien: [
-                    { type: 'video', src: 'projektvideos/leiter.mp4' },
-                    ...Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `projektbilder/leiter/bild (${i + 1}).jpg` }))
+                    { type: 'video', src: 'Projektvideos/leiter.mp4' },
+                    ...Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
                 ]
             },
             'faltkarre': {
                 titel: 'Folding Wheelbarrow',
-                titelBild: 'handwritten_titles/faltkarre.png',
+                titelBild: 'Handwritten_Titles/Faltkarre.png',
                 beschreibung: 'The wheelbarrow in private use can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.',
-                medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `projektbilder/faltkarre/bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
             },
             'tin-3d': {
                 titel: 'Tin 3D Printer',
-                titelBild: 'handwritten_titles/tin_3d_printer.png',
+                titelBild: 'Handwritten_Titles/Tin_3D_Printer.png',
                 beschreibung: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error.',
                 medien: [
-                    { type: 'video', src: 'projektvideos/tin-3d.mp4' },
-                    ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `projektbilder/tin_3d_printer/bild (${i + 1}).jpg` }))
+                    { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
+                    ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
                 ]
             },
             'movement': {
                 titel: 'Movement to Signal',
-                titelBild: 'handwritten_titles/movement_to_signal.png',
+                titelBild: 'Handwritten_Titles/Movement_to_Signal.png',
                 beschreibung: 'The “Movement to Signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. It invites you to consciously movements and to explore the variations and gradations of the visual effects.',
-                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `projektbilder/bewegung_zum_signal/bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung_zum_Signal/Bild (${i + 1}).jpg` }))
             },
             'new-tool': {
                 titel: 'SLIDE',
-                titelBild: 'handwritten_titles/slide.png',
+                titelBild: 'Handwritten_Titles/Slide.png',
                 beschreibung: 'SLIDE is a bag filling aid for people with motor and/or mental disabilities. Especially for people with one arm. The project was developed in cooperation with the Gottessegen workshops in Dortmund.',
-                medien: Array.from({ length: 9 }, (_, i) => ({ type: 'image', src: `projektbilder/new_tool/bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 9 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
             },
             'sketches': {
                 titel: 'Sketches',
-                titelBild: 'handwritten_titles/sketches.png',
+                titelBild: 'Handwritten_Titles/Sketches.png',
                 beschreibung: 'Some sketches I created over the years.',
-                medien: Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `projektbilder/sketches/bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Sketches/Bild (${i + 1}).jpg` }))
             }
         };
         
