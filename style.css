@@ -42,14 +42,16 @@ body {
 .ordner-tabs {
     position: relative;
     height: 30px;
+     left: 3rem;
 }
 .tab {
+   
     position: absolute;
-    top: 0;
+    top: 1.6rem;
     border: none;
     min-width: 350px;
-    height: 70px;
-    padding: 0.2rem 3rem 1.5rem 3rem;
+    height: 75px;
+    padding: 0.5rem 3rem 1.5rem 3rem;
     font-family: var(--font-script);
     font-size: 3.2rem;
     font-weight: 100;
@@ -73,6 +75,7 @@ body {
 .tab::before, .tab::after {
     content: '';
     position: absolute;
+  
     width: 35px;
     height: 45px;
     -webkit-mask-repeat: no-repeat;
@@ -81,29 +84,29 @@ body {
     background-color: rgb(225, 225, 225);
 }
 .tab::before {
-    top: calc(var(--tab-radius) - 10px);
+    top: calc(var(--tab-radius) - 4.2px);
     left: 100%;
     -webkit-mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
     mask-image: radial-gradient(circle 35px at top right, transparent 35px, black 35px);
 }
 .tab::after {
-    top: calc(var(--tab-radius) - 10px);
+    top: calc(var(--tab-radius) - 4.2px);
     right: 100%;
     -webkit-mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
     mask-image: radial-gradient(circle 35px at top left, transparent 35px, black 35px);
 }
 .active.tab::before, .active.tab::after { background-color: var(--Papier); }
 
-.tab[data-tab-target="startseite"] { left: 0; border-top-left-radius: 0; background-color: rgb(225, 225, 225); }
+.tab[data-tab-target="startseite"] { left: 0; background-color: rgb(225, 225, 225); }
 .tab[data-tab-target="projekte"] { left: 260px; background-color: rgb(225, 225, 225) }
 .tab[data-tab-target="about"] { left: 520px; background-color: rgb(225, 225, 225) }
-.tab[data-tab-target="startseite"]::after { display: none; }
+
 .tab:hover { transform: translateY(-8px); }
 .tab.tab.active { background-color: var(--Papier); }
 
 .ordner-inhalt-stapel {
     position: absolute;
-    top: 60px;
+    top: calc(2rem + 60px);
     left: 0;
     right: 0;
     bottom: 0;
@@ -336,7 +339,7 @@ body {
    ========================================================================== */
 @media (max-width: 992px) {
     .ordner-system { margin-top: -2.3rem; }
-    .tab { min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
+    .tab { top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
 	.tab:hover { transform: none; }
     .tab[data-tab-target="projekte"] { left: 21.6vw; }
     .tab[data-tab-target="about"] { left: 43.2vw; }
