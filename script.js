@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const projektDaten = {
             'ashoka-dupe': {
                 titel: 'Ashoka Dupe',
-                titelBild: 'handwritten_titles/Ashoka_Dupe.png',
+                titelBild: 'Handwritten_titles/Ashoka_Dupe.png',
                 beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. <em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em>',
-                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
             },
             'leiter': {
                 titel: 'Decorated Ladder',
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 titel: 'Movement to Signal',
                 titelBild: 'Handwritten_Titles/Movement_to_Signal.png',
                 beschreibung: 'The “Movement to Signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. It invites you to consciously movements and to explore the variations and gradations of the visual effects.',
-                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung_zum_Signal/Bild (${i + 1}).jpg` }))
+                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung zum Signal/Bild (${i + 1}).jpg` }))
             },
             'new-tool': {
                 titel: 'SLIDE',
