@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="rgb(215, 215, 215)">
     
-    <title>Leon Remmert | Portfolio</title>
+    <title>LEON REMMERT</title>
     
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=4">
     
     <link rel="icon" type="image/png" href="Favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -42,34 +42,43 @@
                             Ehrliche, bewusste Entscheidungen sind der Kern meines Designs. Objekte sollten keine falschen Versprechen machen, sondern durch Klarheit und mutige Reduktion überzeugen. Ich arbeite experimentell, lasse mich von Materialien und ihren Eigenschaften inspirieren und sehe im Skizzieren, Modellbauen und digitalen Entwerfen gleichwertige Werkzeuge, um Ideen zu präzisieren und Potenziale auszuloten.
                             Mein Ziel ist es, Produkte zu gestalten, die nicht nur ästhetisch und funktional sind, sondern auch durch ihre Logik und Offenheit begeistern.</p>
                         </div>
+                        
+                        <div class="marquee-container">
+                            <!-- Scharfer Hintergrund -->
+                            <div class="marquee-wrapper">
+                                <div class="marquee-content sharp">
+                                    <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt="">
+                                </div>
+                            </div>
+                            <!-- Unscharfer, maskierter Vordergrund -->
+                            <div class="marquee-wrapper blurry-wrapper">
+                                <div class="marquee-content blurry">
+                                    <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+
                     </main>
 
                     <main class="ordner-inhalt" data-content="projekte">
-                        <div class="projekte-container" id="projekte-container">
-                            <div class="projekt-slides-container" id="projekt-slides"></div>
-                            
-                            <div id="custom-cursor" class="custom-cursor"></div>
-
+                        <div id="projekte-container" class="projekte-container">
+                            <div id="projekt-slides" class="projekt-slides-container"></div>
                             <div class="top-bar"></div>
                             <div class="combined-overlay"></div>
-
-                            <nav class="projekt-navigation-links" id="projekt-nav"></nav>
-                            
-                            <div class="info-overlay" id="info-overlay">
+                            <div id="projekt-nav" class="projekt-navigation-links"></div>
+                            <div id="info-overlay" class="info-overlay">
                                 <div class="info-overlay-content">
-                                    <div class="info-overlay-title-container">
+                                    <div id="overlay-title-container" class="info-overlay-title-container">
                                         <img id="overlay-title-img" src="" alt="Projekttitel">
                                     </div>
                                     <p id="overlay-description"></p>
                                 </div>
                             </div>
-                    
-                            <!-- GEÄNDERT: Button enthält jetzt zwei spans -->
-                            <button class="info-toggle-button" id="info-toggle-button">
+                            <button id="info-toggle-button" class="info-toggle-button">
                                 <span class="text-information">Information</span>
                                 <span class="text-close">Close</span>
                             </button>
-
+                            <div id="custom-cursor" class="custom-cursor">></div>
                         </div>
                     </main>
 
@@ -83,12 +92,28 @@
                             <p>leonremmert1@gmail.com</p>
                             <p>@leonard0_tornado</p>
                         </div>
+
+                        <div class="marquee-container">
+                            <!-- Scharfer Hintergrund -->
+                            <div class="marquee-wrapper">
+                                <div class="marquee-content sharp">
+                                    <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt="">
+                                </div>
+                            </div>
+                            <!-- Unscharfer, maskierter Vordergrund -->
+                            <div class="marquee-wrapper blurry-wrapper">
+                                <div class="marquee-content blurry">
+                                    <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt=""> <img src="data/Logo.png" alt="">
+                                </div>
+                            </div>
+                        </div>
+                        
                     </main>
                 </div>     
             </div>
         </div>
     </div>
    
-    <script src="script.js"></script>
+    <script src="script.js?v=4"></script>
 </body>
 </html>

@@ -62,6 +62,7 @@ body {
     -webkit-text-stroke: 0.5px var(--Hintergrund);
     text-stroke: 0.5px var(--Hintergrund);
     box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2);
+   
 }
 
 .tab.active { box-shadow: 0 -18px 15px -10px rgba(0, 0, 0, 0.2); }
@@ -119,7 +120,8 @@ body {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.5s ease-in-out, visibility 0.5s;
-    overflow: auto;
+    overflow-x: hidden; /* Verhindert horizontales Scrollen durch die Marquee */
+    overflow-y: auto;
 }
 
 .ordner-inhalt.active {
@@ -138,18 +140,14 @@ body {
     line-height: 1.6;
     margin-top: 15rem;
     position: relative;
-    z-index: 2;
+    z-index: 2; /* Liegt über der Marquee */
+        background: transparent;
 }
+
 .logo {
-    position: absolute;
-    top: 50%;
-    left: -30%;
-    width: 320px;
-    opacity: 0.15;
-    transform: translate(-50%, -50%);
-    z-index: 1;
-    pointer-events: none;
+    display: none; /* Das alte, einzelne Logo wird nicht mehr benötigt */
 }
+
 .unterschrift-bg {
     position: fixed;
     top: -50px;
@@ -168,7 +166,7 @@ body {
 .ordner-inhalt[data-content="projekte"] {
     padding: 0;
     overflow: hidden;
-    border-top-right-radius: var(--inhalt-radius-gross);
+    border-top-right-radius: inherit;
 }
 
 .projekte-container {
@@ -340,7 +338,6 @@ body {
     .tab, .tab.active, .tab::before, .tab::after, .ordner-inhalt-stapel { box-shadow: 0 -2vw 1.5vw -1.2vw rgba(0, 0, 0, 0.2); }
     .ordner-inhalt-stapel.is-lifted { transform: none; }
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
-    .logo { width: 20vw; left: -20vw; }
     .text-block { margin-top: 10rem; padding: 0 1rem; }
     .unterschrift-bg { width: 50vw; top: -40px; }
     .projekte-container { cursor: auto; }
@@ -358,7 +355,7 @@ body {
     left: 50%;
     transform: translateX(-50%);
     z-index: 30;
-     opacity: 0.8;
+    opacity: 0.8;
     background-color: var(--Papier);
     color: var(--Hintergrund);
     font-family: 'Helvetica', monospace;
@@ -370,7 +367,7 @@ body {
     transition: background-color 0.3s ease, color 0.3s ease;
     white-space: nowrap;
     box-shadow: 0px 3px 9px #898989, 3px 0px 12px #898989, -3px 0px 12px #898989, 0px -3px 12px #898989;
-      display: grid;
+    display: grid;
     place-items: center;
 }
 
@@ -378,10 +375,8 @@ body {
     opacity: 1;
 }
 
-
-/* NEU: Styling für die beiden Text-Spans */
 .info-toggle-button span {
-    grid-area: 1 / 1; /* Legt beide Spans in die gleiche Zelle */
+    grid-area: 1 / 1;
     transition: opacity 0.3s ease-in-out;
 }
 
@@ -396,7 +391,6 @@ body {
 .projekte-container.info-overlay-active .info-toggle-button .text-close {
     opacity: 1;
 }
-
 
 .info-overlay {
     position: absolute;
@@ -465,5 +459,82 @@ body {
         bottom: 1rem;
         padding: 0.6rem 1.8rem;
         font-size: 0.9rem;
+    }
+}
+
+/* ==========================================================================
+   MARQUEE STYLING (FINAL UND KORREKT)
+   ========================================================================== */
+.marquee-container {
+    position: absolute;
+    bottom: 50%;
+    transform: translateY(50%); /* Korrekte vertikale Zentrierung */
+    left: 0;
+    width: 100%;
+    height: 550px; /* Höhe wird durch Bilder definiert, hier als Referenz */
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.marquee-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.marquee-content {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    /* Deine gewünschte Animationsdauer */
+    animation: scrolling 100s linear infinite; 
+}
+
+/* Bilder in beiden Marquees bekommen dieselbe Größe */
+.marquee-content img {
+    height: 150px; /* Deine gewünschte Höhe */
+    width: auto;
+    padding: 0 4rem;
+    flex-shrink: 0;
+}
+
+/* Der scharfe Hintergrund mit deiner gewünschten Opazität */
+.marquee-content.sharp img {
+    opacity: 0.1;
+}
+
+/* Der unscharfe Vordergrund hat volle Opazität, wird durch den Wrapper gesteuert */
+.marquee-content.blurry img {
+    opacity: 1;
+}
+
+/* Der stationäre Wrapper, der den Unschärfe- und Masken-Effekt anwendet */
+.blurry-wrapper {
+    /* Dein gewünschter Unschärfe-Wert */
+    filter: blur(5px); 
+    -webkit-mask-image: linear-gradient( to right, transparent 0%, black 55%, black 65%, transparent 100% );
+    mask-image: linear-gradient( to right, transparent 0%, black 55%, black 65%, transparent 100% );
+}
+
+
+@keyframes scrolling {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+@media (max-width: 992px) {
+    .marquee-container {
+        height: 550px;
+        bottom: 50%;
+       
+    }
+    .marquee-content img {
+        height: 50px;
+        padding: 0 2rem;
     }
 }
