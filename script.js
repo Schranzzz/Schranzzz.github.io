@@ -200,6 +200,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 projektSlidesContainer.appendChild(slide);
             });
 
+            // Wichtig: zeigeProjekt wird hier mit isInitial=true aufgerufen.
             zeigeProjekt(0, true);
             preloadInitialImages();
             infoToggleButton.addEventListener('click', toggleInfoOverlay);
@@ -223,32 +224,38 @@ document.addEventListener('DOMContentLoaded', function() {
             return mediaElement;
         }
 
+        // =========================================================================
+        // HIER IST DIE KORREKTUR
+        // =========================================================================
         function zeigeProjekt(index, isInitial = false) {
             if (isChangingProject || isInfoOverlayOpen || index < 0 || index >= projektKeys.length || (!isInitial && index === aktuellerProjektIndex)) {
                 return;
             }
             isChangingProject = true;
-
+        
             const alterSlide = document.querySelector('.projekt-slide.active');
             const key = projektKeys[index];
             const neuerSlide = document.querySelector(`.projekt-slide[data-key="${key}"]`);
-
+        
             document.querySelectorAll('.projekt-nav-dot').forEach(n => n.classList.remove('active'));
             document.querySelector(`.projekt-nav-dot[data-index="${index}"]`).classList.add('active');
             
-            const firstMediaElement = neuerSlide.querySelector('img, video, model-viewer');
-
+            // Finde das erste *echte* Medienelement, um dessen Ladezustand zu prüfen
+            const filmstrip = neuerSlide.querySelector('.media-filmstrip');
+            const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
+            const firstRealMediaElement = filmstrip.children[firstRealElementIndex];
+        
             const performCrossfade = () => {
                 neuerSlide.classList.add('active');
                 
-                const filmstrip = neuerSlide.querySelector('.media-filmstrip');
                 const medien = Array.from(filmstrip.children);
                 medien.forEach(el => el.classList.remove('media-active'));
-                medien[parseInt(neuerSlide.dataset.prependedClones, 10)].classList.add('media-active');
                 
-                positioniereFilmstreifen(neuerSlide, parseInt(neuerSlide.dataset.prependedClones, 10));
+                medien[firstRealElementIndex].classList.add('media-active');
+                
+                positioniereFilmstreifen(neuerSlide, firstRealElementIndex);
                 muteAllVideos();
-
+        
                 if (alterSlide) {
                     alterSlide.classList.remove('active');
                 }
@@ -256,17 +263,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 aktuellerProjektIndex = index;
                 setTimeout(() => { isChangingProject = false; }, 500);
             };
-
-            if (isInitial) {
-                performCrossfade();
-                return;
-            }
-            
-            if (!firstMediaElement || firstMediaElement.tagName !== 'IMG' || firstMediaElement.complete) {
+        
+            // KORRIGIERTE LOGIK:
+            // Der spezielle `if (isInitial)` Block wurde entfernt.
+            // Diese Logik wird jetzt IMMER ausgeführt, auch beim ersten Mal.
+            // Sie wartet, bis das Bild geladen ist, bevor sie es anzeigt und positioniert.
+            if (!firstRealMediaElement || firstRealMediaElement.tagName !== 'IMG' || firstRealMediaElement.complete) {
+                // Wenn es kein Bild ist oder das Bild bereits geladen ist, sofort ausführen.
                 performCrossfade();
             } else {
-                firstMediaElement.onload = performCrossfade;
-                firstMediaElement.onerror = performCrossfade;
+                // Wenn es ein Bild ist, das noch nicht geladen wurde, warte auf das 'onload' Event.
+                firstRealMediaElement.onload = performCrossfade;
+                firstRealMediaElement.onerror = performCrossfade; // Führe es auch bei einem Fehler aus, um nicht zu blockieren.
             }
         }
         
