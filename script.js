@@ -88,9 +88,9 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             'movement': {
                 titel: 'Movement to Signal',
-                titelBild: 'Handwritten_Titles/Movement_to_signal.png',
-                beschreibung: 'The “Movement to signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. It invites you to consciously movements and to explore the variations and gradations of the visual effects.',
-                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung zum signal/Bild (${i + 1}).jpg` }))
+                titelBild: 'Handwritten_Titles/Movement_to_Signal.png',
+                beschreibung: 'The “Movement to Signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. It invites you to consciously movements and to explore the variations and gradations of the visual effects.',
+                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung zum Signal/Bild (${i + 1}).jpg` }))
             },
             'new-tool': {
                 titel: 'SLIDE',
