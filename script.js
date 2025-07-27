@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // =======================================================
     const projektContainerWrapper = document.querySelector('.ordner-inhalt[data-content="projekte"]');
 
-    if (projektContainerWrapper) {
+    if (projektContainerWrapper) {S
         const projekteContainer = document.getElementById('projekte-container');
         const customCursor = document.getElementById('custom-cursor');
         const infoToggleButton = document.getElementById('info-toggle-button');
