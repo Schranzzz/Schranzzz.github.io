@@ -551,6 +551,7 @@ body.touch-device .custom-cursor {
     border-top-left-radius: var(--inhalt-radius-gross);
     border-top-right-radius: var(--inhalt-radius-gross);
     cursor: none;
+    transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
      transform: translateY(calc(100% - 1.6rem));
     box-shadow: 0px 3px 9px #898989, 3px 0px 9px #898989, -3px 0px 9px #898989, 0px -3px 9px #898989;
 }
