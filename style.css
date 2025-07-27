@@ -534,7 +534,6 @@ body.touch-device .custom-cursor {
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
     .text-block { margin-top: 10rem; padding: 0 1rem; }
     .unterschrift-bg { opacity: 0; }
-
     /* .custom-cursor { display: none !important; } */ /* REMOVED to enable touch-based detection */
     .projekt-navigation-links { left: 0.5rem; width: 30px; }
     .projekt-nav-dot { width: 10px; height: 10px; }
@@ -595,12 +594,20 @@ body.touch-device .custom-cursor {
         font-size: 0.9rem;
         text-align: center;
     }
+
+    .info-paper-active {
+        height: 49.7%;
+    }
+
+    .info-paper-active .info-toggle-button{
+        height: 49.7%;
+    }
     
     .projekte-container.info-overlay-active .info-toggle-button {
         bottom: 49.7%;
     }
     .projekte-container.info-overlay-active .info-paper {
-        height: 50%;
+        height: 49.7%;
     }
     .projekte-container.info-overlay-active .info-toggle-button::before,
 .projekte-container.info-overlay-active .info-toggle-button::after {

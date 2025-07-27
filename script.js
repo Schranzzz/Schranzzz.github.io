@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (tabsContainer) {
+        // --- FIX: Flag to check if projects tab has been viewed once ---
+        let hasProjectsBeenInitialized = false;
+
         function setActiveState(tabToActivate, isInitialLoad = false) {
             if (!tabToActivate || tabToActivate.classList.contains('active')) return;
             if (!isInitialLoad) {
@@ -28,6 +31,23 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetContent) {
                 targetContent.classList.add('active');
             }
+
+            // --- THE DEFINITIVE FIX ---
+            // This runs ONLY when the projects tab is made active for the very first time.
+            if (tabToActivate.dataset.tabTarget === 'projekte' && !hasProjectsBeenInitialized) {
+                hasProjectsBeenInitialized = true; // Never run this again
+                
+                // Use requestAnimationFrame to wait for the browser to be ready to paint.
+                // This is the most reliable way to ensure layout dimensions are available.
+                requestAnimationFrame(() => {
+                    const aktiverSlide = document.querySelector('.projekt-slide.active');
+                    if (aktiverSlide) {
+                        const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
+                        positioniereFilmstreifen(aktiverSlide, currentIndex);
+                    }
+                });
+            }
+            // --- END OF FIX ---
 
             const contentZIndex = 5;
             tabToActivate.style.zIndex = contentZIndex + 1;
@@ -206,30 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (infoPaper) {
                 infoPaper.addEventListener('click', toggleInfoOverlay);
             }
-
-            const firstSlide = document.querySelector('.projekt-slide');
-            if (firstSlide) {
-                const firstRealImageIndex = parseInt(firstSlide.dataset.prependedClones, 10);
-                const filmstrip = firstSlide.querySelector('.media-filmstrip');
-                if (filmstrip && filmstrip.children[firstRealImageIndex]) {
-                    filmstrip.children[firstRealImageIndex].classList.add('media-active');
-                }
-            }
-
-            const observer = new IntersectionObserver((entries, obs) => {
-                for (const entry of entries) {
-                    if (entry.isIntersecting) {
-                        const aktiverSlide = document.querySelector('.projekt-slide.active');
-                        if (aktiverSlide) {
-                            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-                            positioniereFilmstreifen(aktiverSlide, currentIndex);
-                        }
-                        obs.disconnect();
-                    }
-                }
-            }, { threshold: 0.05 }); 
-
-            observer.observe(projektContainerWrapper);
         }
         
         function createMediaElement(mediaData) {
@@ -266,15 +262,24 @@ document.addEventListener('DOMContentLoaded', function() {
             const filmstrip = neuerSlide.querySelector('.media-filmstrip');
             const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
             
+            // On initial load, just set the state. Positioning is handled by the click logic.
             if (isInitial) {
                 if(alterSlide) alterSlide.classList.remove('active');
                 neuerSlide.classList.add('active');
                 neuerSlide.dataset.currentIndex = firstRealElementIndex;
+                
+                // Pre-activate the first image to make it sharp from the start
+                const firstImage = filmstrip.children[firstRealElementIndex];
+                if (firstImage) {
+                    firstImage.classList.add('media-active');
+                }
+                
                 aktuellerProjektIndex = index;
                 isChangingProject = false;
                 return;
             }
 
+            // For all subsequent clicks, perform the full crossfade
             const performCrossfade = () => {
                 if (alterSlide) {
                     alterSlide.classList.remove('active');
@@ -302,7 +307,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        // --- FUNCTION WITH THE ROBUST TIMING FIX ---
         function positioniereFilmstreifen(slide, newIndex) {
             const filmstrip = slide.querySelector('.media-filmstrip');
             if (!slide || !filmstrip) return;
@@ -310,15 +314,16 @@ document.addEventListener('DOMContentLoaded', function() {
             slide.dataset.currentIndex = newIndex;
             const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
-            
-            // If the browser hasn't calculated the layout yet, the width will be 0.
-            // In that case, we wait a moment and try again.
-            if (slide.offsetWidth === 0) {
-                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50);
-                 return;
-            }
 
             const containerWidth = slide.offsetWidth;
+
+            // This should not happen with requestAnimationFrame, but as a fallback:
+            if (containerWidth === 0) {
+                 console.warn("Positioning failed, retrying...");
+                 requestAnimationFrame(() => positioniereFilmstreifen(slide, newIndex));
+                 return;
+            }
+            
             const mediumWidth = targetMedium.offsetWidth;
             const mediumOffsetLeft = targetMedium.offsetLeft;
             const translateX = (containerWidth / 2) - (mediumWidth / 2) - mediumOffsetLeft;
