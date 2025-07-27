@@ -522,7 +522,7 @@ body.touch-device .custom-cursor {
     .ordner-system { margin-top: -2.3rem; }
     .tab { top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); filter: none; }
 	.tab:hover { transform: none; }
-    
+  
     .tab[data-tab-target="projekte"] { left: 21.6vw; }
     .tab[data-tab-target="about"] { left: 43.2vw; }
     .tab::before, .tab::after { width: 2.9vw; height: 3.75vw; top: 4.12vw; }
@@ -533,8 +533,8 @@ body.touch-device .custom-cursor {
     .ordner-inhalt-stapel.is-lifted { transform: none; }
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
     .text-block { margin-top: 10rem; padding: 0 1rem; }
-    .unterschrift-bg { width: 50vw; top: -40px; }
-    
+    .unterschrift-bg { opacity: 0; }
+
     /* .custom-cursor { display: none !important; } */ /* REMOVED to enable touch-based detection */
     .projekt-navigation-links { left: 0.5rem; width: 30px; }
     .projekt-nav-dot { width: 10px; height: 10px; }
