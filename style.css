@@ -150,10 +150,12 @@ body {
     z-index: 2;
         background: transparent;
         font-family: "Rounded", monospace;
+        font-style: thin;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     filter: blur(0.4px);
+    font-size: 0.8rem;
 }
 
 .logo {
@@ -187,6 +189,10 @@ body {
     height: 100%;
     background-color: #333;
     border-top-right-radius: inherit;
+    
+}
+
+.ordner-inhalt[data-content="projekte"].active .projekte-container {
     cursor: none;
 }
 
@@ -200,6 +206,11 @@ body {
     width: 100%; height: 100%;
     z-index: 1;
 }
+
+.projekt-slides-container.loaded {
+    opacity: 1;
+}
+
 .projekt-slide {
     position: absolute;
     top: 0; left: 0;
@@ -256,6 +267,11 @@ body {
     transition: opacity 0.3s ease;
     transform: translate(-50%, -50%);
     text-shadow: #333 0px 0px 2px, #333 0px 0px 4px, #333 0px 0px 6px;
+}
+
+/* Hide custom cursor on touch devices */
+body.touch-device .custom-cursor {
+    display: none !important;
 }
 
 .top-bar {
@@ -362,15 +378,15 @@ body {
     border-top-left-radius: var(--tab-radius);
     border-top-right-radius: var(--tab-radius);
     transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-    box-shadow: 0px -3px 9px  #898989;
+    box-shadow: 0 -11px 15px -3px #898989;
 }
 
 .info-toggle-button::before, .info-toggle-button::after {
     content: '';
     position: absolute;
     width: var(--tab-radius);
-    height: 20px; /* PUFFER: Grösser als nötig */
-    bottom: -10px; /* PUFFER: Schiebt die Ecke nach unten für Überlappung */
+    height: 30px; /* PUFFER: Grösser als nötig */
+    bottom: -0.01rem; /* PUFFER: Schiebt die Ecke nach unten für Überlappung */
     background-color: var(--Papier);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
@@ -378,14 +394,14 @@ body {
 }
 
 .info-toggle-button::before {
-    left: 100%;
+    left: 98%;
     /* KORREKTUR: Maske ist jetzt oben rund, wie ein Tab */
     -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
     mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
 }
 
 .info-toggle-button::after {
-    right: 100%;
+    right: 98%;
     /* KORREKTUR: Maske ist jetzt oben rund, wie ein Tab */
     -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
     mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
@@ -396,7 +412,7 @@ body {
     bottom: 0rem;
     left: 0;
     width: 100%;
-    height: 2rem; /* DEZENTER */
+    height: 1.6rem; /* DEZENTER */
     background-color: var(--Papier);
     z-index: 20;
     transition: height 0.5s cubic-bezier(0.65, 0, 0.35, 1);
@@ -480,19 +496,19 @@ body {
 }
 
 .projekte-container.info-overlay-active .info-toggle-button {
-    bottom: 50%;
+    bottom: 49.7%;
     margin-bottom: 0;
 }
 
 .projekte-container.info-overlay-active .info-toggle-button::before,
 .projekte-container.info-overlay-active .info-toggle-button::after {
-    opacity: 0;
+    opacity: 1;
 }
 
 
 .projekte-container.info-overlay-active .info-overlay {
     transform: translateY(0);
-    pointer-events: auto;
+    
 }
 
 
@@ -514,8 +530,8 @@ body {
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
     .text-block { margin-top: 10rem; padding: 0 1rem; }
     .unterschrift-bg { width: 50vw; top: -40px; }
-    .projekte-container { cursor: auto; }
-    .custom-cursor { display: none !important; }
+    
+    /* .custom-cursor { display: none !important; } */ /* REMOVED to enable touch-based detection */
     .projekt-navigation-links { left: 0.5rem; width: 30px; }
     .projekt-nav-dot { width: 10px; height: 10px; }
     
@@ -526,28 +542,35 @@ body {
     }
     
     .info-toggle-button {
-        bottom: 1rem;
+        bottom: 0.9rem;
         height: 40px;
         padding: 0.6rem 1.8rem;
         font-size: 0.9rem;
-        border-top-left-radius: 4vw;
-        border-top-right-radius: 4vw;
-        box-shadow: 0px -3px 6px #898989;
+        border-top-left-radius: 5.5vw;
+        border-top-right-radius: 5.5vw;
+       box-shadow: 0 -12px 15px -3px #898989;
+    
     }
 
+    .info-toggle-button.info-overlay-active{
+   
+    bottom: 0.8rem;
+}
+
+
     .info-toggle-button::before, .info-toggle-button::after {
-        width: 4vw;
-        height: 15px;
-        bottom: -8px;
-        box-shadow: 0px -3px 6px #898989;
+        width: 5.3vw;
+        height: 5.3vw;
+        bottom: 0;
+        box-shadow: 0 -15px 15px -3px #898989;
     }
     .info-toggle-button::before {
-        -webkit-mask-image: radial-gradient(circle 4vw at top right, transparent 4vw, black calc(4vw + 1px));
-        mask-image: radial-gradient(circle 4vw at top right, transparent 4vw, black calc(4vw + 1px));
+        -webkit-mask-image: radial-gradient(circle 5.5vw at top right, transparent 5.5vw, black 5.5vw);
+        mask-image: radial-gradient(circle 5.5vw at top right, transparent 5.5vw, black 5.5vw);
     }
     .info-toggle-button::after {
-        -webkit-mask-image: radial-gradient(circle 4vw at top left, transparent 4vw, black calc(4vw + 1px));
-        mask-image: radial-gradient(circle 4vw at top left, transparent 4vw, black calc(4vw + 1px));
+        -webkit-mask-image: radial-gradient(circle 5.5vw at top left, transparent 5.5vw, black 5.5vw);
+        mask-image: radial-gradient(circle 5.5vw at top left, transparent 5.5vw, black 5.5vw);
     }
 
     .info-overlay-content {
@@ -563,11 +586,16 @@ body {
     }
     
     .projekte-container.info-overlay-active .info-toggle-button {
-        bottom: 50%;
+        bottom: 49.7%;
     }
     .projekte-container.info-overlay-active .info-paper {
         height: 50%;
     }
+    .projekte-container.info-overlay-active .info-toggle-button::before,
+.projekte-container.info-overlay-active .info-toggle-button::after {
+    bottom: 0;
+    opacity: 1;
+}
 }
 
 

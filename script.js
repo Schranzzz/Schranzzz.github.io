@@ -8,6 +8,10 @@ document.addEventListener('DOMContentLoaded', function() {
     var contentPages = document.querySelectorAll('.ordner-inhalt');
     var ordnerInhaltStapel = document.querySelector('.ordner-inhalt-stapel');
     
+    if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
+        document.body.classList.add('touch-device');
+    }
+    
     if (tabsContainer) {
         function setActiveState(tabToActivate, isInitialLoad = false) {
             if (!tabToActivate || tabToActivate.classList.contains('active')) return;
@@ -132,7 +136,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (customCursor) customCursor.style.opacity = '0';
             }
         }
-
+        
+        // REMOVED: This function is no longer needed due to <link rel="preload">
+        /*
         function preloadInitialImages() {
             Object.values(projektDaten).forEach(projekt => {
                 const firstMedium = projekt.medien[0];
@@ -141,6 +147,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+        */
 
         function initProjekte() {
             if (!projekteContainer || !projektNav || !projektSlidesContainer || !infoToggleButton) {
@@ -202,7 +209,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             zeigeProjekt(0, true);
-            preloadInitialImages();
+            // preloadInitialImages(); // REMOVED
             infoToggleButton.addEventListener('click', toggleInfoOverlay);
             if (infoPaper) {
                 infoPaper.addEventListener('click', toggleInfoOverlay);
@@ -259,6 +266,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     alterSlide.classList.remove('active');
                 }
                 
+                // ADDED: Fade in the container only on the very first load
+                if (isInitial) {
+                    projektSlidesContainer.classList.add('loaded');
+                }
+                
                 aktuellerProjektIndex = index;
                 setTimeout(() => { isChangingProject = false; }, 500);
             };
@@ -279,7 +291,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
             
-            if (targetMedium.offsetWidth === 0 && targetMedium.tagName === "IMG") {
+            if (targetMedium.offsetWidth === 0 && (targetMedium.tagName === "IMG" || targetMedium.tagName === "VIDEO")) {
                  setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50);
                  return;
             }
@@ -378,7 +390,7 @@ document.addEventListener('DOMContentLoaded', function() {
             customCursor.style.opacity = '1';
             customCursor.style.left = `${event.clientX}px`;
             customCursor.style.top = `${event.clientY}px`;
-            if (isNavigating) return;
+            
             const rect = projekteContainer.getBoundingClientRect();
             const midpoint = rect.left + rect.width / 2;
             if (event.clientX < midpoint) {
