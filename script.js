@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const projektDaten = {
             'ashoka-dupe': {
                 titel: 'Ashoka Dupe',
-                titelBild: 'Handwritten_titles/Ashoka_Dupe.png',
+                titelBild: 'Handwritten_Titles/Ashoka_Dupe.png',
                 beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. <em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em>',
                 medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
             },
@@ -116,7 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const projektKeys = Object.keys(projektDaten);
         
-        // Preload the very first image to ensure it's available.
         new Image().src = 'Projektbilder/Ashoka_Dupe/Bild (1).jpg';
 
         function muteAllVideos() {
@@ -202,13 +201,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 projektSlidesContainer.appendChild(slide);
             });
 
-            zeigeProjekt(0, true); // Prepare the first project
+            zeigeProjekt(0, true);
             infoToggleButton.addEventListener('click', toggleInfoOverlay);
             if (infoPaper) {
                 infoPaper.addEventListener('click', toggleInfoOverlay);
             }
 
-            // --- THE ROBUST FIX using IntersectionObserver ---
+            // --- THE FINAL, SIMPLE FIX ---
+            const firstSlide = document.querySelector('.projekt-slide');
+            if (firstSlide) {
+                const firstRealImageIndex = parseInt(firstSlide.dataset.prependedClones, 10);
+                const filmstrip = firstSlide.querySelector('.media-filmstrip');
+                if (filmstrip && filmstrip.children[firstRealImageIndex]) {
+                    // This ensures the very first image is sharp from the beginning.
+                    filmstrip.children[firstRealImageIndex].classList.add('media-active');
+                }
+            }
+            // --- END OF FIX ---
+
             const observer = new IntersectionObserver((entries, obs) => {
                 for (const entry of entries) {
                     if (entry.isIntersecting) {
@@ -216,19 +226,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (aktiverSlide) {
                             const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
                             positioniereFilmstreifen(aktiverSlide, currentIndex);
-                            
-                            const filmstrip = aktiverSlide.querySelector('.media-filmstrip');
-                            if (filmstrip && filmstrip.children[currentIndex]) {
-                               filmstrip.children[currentIndex].classList.add('media-active');
-                            }
                         }
-                        // We only need this once, so we disconnect the observer.
                         obs.disconnect();
                     }
                 }
-            }, { threshold: 0.1 }); // Fire when 10% of the container is visible
+            }, { threshold: 0.05 }); 
 
-            // Start observing the projects tab container.
             observer.observe(projektContainerWrapper);
         }
         
@@ -267,8 +270,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
             
             if (isInitial) {
-                // On initial load, just set the active classes and index.
-                // The IntersectionObserver will handle the positioning.
                 if(alterSlide) alterSlide.classList.remove('active');
                 neuerSlide.classList.add('active');
                 neuerSlide.dataset.currentIndex = firstRealElementIndex;
@@ -312,9 +313,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
             
-            // Check if the container is actually rendered with a width
             if (slide.offsetWidth === 0) {
-                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50); // Try again shortly
+                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50);
                  return;
             }
 
