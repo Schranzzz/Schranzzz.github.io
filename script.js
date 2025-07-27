@@ -8,15 +8,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var contentPages = document.querySelectorAll('.ordner-inhalt');
     var ordnerInhaltStapel = document.querySelector('.ordner-inhalt-stapel');
     
-    // ADDED: Touch device detection
     if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
         document.body.classList.add('touch-device');
     }
     
     if (tabsContainer) {
-        // MOVED: The initialization flag needs to be accessible by setActiveState
-        let isProjekteTabInitialized = false;
-
         function setActiveState(tabToActivate, isInitialLoad = false) {
             if (!tabToActivate || tabToActivate.classList.contains('active')) return;
             if (!isInitialLoad) {
@@ -32,27 +28,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (targetContent) {
                 targetContent.classList.add('active');
             }
-
-            // --- START OF THE FIX ---
-            // This logic runs ONLY when the projects tab is clicked for the first time.
-            if (tabToActivate.dataset.tabTarget === 'projekte' && !isProjekteTabInitialized) {
-                const aktiverSlide = document.querySelector('.projekt-slide.active');
-                if (aktiverSlide) {
-                    const filmstrip = aktiverSlide.querySelector('.media-filmstrip');
-                    const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-                    
-                    // Use a minimal timeout to ensure the browser has calculated the layout
-                    setTimeout(() => {
-                        positioniereFilmstreifen(aktiverSlide, currentIndex);
-                        // Also, ensure the first image is sharp immediately
-                        if (filmstrip && filmstrip.children[currentIndex]) {
-                           filmstrip.children[currentIndex].classList.add('media-active');
-                        }
-                    }, 10); 
-                }
-                isProjekteTabInitialized = true; // Mark as initialized so this never runs again
-            }
-            // --- END OF THE FIX ---
 
             const contentZIndex = 5;
             tabToActivate.style.zIndex = contentZIndex + 1;
@@ -141,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         const projektKeys = Object.keys(projektDaten);
         
-        // ADDED: Preload the most important image to prevent it from missing on first view.
+        // Preload the very first image to ensure it's available.
         new Image().src = 'Projektbilder/Ashoka_Dupe/Bild (1).jpg';
 
         function muteAllVideos() {
@@ -227,11 +202,34 @@ document.addEventListener('DOMContentLoaded', function() {
                 projektSlidesContainer.appendChild(slide);
             });
 
-            zeigeProjekt(0, true);
+            zeigeProjekt(0, true); // Prepare the first project
             infoToggleButton.addEventListener('click', toggleInfoOverlay);
             if (infoPaper) {
                 infoPaper.addEventListener('click', toggleInfoOverlay);
             }
+
+            // --- THE ROBUST FIX using IntersectionObserver ---
+            const observer = new IntersectionObserver((entries, obs) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        const aktiverSlide = document.querySelector('.projekt-slide.active');
+                        if (aktiverSlide) {
+                            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
+                            positioniereFilmstreifen(aktiverSlide, currentIndex);
+                            
+                            const filmstrip = aktiverSlide.querySelector('.media-filmstrip');
+                            if (filmstrip && filmstrip.children[currentIndex]) {
+                               filmstrip.children[currentIndex].classList.add('media-active');
+                            }
+                        }
+                        // We only need this once, so we disconnect the observer.
+                        obs.disconnect();
+                    }
+                }
+            }, { threshold: 0.1 }); // Fire when 10% of the container is visible
+
+            // Start observing the projects tab container.
+            observer.observe(projektContainerWrapper);
         }
         
         function createMediaElement(mediaData) {
@@ -269,10 +267,12 @@ document.addEventListener('DOMContentLoaded', function() {
             const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
             
             if (isInitial) {
-                // On initial page load, just prepare the state without positioning.
-                // The actual positioning will be triggered by the fix in setActiveState.
+                // On initial load, just set the active classes and index.
+                // The IntersectionObserver will handle the positioning.
+                if(alterSlide) alterSlide.classList.remove('active');
                 neuerSlide.classList.add('active');
                 neuerSlide.dataset.currentIndex = firstRealElementIndex;
+                aktuellerProjektIndex = index;
                 isChangingProject = false;
                 return;
             }
@@ -306,14 +306,15 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function positioniereFilmstreifen(slide, newIndex) {
             const filmstrip = slide.querySelector('.media-filmstrip');
-            if (!filmstrip) return;
+            if (!slide || !filmstrip) return;
             
             slide.dataset.currentIndex = newIndex;
             const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
             
-            if (targetMedium.offsetWidth === 0 && targetMedium.tagName === "IMG") {
-                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50);
+            // Check if the container is actually rendered with a width
+            if (slide.offsetWidth === 0) {
+                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50); // Try again shortly
                  return;
             }
 
@@ -435,7 +436,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         window.addEventListener('resize', () => {
             const aktiverSlide = document.querySelector('.projekt-slide.active');
-            if(aktiverSlide) {
+            if(aktiverSlide && projektContainerWrapper.classList.contains('active')) {
                 const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
                 positioniereFilmstreifen(aktiverSlide, currentIndex);
             }
