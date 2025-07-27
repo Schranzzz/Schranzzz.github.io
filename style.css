@@ -207,10 +207,6 @@ body {
     z-index: 1;
 }
 
-.projekt-slides-container.loaded {
-    opacity: 1;
-}
-
 .projekt-slide {
     position: absolute;
     top: 0; left: 0;
@@ -269,7 +265,6 @@ body {
     text-shadow: #333 0px 0px 2px, #333 0px 0px 4px, #333 0px 0px 6px;
 }
 
-/* Hide custom cursor on touch devices */
 body.touch-device .custom-cursor {
     display: none !important;
 }
@@ -352,12 +347,12 @@ body.touch-device .custom-cursor {
 }
 
 /* ==========================================================================
-   INFO-OVERLAY STYLING
+   INFO-OVERLAY STYLING (FINAL CLEANED UP VERSION)
    ========================================================================== */
 .info-toggle-button {
     position: absolute;
-    height: 45px; /* DEZENTER */
-    bottom: 1.5rem; /* DEZENTER */
+    height: 45px;
+    bottom: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
     z-index: 30;
@@ -377,7 +372,7 @@ body.touch-device .custom-cursor {
     place-items: center;
     border-top-left-radius: var(--tab-radius);
     border-top-right-radius: var(--tab-radius);
-    transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+   transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
     box-shadow: 0 -11px 15px -3px #898989;
 }
 
@@ -385,41 +380,55 @@ body.touch-device .custom-cursor {
     content: '';
     position: absolute;
     width: var(--tab-radius);
-    height: 30px; /* PUFFER: Grösser als nötig */
-    bottom: -0.01rem; /* PUFFER: Schiebt die Ecke nach unten für Überlappung */
+    height: 30px;
+    bottom: -0.01rem;
     background-color: var(--Papier);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     box-shadow: 0px -3px 9px #898989;
+    transition: opacity 0.3s ease;
 }
 
 .info-toggle-button::before {
     left: 98%;
-    /* KORREKTUR: Maske ist jetzt oben rund, wie ein Tab */
     -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
     mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
 }
 
 .info-toggle-button::after {
     right: 98%;
-    /* KORREKTUR: Maske ist jetzt oben rund, wie ein Tab */
     -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
     mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
 }
 
-.info-paper {
+.info-paper,
+.info-overlay {
     position: absolute;
-    bottom: 0rem;
+    bottom: 0;
     left: 0;
     width: 100%;
-    height: 1.6rem; /* DEZENTER */
+    height: 50%;
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    transform: translateY(calc(100% - 1.6rem)); 
+    cursor: pointer;
+}
+
+.info-paper {
     background-color: var(--Papier);
     z-index: 20;
-    transition: height 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    cursor: pointer;
     border-top-left-radius: var(--inhalt-radius-gross);
     border-top-right-radius: var(--inhalt-radius-gross);
-    cursor: pointer;
     box-shadow: 0px 3px 9px #898989, 3px 0px 9px #898989, -3px 0px 9px #898989, 0px -3px 9px #898989;
+}
+
+.info-overlay {
+    z-index: 25;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    pointer-events: none;
 }
 
 .info-toggle-button:hover {
@@ -428,11 +437,20 @@ body.touch-device .custom-cursor {
 
 .info-toggle-button span {
     grid-area: 1 / 1;
-    transition: opacity 0.3s ease-in-out;
+    
 }
 
 .info-toggle-button .text-close {
     opacity: 0;
+}
+
+.projekte-container.info-overlay-active .info-paper,
+.projekte-container.info-overlay-active .info-overlay {
+    transform: translateY(0);
+}
+
+.projekte-container.info-overlay-active .info-toggle-button {
+    bottom: 50%;
 }
 
 .projekte-container.info-overlay-active .info-toggle-button .text-information {
@@ -443,20 +461,13 @@ body.touch-device .custom-cursor {
     opacity: 1;
 }
 
-.info-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 50%;
-    z-index: 25;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-    pointer-events: none;
-    transform: translateY(100%);
-    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+.projekte-container.info-overlay-active .info-toggle-button::before,
+.projekte-container.info-overlay-active .info-toggle-button::after {
+    opacity: 1;
+}
+
+.projekte-container.info-overlay-active .info-overlay {
+    pointer-events: auto;
 }
 
 .info-overlay-content {
@@ -491,36 +502,20 @@ body.touch-device .custom-cursor {
     line-height: 1.6;
 }
 
-.projekte-container.info-overlay-active .info-paper {
-    height: 50%;
-}
-
-.projekte-container.info-overlay-active .info-toggle-button {
-    bottom: 49.7%;
-    margin-bottom: 0;
-}
-
-.projekte-container.info-overlay-active .info-toggle-button::before,
-.projekte-container.info-overlay-active .info-toggle-button::after {
-    opacity: 1;
-}
-
-
-.projekte-container.info-overlay-active .info-overlay {
-    transform: translateY(0);
-    
-}
-
-
 /* ==========================================================================
    MOBILE ANPASSUNGEN
    ========================================================================== */
 @media (max-width: 992px) {
+    .ordner-inhalt[data-content="startseite"].active,
+    .ordner-inhalt[data-content="about"].active {
+        overflow: hidden;
+    }
+
     .tab, .info-toggle-button, .info-overlay-content, .text-block {
         filter: none;
     }
     .ordner-system { margin-top: -2.3rem; }
-    .tab { top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); filter: none; }
+    .tab { -webkit-tap-highlight-color: transparent; top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
 	.tab:hover { transform: none; }
   
     .tab[data-tab-target="projekte"] { left: 21.6vw; }
@@ -534,17 +529,14 @@ body.touch-device .custom-cursor {
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
     .text-block { margin-top: 10rem; padding: 0 1rem; }
     .unterschrift-bg { opacity: 0; }
-    /* .custom-cursor { display: none !important; } */ /* REMOVED to enable touch-based detection */
     .projekt-navigation-links { left: 0.5rem; width: 30px; }
-    .projekt-nav-dot { width: 10px; height: 10px; }
+    .projekt-nav-dot { width: 10px; height: 10px; -webkit-tap-highlight-color: transparent;}
     
-     .info-paper, .info-overlay {
-        transform: translateY(calc(100% - 1rem)); /* Nur 1rem sichtbar */
+    .info-paper, .info-overlay {
+        transform: translateY(calc(100% - 1rem)); /* Startposition für Mobile anpassen */
     }
-    
 
     .info-paper {
-        height: 1rem;
         border-top-left-radius: 6.6vw;
         border-top-right-radius: 6.6vw;
     }
@@ -556,17 +548,9 @@ body.touch-device .custom-cursor {
         font-size: 0.6rem;
         border-top-left-radius: 5.5vw;
         border-top-right-radius: 5.5vw;
-       box-shadow: 0 -12px 15px -3px #898989;
-       filter: none;
-       
-    
+        box-shadow: 0 -12px 15px -3px #898989;
+        -webkit-tap-highlight-color: transparent;
     }
-
-    .info-toggle-button.info-overlay-active{
-   
-    bottom: 0.8rem;
-}
-
 
     .info-toggle-button::before, .info-toggle-button::after {
         width: 5.3vw;
@@ -594,26 +578,11 @@ body.touch-device .custom-cursor {
         font-size: 0.9rem;
         text-align: center;
     }
-
-    .info-paper-active {
-        height: 49.7%;
-    }
-
-    .info-paper-active .info-toggle-button{
-        height: 49.7%;
-    }
     
-    .projekte-container.info-overlay-active .info-toggle-button {
-        bottom: 49.7%;
-    }
-    .projekte-container.info-overlay-active .info-paper {
-        height: 49.7%;
-    }
     .projekte-container.info-overlay-active .info-toggle-button::before,
-.projekte-container.info-overlay-active .info-toggle-button::after {
-    bottom: 0;
-    opacity: 1;
-}
+    .projekte-container.info-overlay-active .info-toggle-button::after {
+        opacity: 1;
+    }
 }
 
 
