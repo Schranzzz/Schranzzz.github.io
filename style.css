@@ -550,6 +550,7 @@ body.touch-device .custom-cursor {
         border-top-left-radius: 5.5vw;
         border-top-right-radius: 5.5vw;
        box-shadow: 0 -12px 15px -3px #898989;
+       filter: none;
     
     }
 
