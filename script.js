@@ -207,17 +207,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 infoPaper.addEventListener('click', toggleInfoOverlay);
             }
 
-            // --- THE FINAL, SIMPLE FIX ---
             const firstSlide = document.querySelector('.projekt-slide');
             if (firstSlide) {
                 const firstRealImageIndex = parseInt(firstSlide.dataset.prependedClones, 10);
                 const filmstrip = firstSlide.querySelector('.media-filmstrip');
                 if (filmstrip && filmstrip.children[firstRealImageIndex]) {
-                    // This ensures the very first image is sharp from the beginning.
                     filmstrip.children[firstRealImageIndex].classList.add('media-active');
                 }
             }
-            // --- END OF FIX ---
 
             const observer = new IntersectionObserver((entries, obs) => {
                 for (const entry of entries) {
@@ -305,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
+        // --- FUNCTION WITH THE ROBUST TIMING FIX ---
         function positioniereFilmstreifen(slide, newIndex) {
             const filmstrip = slide.querySelector('.media-filmstrip');
             if (!slide || !filmstrip) return;
@@ -313,6 +311,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
             
+            // If the browser hasn't calculated the layout yet, the width will be 0.
+            // In that case, we wait a moment and try again.
             if (slide.offsetWidth === 0) {
                  setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50);
                  return;
