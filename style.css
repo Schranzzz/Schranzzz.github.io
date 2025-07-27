@@ -566,6 +566,7 @@ body.touch-device .custom-cursor {
         border-top-right-radius: 5.5vw;
         box-shadow: 0 -12px 15px -3px #898989;
         -webkit-tap-highlight-color: transparent;
+        transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .info-toggle-button::before, .info-toggle-button::after {
@@ -573,6 +574,7 @@ body.touch-device .custom-cursor {
         height: 4.3vw;
         bottom: 0;
         box-shadow: 0 -15px 15px -3px #898989;
+        transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
     }
     .info-toggle-button::before {
         -webkit-mask-image: radial-gradient(circle 5.5vw at top right, transparent 5.5vw, black 5.5vw);
