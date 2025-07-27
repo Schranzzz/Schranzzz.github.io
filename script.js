@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // =======================================================
     const projektContainerWrapper = document.querySelector('.ordner-inhalt[data-content="projekte"]');
 
-    if (projektContainerWrapper) {S
+    if (projektContainerWrapper) {
         const projekteContainer = document.getElementById('projekte-container');
         const customCursor = document.getElementById('custom-cursor');
         const infoToggleButton = document.getElementById('info-toggle-button');
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             'faltkarre': {
                 titel: 'Folding Wheelbarrow',
-                titelBild: 'Handwritten_Titles/faltkarre.png',
+                titelBild: 'Handwritten_Titles/Faltkarre.png',
                 beschreibung: 'The wheelbarrow in private use can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.',
                 medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
             },
