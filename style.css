@@ -100,6 +100,7 @@ body {
 .tab[data-tab-target="startseite"] { left: 0; background-color: rgb(225, 225, 225); }
 .tab[data-tab-target="projekte"] { left: 260px; background-color: rgb(225, 225, 225) }
 .tab[data-tab-target="about"] { left: 520px; background-color: rgb(225, 225, 225) }
+.tab[data-tab-target="info-toggle-button"] { left: 0px; background-color: rgb(225, 225, 225) }
 
 .tab:hover { transform: translateY(-8px); }
 .tab.tab.active { background-color: var(--Papier); }
@@ -126,7 +127,7 @@ body {
     opacity: 0;
     visibility: hidden;
     
-    overflow-x: hidden; /* Verhindert horizontales Scrollen durch die Marquee */
+    overflow-x: hidden;
     overflow-y: auto;
 }
 
@@ -146,7 +147,7 @@ body {
     line-height: 1.6;
     margin-top: 15rem;
     position: relative;
-    z-index: 2; /* Liegt über der Marquee */
+    z-index: 2;
         background: transparent;
         font-family: "Rounded", monospace;
     font-style: normal;
@@ -156,7 +157,7 @@ body {
 }
 
 .logo {
-    display: none; /* Das alte, einzelne Logo wird nicht mehr benötigt */
+    display: none;
 }
 
 .unterschrift-bg {
@@ -335,56 +336,74 @@ body {
 }
 
 /* ==========================================================================
-   MOBILE ANPASSUNGEN
-   ========================================================================== */
-@media (max-width: 992px) {
-    .ordner-system { margin-top: -2.3rem; }
-    .tab { top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
-	.tab:hover { transform: none; }
-    .tab[data-tab-target="projekte"] { left: 21.6vw; }
-    .tab[data-tab-target="about"] { left: 43.2vw; }
-    .tab::before, .tab::after { width: 2.9vw; height: 3.75vw; top: 4.12vw; }
-    .tab::before { -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); }
-    .tab::after { -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); }
-    .ordner-inhalt-stapel { top: 7vw; }
-    .tab, .tab.active, .tab::before, .tab::after, .ordner-inhalt-stapel { box-shadow: 0 -2vw 1.5vw -1.2vw rgba(0, 0, 0, 0.2); }
-    .ordner-inhalt-stapel.is-lifted { transform: none; }
-    .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
-    .text-block { margin-top: 10rem; padding: 0 1rem; }
-    .unterschrift-bg { width: 50vw; top: -40px; }
-    .projekte-container { cursor: auto; }
-    .custom-cursor { display: none !important; }
-    .projekt-navigation-links { left: 0.5rem; width: 30px; }
-    .projekt-nav-dot { width: 10px; height: 10px; }
-}
-
-/* ==========================================================================
    INFO-OVERLAY STYLING
    ========================================================================== */
 .info-toggle-button {
     position: absolute;
-    bottom: 2rem;
+    height: 45px; /* DEZENTER */
+    bottom: 1.5rem; /* DEZENTER */
     left: 50%;
     transform: translateX(-50%);
     z-index: 30;
-    opacity: 0.8;
     background-color: var(--Papier);
     color: var(--Hintergrund);
     font-family: "Rounded", monospace;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    font-size: 1rem;
+    font-size: 0.8rem;
+    filter: blur(0.4px);
     border: none;
-    border-radius: 50px;
     padding: 0.8rem 2.5rem;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
     white-space: nowrap;
-    box-shadow: 0px 3px 9px #898989, 3px 0px 12px #898989, -3px 0px 12px #898989, 0px -3px 12px #898989;
     display: grid;
     place-items: center;
-    filter: blur(0.4px);
+    border-top-left-radius: var(--tab-radius);
+    border-top-right-radius: var(--tab-radius);
+    transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    box-shadow: 0px -3px 9px  #898989;
+}
+
+.info-toggle-button::before, .info-toggle-button::after {
+    content: '';
+    position: absolute;
+    width: var(--tab-radius);
+    height: 20px; /* PUFFER: Grösser als nötig */
+    bottom: -10px; /* PUFFER: Schiebt die Ecke nach unten für Überlappung */
+    background-color: var(--Papier);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    box-shadow: 0px -3px 9px #898989;
+}
+
+.info-toggle-button::before {
+    left: 100%;
+    /* KORREKTUR: Maske ist jetzt oben rund, wie ein Tab */
+    -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
+    mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
+}
+
+.info-toggle-button::after {
+    right: 100%;
+    /* KORREKTUR: Maske ist jetzt oben rund, wie ein Tab */
+    -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
+    mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
+}
+
+.info-paper {
+    position: absolute;
+    bottom: 0rem;
+    left: 0;
+    width: 100%;
+    height: 2rem; /* DEZENTER */
+    background-color: var(--Papier);
+    z-index: 20;
+    transition: height 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    border-top-left-radius: var(--inhalt-radius-gross);
+    border-top-right-radius: var(--inhalt-radius-gross);
+    cursor: pointer;
+    box-shadow: 0px 3px 9px #898989, 3px 0px 9px #898989, -3px 0px 9px #898989, 0px -3px 9px #898989;
 }
 
 .info-toggle-button:hover {
@@ -410,42 +429,40 @@ body {
 
 .info-overlay {
     position: absolute;
-    top: 0;
+    bottom: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 50%;
     z-index: 25;
-    background-color: rgba(232, 232, 232, 0.7);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 2rem;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.4s ease, visibility 0.4s ease;
     pointer-events: none;
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 .info-overlay-content {
-    text-align: center;
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    text-align: left;
     color: var(--Hintergrund);
-    max-width: 800px;
-    transform: translateY(20px);
-    transition: transform 0.4s ease;
+    max-width: 900px;
     filter: blur(0.4px);
 }
 
 .info-overlay-title-container {
-    margin-bottom: 2rem;
-    max-width: 500px;
+    margin-bottom: 0;
+    flex-shrink: 0;
+    max-width: 40%;
     margin-left: auto;
     margin-right: auto;
 }
 
 .info-overlay-title-container img {
-    width: 100%;
+    width: 60%;
     height: auto;
 }
 
@@ -454,45 +471,116 @@ body {
     font-style: normal;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
-    font-size: 1.1rem;
+    font-size: 0.8rem;
     line-height: 1.6;
-    
 }
 
+.projekte-container.info-overlay-active .info-paper {
+    height: 50%;
+}
+
+.projekte-container.info-overlay-active .info-toggle-button {
+    bottom: 50%;
+    margin-bottom: 0;
+}
+
+.projekte-container.info-overlay-active .info-toggle-button::before,
+.projekte-container.info-overlay-active .info-toggle-button::after {
+    opacity: 0;
+}
+
+
 .projekte-container.info-overlay-active .info-overlay {
-    opacity: 1;
-    visibility: visible;
+    transform: translateY(0);
     pointer-events: auto;
 }
 
-.projekte-container.info-overlay-active .info-overlay-content {
-    transform: translateY(0);
-}
 
+/* ==========================================================================
+   MOBILE ANPASSUNGEN
+   ========================================================================== */
 @media (max-width: 992px) {
+    .ordner-system { margin-top: -2.3rem; }
+    .tab { top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
+	.tab:hover { transform: none; }
+    .tab[data-tab-target="projekte"] { left: 21.6vw; }
+    .tab[data-tab-target="about"] { left: 43.2vw; }
+    .tab::before, .tab::after { width: 2.9vw; height: 3.75vw; top: 4.12vw; }
+    .tab::before { -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); }
+    .tab::after { -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); }
+    .ordner-inhalt-stapel { top: 7vw; }
+    .tab, .tab.active, .tab::before, .tab::after, .ordner-inhalt-stapel { box-shadow: 0 -2vw 1.5vw -1.2vw rgba(0, 0, 0, 0.2); }
+    .ordner-inhalt-stapel.is-lifted { transform: none; }
+    .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
+    .text-block { margin-top: 10rem; padding: 0 1rem; }
+    .unterschrift-bg { width: 50vw; top: -40px; }
+    .projekte-container { cursor: auto; }
+    .custom-cursor { display: none !important; }
+    .projekt-navigation-links { left: 0.5rem; width: 30px; }
+    .projekt-nav-dot { width: 10px; height: 10px; }
+    
+    .info-paper {
+        height: 1rem;
+        border-top-left-radius: 6.6vw;
+        border-top-right-radius: 6.6vw;
+    }
+    
+    .info-toggle-button {
+        bottom: 1rem;
+        height: 40px;
+        padding: 0.6rem 1.8rem;
+        font-size: 0.9rem;
+        border-top-left-radius: 4vw;
+        border-top-right-radius: 4vw;
+        box-shadow: 0px -3px 6px #898989;
+    }
+
+    .info-toggle-button::before, .info-toggle-button::after {
+        width: 4vw;
+        height: 15px;
+        bottom: -8px;
+        box-shadow: 0px -3px 6px #898989;
+    }
+    .info-toggle-button::before {
+        -webkit-mask-image: radial-gradient(circle 4vw at top right, transparent 4vw, black calc(4vw + 1px));
+        mask-image: radial-gradient(circle 4vw at top right, transparent 4vw, black calc(4vw + 1px));
+    }
+    .info-toggle-button::after {
+        -webkit-mask-image: radial-gradient(circle 4vw at top left, transparent 4vw, black calc(4vw + 1px));
+        mask-image: radial-gradient(circle 4vw at top left, transparent 4vw, black calc(4vw + 1px));
+    }
+
+    .info-overlay-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
     .info-overlay-title-container {
         max-width: 300px;
     }
     .info-overlay-content p {
         font-size: 0.9rem;
+        text-align: center;
     }
-    .info-toggle-button {
-        bottom: 1rem;
-        padding: 0.6rem 1.8rem;
-        font-size: 0.9rem;
+    
+    .projekte-container.info-overlay-active .info-toggle-button {
+        bottom: 50%;
+    }
+    .projekte-container.info-overlay-active .info-paper {
+        height: 50%;
     }
 }
 
+
 /* ==========================================================================
-   MARQUEE STYLING (FINAL UND KORREKT)
+   MARQUEE STYLING
    ========================================================================== */
 .marquee-container {
     position: absolute;
     bottom: 50%;
-    transform: translateY(50%); /* Korrekte vertikale Zentrierung */
+    transform: translateY(50%);
     left: 0;
     width: 100%;
-    height: 550px; /* Höhe wird durch Bilder definiert, hier als Referenz */
+    height: 550px;
     overflow: hidden;
     pointer-events: none;
     z-index: 1;
@@ -512,31 +600,25 @@ body {
     display: flex;
     align-items: center;
     width: fit-content;
-    /* Deine gewünschte Animationsdauer */
     animation: scrolling 100s linear infinite; 
 }
 
-/* Bilder in beiden Marquees bekommen dieselbe Größe */
 .marquee-content img {
-    height: 150px; /* Deine gewünschte Höhe */
+    height: 150px;
     width: auto;
     padding: 0 4rem;
     flex-shrink: 0;
 }
 
-/* Der scharfe Hintergrund mit deiner gewünschten Opazität */
 .marquee-content.sharp img {
     opacity: 0.1;
 }
 
-/* Der unscharfe Vordergrund hat volle Opazität, wird durch den Wrapper gesteuert */
 .marquee-content.blurry img {
     opacity: 1;
 }
 
-/* Der stationäre Wrapper, der den Unschärfe- und Masken-Effekt anwendet */
 .blurry-wrapper {
-    /* Dein gewünschter Unschärfe-Wert */
     filter: blur(5px); 
     -webkit-mask-image: linear-gradient( to right, transparent 0%, black 55%, black 65%, transparent 100% );
     mask-image: linear-gradient( to right, transparent 0%, black 55%, black 65%, transparent 100% );
@@ -552,7 +634,6 @@ body {
     .marquee-container {
         height: 550px;
         bottom: 50%;
-       
     }
     .marquee-content img {
         height: 50px;

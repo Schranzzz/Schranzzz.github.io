@@ -48,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const overlayDescription = document.getElementById('overlay-description');
         const projektNav = document.getElementById('projekt-nav');
         const projektSlidesContainer = document.getElementById('projekt-slides');
+        const infoPaper = document.getElementById('info-paper');
         
         let isInfoOverlayOpen = false;
         let aktuellerProjektIndex = 0;
@@ -200,10 +201,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 projektSlidesContainer.appendChild(slide);
             });
 
-            // Wichtig: zeigeProjekt wird hier mit isInitial=true aufgerufen.
             zeigeProjekt(0, true);
             preloadInitialImages();
             infoToggleButton.addEventListener('click', toggleInfoOverlay);
+            if (infoPaper) {
+                infoPaper.addEventListener('click', toggleInfoOverlay);
+            }
         }
         
         function createMediaElement(mediaData) {
@@ -224,9 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
             return mediaElement;
         }
 
-        // =========================================================================
-        // HIER IST DIE KORREKTUR
-        // =========================================================================
         function zeigeProjekt(index, isInitial = false) {
             if (isChangingProject || isInfoOverlayOpen || index < 0 || index >= projektKeys.length || (!isInitial && index === aktuellerProjektIndex)) {
                 return;
@@ -240,7 +240,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.projekt-nav-dot').forEach(n => n.classList.remove('active'));
             document.querySelector(`.projekt-nav-dot[data-index="${index}"]`).classList.add('active');
             
-            // Finde das erste *echte* Medienelement, um dessen Ladezustand zu prüfen
             const filmstrip = neuerSlide.querySelector('.media-filmstrip');
             const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
             const firstRealMediaElement = filmstrip.children[firstRealElementIndex];
@@ -264,17 +263,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 setTimeout(() => { isChangingProject = false; }, 500);
             };
         
-            // KORRIGIERTE LOGIK:
-            // Der spezielle `if (isInitial)` Block wurde entfernt.
-            // Diese Logik wird jetzt IMMER ausgeführt, auch beim ersten Mal.
-            // Sie wartet, bis das Bild geladen ist, bevor sie es anzeigt und positioniert.
             if (!firstRealMediaElement || firstRealMediaElement.tagName !== 'IMG' || firstRealMediaElement.complete) {
-                // Wenn es kein Bild ist oder das Bild bereits geladen ist, sofort ausführen.
                 performCrossfade();
             } else {
-                // Wenn es ein Bild ist, das noch nicht geladen wurde, warte auf das 'onload' Event.
                 firstRealMediaElement.onload = performCrossfade;
-                firstRealMediaElement.onerror = performCrossfade; // Führe es auch bei einem Fehler aus, um nicht zu blockieren.
+                firstRealMediaElement.onerror = performCrossfade;
             }
         }
         
@@ -399,7 +392,7 @@ document.addEventListener('DOMContentLoaded', function() {
         projektContainerWrapper.addEventListener('mouseleave', () => { if(customCursor) customCursor.style.opacity = '0'; });
         
         projektContainerWrapper.addEventListener('click', (event) => {
-            if (event.target.closest('.info-toggle-button') || event.target.closest('.info-overlay')) return;
+            if (event.target.closest('.info-toggle-button') || event.target.closest('.info-paper') || event.target.closest('.info-overlay')) return;
             if (isInfoOverlayOpen) return;
             
             const rect = projekteContainer.getBoundingClientRect();
@@ -456,10 +449,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const blurryContent = container.querySelector('.marquee-content.blurry');
 
         if (sharpContent && blurryContent) {
-            // Nimm die originalen Kinder, bevor sie verdoppelt werden
             const originalChildren = Array.from(sharpContent.children);
             
-            // Verdopple den Inhalt in beiden Containern für eine nahtlose Schleife
             originalChildren.forEach(child => {
                 sharpContent.appendChild(child.cloneNode(true));
                 blurryContent.appendChild(child.cloneNode(true));
