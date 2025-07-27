@@ -517,7 +517,7 @@ body.touch-device .custom-cursor {
    ========================================================================== */
 @media (max-width: 992px) {
     .ordner-system { margin-top: -2.3rem; }
-    .tab { top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
+    .tab { top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); filter: blur(0.05vw); }
 	.tab:hover { transform: none; }
     .tab[data-tab-target="projekte"] { left: 21.6vw; }
     .tab[data-tab-target="about"] { left: 43.2vw; }

@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var contentPages = document.querySelectorAll('.ordner-inhalt');
     var ordnerInhaltStapel = document.querySelector('.ordner-inhalt-stapel');
     
+    // ADDED: Touch device detection
     if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
         document.body.classList.add('touch-device');
     }
@@ -136,18 +137,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (customCursor) customCursor.style.opacity = '0';
             }
         }
-        
-        // REMOVED: This function is no longer needed due to <link rel="preload">
-        /*
+
         function preloadInitialImages() {
             Object.values(projektDaten).forEach(projekt => {
                 const firstMedium = projekt.medien[0];
-                if (firstMedium && firstMedium.type === 'image') {
+                if (firstMedium && (firstMedium.type === 'image' || firstMedium.type === 'video')) {
                     new Image().src = firstMedium.src;
                 }
             });
         }
-        */
 
         function initProjekte() {
             if (!projekteContainer || !projektNav || !projektSlidesContainer || !infoToggleButton) {
@@ -209,11 +207,29 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             zeigeProjekt(0, true);
-            // preloadInitialImages(); // REMOVED
+            preloadInitialImages();
             infoToggleButton.addEventListener('click', toggleInfoOverlay);
             if (infoPaper) {
                 infoPaper.addEventListener('click', toggleInfoOverlay);
             }
+            
+            // ADDED: IntersectionObserver to fix initial positioning
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const aktiverSlide = document.querySelector('.projekt-slide.active');
+                        if (aktiverSlide) {
+                            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
+                            // Use a small timeout to ensure rendering is complete
+                            setTimeout(() => {
+                                positioniereFilmstreifen(aktiverSlide, currentIndex);
+                            }, 50);
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            observer.observe(projekteContainer);
         }
         
         function createMediaElement(mediaData) {
@@ -249,37 +265,39 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const filmstrip = neuerSlide.querySelector('.media-filmstrip');
             const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
-            const firstRealMediaElement = filmstrip.children[firstRealElementIndex];
         
-            const performCrossfade = () => {
+            // MODIFIED: Simplified the crossfade logic for robustness
+            const performChange = () => {
+                if (alterSlide) alterSlide.classList.remove('active');
                 neuerSlide.classList.add('active');
-                
+
                 const medien = Array.from(filmstrip.children);
                 medien.forEach(el => el.classList.remove('media-active'));
-                
                 medien[firstRealElementIndex].classList.add('media-active');
                 
                 positioniereFilmstreifen(neuerSlide, firstRealElementIndex);
                 muteAllVideos();
         
-                if (alterSlide) {
-                    alterSlide.classList.remove('active');
-                }
-                
-                // ADDED: Fade in the container only on the very first load
-                if (isInitial) {
-                    projektSlidesContainer.classList.add('loaded');
-                }
-                
                 aktuellerProjektIndex = index;
-                setTimeout(() => { isChangingProject = false; }, 500);
+                // Use a longer timeout for project change to prevent race conditions
+                setTimeout(() => { isChangingProject = false; }, 600); 
             };
-        
-            if (!firstRealMediaElement || firstRealMediaElement.tagName !== 'IMG' || firstRealMediaElement.complete) {
-                performCrossfade();
-            } else {
-                firstRealMediaElement.onload = performCrossfade;
-                firstRealMediaElement.onerror = performCrossfade;
+            
+            // If it's not the initial page load, perform the transition smoothly.
+            // On initial load, the IntersectionObserver will handle the final positioning.
+            if (!isInitial) {
+                 const firstRealMediaElement = filmstrip.children[firstRealElementIndex];
+                 if (firstRealMediaElement && firstRealMediaElement.tagName === 'IMG' && !firstRealMediaElement.complete) {
+                     firstRealMediaElement.onload = performChange;
+                     firstRealMediaElement.onerror = performChange;
+                 } else {
+                     performChange();
+                 }
+            } else { // On initial load, just set the active classes without complex transitions.
+                 if (alterSlide) alterSlide.classList.remove('active');
+                 neuerSlide.classList.add('active');
+                 aktuellerProjektIndex = index;
+                 isChangingProject = false;
             }
         }
         
@@ -291,8 +309,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
             
-            if (targetMedium.offsetWidth === 0 && (targetMedium.tagName === "IMG" || targetMedium.tagName === "VIDEO")) {
-                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 50);
+            // This check is crucial for when the container is not yet rendered
+            if (targetMedium.offsetWidth === 0 && targetMedium.tagName === "IMG") {
+                 setTimeout(() => positioniereFilmstreifen(slide, newIndex), 100);
                  return;
             }
 
