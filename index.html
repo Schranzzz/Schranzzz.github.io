@@ -7,9 +7,9 @@
     
     <title>LEON REMMERT</title>
     
-    <link rel="stylesheet" href="style.css?v=4">
+    <link rel="stylesheet" href="style.css?v=5"> <!-- Version erhöht, um Caching zu vermeiden -->
 
-       <link rel="preload" href="Projektbilder/Ashoka_Dupe/Bild (1).jpg" as="image">
+    <link rel="preload" href="Projektbilder/Ashoka_Dupe/Bild (1).jpg" as="image">
     
     <link rel="icon" type="image/png" href="Favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,7 @@
                                 <img src="data/Logo.png" alt="Leon Remmert Logo">
                             </div>
                             <h2></h2>
-                            <p>>> Ich verstehe Gestaltung als die Suche nach Potenzialen, die mehr können als nur ein Problem zu lösen. Es geht mir darum, Überschneidungspunkte zwischen unterschiedlichen Anforderungen zu finden und so ein Objekt zu schaffen, das selbstverständlich wirkt, weil es in Material, Form und Funktion nachvollziehbar ist. Gestaltung bedeutet für mich Verantwortung, gegenüber der Umwelt, den Menschen und dem Prozess selbst.
+                            <p>> Ich verstehe Gestaltung als die Suche nach Potenzialen, die mehr können als nur ein Problem zu lösen. Es geht mir darum, Überschneidungspunkte zwischen unterschiedlichen Anforderungen zu finden und so ein Objekt zu schaffen, das selbstverständlich wirkt, weil es in Material, Form und Funktion nachvollziehbar ist. Gestaltung bedeutet für mich Verantwortung, gegenüber der Umwelt, den Menschen und dem Prozess selbst.
                             Ehrliche, bewusste Entscheidungen sind der Kern meines Designs. Objekte sollten keine falschen Versprechen machen, sondern durch Klarheit und mutige Reduktion überzeugen. Ich arbeite experimentell, lasse mich von Materialien und ihren Eigenschaften inspirieren und sehe im Skizzieren, Modellbauen und digitalen Entwerfen gleichwertige Werkzeuge, um Ideen zu präzisieren und Potenziale auszuloten.
                             Mein Ziel ist es, Produkte zu gestalten, die nicht nur ästhetisch und funktional sind, sondern auch durch ihre Logik und Offenheit begeistern.</p>
                         </div>
@@ -68,20 +68,25 @@
                             <div class="top-bar"></div>
                             <div class="combined-overlay"></div>
                             <div id="projekt-nav" class="projekt-navigation-links"></div>
-                            <div id="info-overlay" class="info-overlay">
-                                <div class="info-overlay-content">
-                                    <div id="overlay-title-container" class="info-overlay-title-container">
-                                        <img id="overlay-title-img" src="" alt="Projekttitel">
+
+                            <!-- START DER KORREKTUR: Wrapper um die Info-Elemente -->
+                            <div class="info-wrapper">
+                                <div id="info-paper" class="info-paper"> </div>
+                                <div id="info-overlay" class="info-overlay">
+                                    <div class="info-overlay-content">
+                                        <div id="overlay-title-container" class="info-overlay-title-container">
+                                            <img id="overlay-title-img" src="" alt="Projekttitel">
+                                        </div>
+                                        <p id="overlay-description"></p>
                                     </div>
-                                    <p id="overlay-description"></p>
                                 </div>
+                                <button id="info-toggle-button" class="info-toggle-button">
+                                    <span class="text-information">Info</span>
+                                    <span class="text-close">X</span>
+                                </button>
                             </div>
-                            <button id="info-toggle-button" class="info-toggle-button">
-                                <span class="text-information">Info</span>
-                                <span class="text-close">X</span>
-                                
-                            </button>
-                            <div id="info-paper" class="info-paper"> </div>
+                            <!-- ENDE DER KORREKTUR -->
+                            
                             <div id="custom-cursor" class="custom-cursor">></div>
                         </div>
                     </main>

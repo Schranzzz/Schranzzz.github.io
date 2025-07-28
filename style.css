@@ -347,21 +347,67 @@ body.touch-device .custom-cursor {
 }
 
 /* ==========================================================================
-   INFO-OVERLAY STYLING (FINAL CLEANED UP VERSION)
+   INFO-OVERLAY STYLING (FINAL WRAPPER ARCHITECTURE)
    ========================================================================== */
+.info-wrapper {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    z-index: 15;
+    pointer-events: none; /* Wrapper ist unsichtbar für Klicks */
+    /* NUR DER WRAPPER WIRD ANIMIERT */
+    transform: translateY(calc(100% - 1.6rem));
+    transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+    cursor: pointer;
+}
+
+.info-paper,
+.info-overlay,
 .info-toggle-button {
     position: absolute;
-    height: 45px;
-    bottom: 1.5rem;
+    pointer-events: auto; /* Kinder sind wieder klickbar */
+}
+
+.info-paper {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 20;
+    cursor: pointer;
+    background-color: var(--Papier);
+    border-top-left-radius: var(--inhalt-radius-gross);
+    border-top-right-radius: var(--inhalt-radius-gross);
+    box-shadow: 0px 3px 9px #898989, 3px 0px 9px #898989, -3px 0px 9px #898989, 0px -3px 9px #898989;
+}
+
+.info-overlay {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 25;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    opacity: 0; /* Inhalt ist nur im offenen Zustand sichtbar */
+    transition: opacity 0.3s ease-in-out 0.1s; /* Leichte Verzögerung */
+    
+}
+
+.info-toggle-button {
+    top: 7px; /* Klebt am oberen Rand des Wrappers */
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(-100%); /* Platziert ihn genau über der Kante */
     z-index: 30;
+
+    height: 50px;
     background-color: var(--Papier);
     color: var(--Hintergrund);
     font-family: "Rounded", monospace;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
     font-size: 0.8rem;
     filter: blur(0.4px);
     border: none;
@@ -372,10 +418,7 @@ body.touch-device .custom-cursor {
     place-items: center;
     border-top-left-radius: var(--tab-radius);
     border-top-right-radius: var(--tab-radius);
-    transition: bottom 0.5s cubic-bezier(0.65, 0, 0.35, 1);
     box-shadow: 0 -11px 15px -3px #898989;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
 }
 
 .info-toggle-button::before, .info-toggle-button::after {
@@ -383,170 +426,91 @@ body.touch-device .custom-cursor {
     position: absolute;
     width: var(--tab-radius);
     height: 30px;
-    bottom: -0.01rem;
+    bottom: 5px;
     background-color: var(--Papier);
     -webkit-mask-repeat: no-repeat;
     mask-repeat: no-repeat;
     box-shadow: 0px -3px 9px #898989;
-    transition: opacity 0.3s ease;
 }
 
 .info-toggle-button::before {
     left: 98%;
     -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
-    mask-image: radial-gradient(circle var(--tab-radius) at top right, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
 }
 
 .info-toggle-button::after {
     right: 98%;
     -webkit-mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
-    mask-image: radial-gradient(circle var(--tab-radius) at top left, transparent var(--tab-radius), black calc(var(--tab-radius) + 1px));
 }
 
-/* KORREKTE ANIMATIONSBASIS FÜR PAPIER UND INHALT */
-.info-paper,
-.info-overlay {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 50%; /* Höhe ist immer 50%, wird nicht animiert */
-    transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-    transform: translateY(calc(100% - 1.6rem)); /* Startposition: Nur ein Streifen ist sichtbar */
-    cursor: pointer;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-}
+.info-toggle-button span { grid-area: 1 / 1; transition: opacity 0.3s ease-in-out; }
+.info-toggle-button .text-close { opacity: 0; }
 
-.info-paper {
-    background-color: var(--Papier);
-    z-index: 20;
-    cursor: pointer;
-    border-top-left-radius: var(--inhalt-radius-gross);
-    border-top-right-radius: var(--inhalt-radius-gross);
-    box-shadow: 0px 3px 9px #898989, 3px 0px 9px #898989, -3px 0px 9px #898989, 0px -3px 9px #898989;
-}
-
-.info-overlay {
-    z-index: 25;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 2rem;
-    pointer-events: none;
-}
-
-.info-toggle-button:hover {
-    opacity: 1;
-}
-
-.info-toggle-button span {
-    grid-area: 1 / 1;
-    transition: opacity 0.3s ease-in-out;
-}
-
-.info-toggle-button .text-close {
-    opacity: 0;
-}
-
-/* REGELN FÜR DEN GEÖFFNETEN ZUSTAND */
-.projekte-container.info-overlay-active .info-paper,
-.projekte-container.info-overlay-active .info-overlay {
-    transform: translateY(0); /* Fährt in die Endposition */
-}
-
-.projekte-container.info-overlay-active .info-toggle-button {
-    bottom: 49.7%;
-}
-
-.projekte-container.info-overlay-active .info-toggle-button .text-information {
-    opacity: 0;
-}
-
-.projekte-container.info-overlay-active .info-toggle-button .text-close {
-    opacity: 1;
-}
-
-.projekte-container.info-overlay-active .info-toggle-button::before,
-.projekte-container.info-overlay-active .info-toggle-button::after {
-    opacity: 1;
+/* GEÖFFNETER ZUSTAND: NUR DER WRAPPER WIRD BEWEGT */
+.projekte-container.info-overlay-active .info-wrapper {
+    transform: translateY(0);
 }
 
 .projekte-container.info-overlay-active .info-overlay {
-    pointer-events: auto;
+    opacity: 1;
+    pointer-events: auto; /* Inhalt wird klickbar */
 }
 
-.info-overlay-content {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    text-align: left;
-    color: var(--Hintergrund);
-    max-width: 900px;
-    filter: blur(0.4px);
+.projekte-container.info-overlay-active .info-toggle-button .text-information { opacity: 0; }
+.projekte-container.info-overlay-active .info-toggle-button .text-close { opacity: 1; }
+
+.info-overlay-content { 
+    display: flex; gap: 2rem;
+     align-items: left; text-align: left; 
+      color: var(--Hintergrund);
+       max-width: 900px;
+        filter: blur(0.4px);
+        font-family: "Rounded", monospace;
+        font-size: 0.8rem;
+            width: 100%; /* <-- DIESE ZEILE IST NEU */
 }
 
-.info-overlay-title-container {
-    margin-bottom: 0;
-    flex-shrink: 0;
-    max-width: 40%;
-    margin-left: auto;
-    margin-right: auto;
-}
 
-.info-overlay-title-container img {
-    width: 60%;
-    height: auto;
-}
+    
+    
+.info-overlay-title-container { margin-bottom: 0; flex-shrink: 0; max-width: 40%; margin-left: auto; margin-right: auto; }
+.info-overlay-title-container img { width: 60%; height: auto; }
+.info-overlay-content p { font-family: "Rounded", monospace; font-size: 0.8rem; line-height: 1.6; }
 
-.info-overlay-content p {
-    font-family: "Rounded", monospace;
-    font-style: normal;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    font-size: 0.8rem;
-    line-height: 1.6;
-}
 
 /* ==========================================================================
-   MOBILE ANPASSUNGEN
+   MOBILE ANPASSUNGEN (FINAL WRAPPER ARCHITECTURE)
    ========================================================================== */
 @media (max-width: 992px) {
     .ordner-inhalt[data-content="startseite"].active,
     .ordner-inhalt[data-content="about"].active {
         overflow: hidden;
+         overscroll-behavior: contain;
 
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
     }
 
-    .tab, .info-toggle-button, .info-overlay-content, .text-block {
-        filter: none;
-    }
+    .tab, .info-toggle-button, .info-overlay-content, .text-block { filter: none; }
     .ordner-system { margin-top: -2.3rem; }
     .tab { -webkit-tap-highlight-color: transparent; top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
 	.tab:hover { transform: none; }
-    
     .tab[data-tab-target="projekte"] { left: 21.6vw; }
     .tab[data-tab-target="about"] { left: 43.2vw; }
     .tab::before, .tab::after { width: 2.9vw; height: 3.75vw; top: 4.12vw; }
-    .tab::before { -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); }
-    .tab::after { -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); }
+    .tab::before { -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw); }
+    .tab::after { -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw); }
     .ordner-inhalt-stapel { top: 7vw; }
     .tab, .tab.active, .tab::before, .tab::after, .ordner-inhalt-stapel { box-shadow: 0 -2vw 1.5vw -1.2vw rgba(0, 0, 0, 0.2); }
     .ordner-inhalt-stapel.is-lifted { transform: none; }
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
     .text-block { margin-top: 10rem; padding: 0 1rem; }
-    .unterschrift-bg { opacity: 0; }
+    .unterschrift-bg { display: none; }
     .projekt-navigation-links { left: 0.5rem; width: 30px; }
     .projekt-nav-dot { width: 10px; height: 10px; -webkit-tap-highlight-color: transparent;}
     
-      /* KORREKTE ANIMATIONS-STARTPOSITION FÜR MOBILE */
-    .info-paper, 
-    .info-overlay {
-        transform: translateY(calc(100% - 1rem)); /* Nur 1rem am Anfang sichtbar */
-        cursor: pointer;
-        transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-        -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
+    .info-wrapper {
+        transform: translateY(calc(100% - 1rem));
     }
     
     .info-paper {
@@ -555,53 +519,27 @@ body.touch-device .custom-cursor {
     }
     
     .info-toggle-button {
-        bottom: 0.9rem;
         height: 25px;
         padding: 0.6rem 1.8rem;
         font-size: 0.6rem;
-        border-top-left-radius: 5.5vw;
-        border-top-right-radius: 5.5vw;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
         box-shadow: 0 -12px 15px -3px #898989;
-        -webkit-tap-highlight-color: transparent;
-        transition: all 0.5s cubic-bezier(0.65, 0, 0.35, 1);
-        -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-
-    }
-
-    /* KORREKTE BUTTON-POSITION IM GEÖFFNETEN ZUSTAND */
-    .projekte-container.info-overlay-active .info-toggle-button {
-        margin-bottom: -0px; /* Feinjustierung, damit er perfekt sitzt */
     }
 
     .info-toggle-button::before, .info-toggle-button::after {
-        width: 5.3vw;
-        height: 4.3vw;
-        bottom: 0;
+        width: 20px;
+        height: 20px;
+        bottom: -2px;
         box-shadow: 0 -15px 15px -3px #898989;
     }
-    .info-toggle-button::before {
-        -webkit-mask-image: radial-gradient(circle 5.5vw at top right, transparent 5.5vw, black 5.5vw);
-        mask-image: radial-gradient(circle 5.5vw at top right, transparent 5.5vw, black 5.5vw);
-    }
-    .info-toggle-button::after {
-        -webkit-mask-image: radial-gradient(circle 5.5vw at top left, transparent 5.5vw, black 5.5vw);
-        mask-image: radial-gradient(circle 5.5vw at top left, transparent 5.5vw, black 5.5vw);
-    }
+    .info-toggle-button::before { -webkit-mask-image: radial-gradient(circle 20px at top right, transparent 20px, black 20px); }
+    .info-toggle-button::after { -webkit-mask-image: radial-gradient(circle 20px at top left, transparent 20px, black 20px); }
 
-    .info-overlay-content {
-        flex-direction: column;
-        gap: 1rem;
-    }
-    .info-overlay-title-container {
-        max-width: 300px;
-    }
-    .info-overlay-content p {
-        font-size: 0.9rem;
-        text-align: center;
-    }
+    .info-overlay-content { flex-direction: column; gap: 1rem; text-align: left; align-items: left; }
+    .info-overlay-title-container { max-width: 300px; }
+    .info-overlay-content p { font-size: 0.9rem; text-align: center; }
 }
-
 
 /* ==========================================================================
    MARQUEE STYLING

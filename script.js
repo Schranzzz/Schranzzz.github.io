@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function() {
             'ashoka-dupe': {
                 titel: 'Ashoka Dupe',
                 titelBild: 'Handwritten_Titles/Ashoka_Dupe.png',
-                beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. <em>Modell mit der Maus ziehen zum Drehen, Mausrad zum Zoomen.</em>',
+                beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. ',
                 medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
             },
             'leiter': {
