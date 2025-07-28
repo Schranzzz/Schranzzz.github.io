@@ -499,7 +499,7 @@ body.touch-device .custom-cursor {
 
 .gif-background-container img {
      width: auto; /* Behält das Seitenverhältnis bei */
-    height: 120%; /* << HIER STEUERST DU DIE GRÖSSE! (z.B. 100%, 150%, 200%) */
+    height: 100%; /* << HIER STEUERST DU DIE GRÖSSE! (z.B. 100%, 150%, 200%) */
     object-fit: contain; /* Stellt sicher, dass das GIF komplett sichtbar ist */
 }
 
