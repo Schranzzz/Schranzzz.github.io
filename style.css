@@ -493,8 +493,14 @@ body.touch-device .custom-cursor {
     }
 
     .tab, .info-toggle-button, .info-overlay-content, .text-block { filter: none; }
-    .ordner-system { margin-top: -2.3rem; }
-    .tab { -webkit-tap-highlight-color: transparent; top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); }
+    .ordner-system { margin-top: -2.3rem; overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;}
+    .tab { -webkit-tap-highlight-color: transparent; top: -0vw; min-width: 29vw; height: 8vw; padding: 1vw 2.5vw 1.5vw 2.5vw; border-top-left-radius: 4vw; border-top-right-radius: 4vw; font-size: clamp(1.6rem, 4vw, 2.8rem); overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;}
 	.tab:hover { transform: none; }
     .tab[data-tab-target="projekte"] { left: 21.6vw; }
     .tab[data-tab-target="about"] { left: 43.2vw; }
@@ -512,8 +518,7 @@ body.touch-device .custom-cursor {
     
     .info-wrapper {
         transform: translateY(calc(100% - 1rem));
-        overflow: hidden;
-         overscroll-behavior: contain;
+        overscroll-behavior: contain;
 
         /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
         touch-action: none;
