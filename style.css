@@ -534,13 +534,7 @@ body.touch-device .custom-cursor {
          -webkit-tap-highlight-color: transparent;
     }
 
-    .body {
-        overflow: hidden;
-         overscroll-behavior: contain;
-
-        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
-        touch-action: none;
-    }
+    
 
     .info-toggle-button::before, .info-toggle-button::after {
         width: 20px;
