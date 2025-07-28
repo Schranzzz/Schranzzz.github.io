@@ -528,7 +528,28 @@ body.touch-device .custom-cursor {
         /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
         touch-action: none;
     }
-    
+    .body {
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
+    }
+
+    .media-filmstrip {
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
+    }
+    .projekte-container.info-overlay-active .info-wrapper {
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
+    }
     .info-toggle-button {
         height: 25px;
         padding: 0.6rem 1.8rem;
