@@ -512,6 +512,11 @@ body.touch-device .custom-cursor {
     
     .info-wrapper {
         transform: translateY(calc(100% - 1rem));
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
       
     }
     
@@ -533,15 +538,31 @@ body.touch-device .custom-cursor {
         border-top-right-radius: 16px;
         box-shadow: 0 -12px 15px -3px #898989;
          -webkit-tap-highlight-color: transparent;
+         overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
     }
 
-    
+    .body {overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
+        z-index: -1;
+    }
 
     .info-toggle-button::before, .info-toggle-button::after {
         width: 20px;
         height: 20px;
         bottom: -2px;
-        box-shadow: 0 -15px 15px -3px #898989;
+        box-shadow: 0 -15px 15px -3px #898989; 
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
     }
     .info-toggle-button::before { -webkit-mask-image: radial-gradient(circle 20px at top right, transparent 20px, black 20px); }
     .info-toggle-button::after { -webkit-mask-image: radial-gradient(circle 20px at top left, transparent 20px, black 20px); }
@@ -553,7 +574,11 @@ body.touch-device .custom-cursor {
         /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
         touch-action: none; }
     .info-overlay-title-container { max-width: 300px; }
-    .info-overlay-content p { font-size: 0.9rem; text-align: center; }
+    .info-overlay-content p { font-size: 0.9rem; text-align: center; overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none; }
 }
 
 /* ==========================================================================
