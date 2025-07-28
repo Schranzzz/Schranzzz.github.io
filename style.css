@@ -23,11 +23,7 @@ body {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
-     
-         overscroll-behavior: contain;
-
-        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
-        touch-action: none;
+    
 }
 
 .page-wrapper { flex: 1 0 auto; display: flex; flex-direction: column; }
@@ -542,7 +538,14 @@ body.touch-device .custom-cursor {
         box-shadow: 0 -12px 15px -3px #898989;
          -webkit-tap-highlight-color: transparent;
     }
+    
+    .body {
+        overflow: hidden;
+         overscroll-behavior: contain;
 
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
+    }
     
 
     .info-toggle-button::before, .info-toggle-button::after {
