@@ -533,20 +533,10 @@ body.touch-device .custom-cursor {
         border-top-right-radius: 16px;
         box-shadow: 0 -12px 15px -3px #898989;
          -webkit-tap-highlight-color: transparent;
-         overflow: hidden;
-         overscroll-behavior: contain;
-
-        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
-        touch-action: none;
+         
     }
 
-    .body {overflow: hidden;
-         overscroll-behavior: contain;
-
-        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
-        touch-action: none;
-        z-index: -1;
-    }
+    
 
     .info-toggle-button::before, .info-toggle-button::after {
         width: 20px;
