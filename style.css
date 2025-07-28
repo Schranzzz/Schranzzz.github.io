@@ -483,7 +483,8 @@ body.touch-device .custom-cursor {
    ========================================================================== */
 @media (max-width: 992px) {
     .ordner-inhalt[data-content="startseite"].active,
-    .ordner-inhalt[data-content="about"].active {
+    .ordner-inhalt[data-content="about"].active,
+    .ordner-inhalt[data-content="projekte"].active {
         overflow: hidden;
          overscroll-behavior: contain;
 
@@ -511,11 +512,21 @@ body.touch-device .custom-cursor {
     
     .info-wrapper {
         transform: translateY(calc(100% - 1rem));
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
     }
     
     .info-paper {
         border-top-left-radius: 6.6vw;
         border-top-right-radius: 6.6vw;
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
     }
     
     .info-toggle-button {
@@ -538,6 +549,7 @@ body.touch-device .custom-cursor {
     .info-toggle-button::after { -webkit-mask-image: radial-gradient(circle 20px at top left, transparent 20px, black 20px); }
 
     .info-overlay-content { flex-direction: column; gap: 1rem; text-align: left; align-items: left;  overflow: hidden;
+         overflow: hidden;
          overscroll-behavior: contain;
 
         /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
