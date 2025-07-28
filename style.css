@@ -491,7 +491,7 @@ body.touch-device .custom-cursor {
     justify-content: center;
     align-items: center;
     pointer-events: none; /* Macht das GIF "durchklickbar" */
-    opacity: 0.05; /* Macht das GIF dezent und durchscheinend */
+    opacity: 0.1; /* Macht das GIF dezent und durchscheinend */
     filter: blur(4px);
      overflow: hidden; /* Wichtig: Schneidet die Ränder des gezoomten Bildes ab */
 }
@@ -540,7 +540,7 @@ body.touch-device .custom-cursor {
     .tab, .tab.active, .tab::before, .tab::after, .ordner-inhalt-stapel { box-shadow: 0 -2vw 1.5vw -1.2vw rgba(0, 0, 0, 0.2); }
     .ordner-inhalt-stapel.is-lifted { transform: none; }
     .ordner-inhalt, .ordner-inhalt-stapel { border-top-right-radius: 6.6vw; }
-    .text-block { margin-top: 10rem; padding: 0 1rem; }
+    .text-block { margin-top: 3rem; padding: 0 1rem; }
     .unterschrift-bg { display: none; }
     .projekt-navigation-links { left: 0.5rem; width: 30px; }
     .projekt-nav-dot { width: 10px; height: 10px; -webkit-tap-highlight-color: transparent;}
