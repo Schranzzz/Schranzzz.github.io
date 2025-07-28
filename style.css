@@ -525,6 +525,7 @@ body.touch-device .custom-cursor {
         border-top-left-radius: 16px;
         border-top-right-radius: 16px;
         box-shadow: 0 -12px 15px -3px #898989;
+         -webkit-tap-highlight-color: transparent;
     }
 
     .info-toggle-button::before, .info-toggle-button::after {
@@ -536,7 +537,11 @@ body.touch-device .custom-cursor {
     .info-toggle-button::before { -webkit-mask-image: radial-gradient(circle 20px at top right, transparent 20px, black 20px); }
     .info-toggle-button::after { -webkit-mask-image: radial-gradient(circle 20px at top left, transparent 20px, black 20px); }
 
-    .info-overlay-content { flex-direction: column; gap: 1rem; text-align: left; align-items: left; }
+    .info-overlay-content { flex-direction: column; gap: 1rem; text-align: left; align-items: left;  overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none; }
     .info-overlay-title-container { max-width: 300px; }
     .info-overlay-content p { font-size: 0.9rem; text-align: center; }
 }
