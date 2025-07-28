@@ -483,8 +483,8 @@ body.touch-device .custom-cursor {
    ========================================================================== */
 @media (max-width: 992px) {
     .ordner-inhalt[data-content="startseite"].active,
-    .ordner-inhalt[data-content="about"].active,
-    .ordner-inhalt[data-content="projekte"].active {
+    .ordner-inhalt[data-content="about"].active
+     {
         overflow: hidden;
          overscroll-behavior: contain;
 
@@ -528,6 +528,14 @@ body.touch-device .custom-cursor {
         /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
         touch-action: none;
     }
+    .body {
+        overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
+    }
+
     
     .info-toggle-button {
         height: 25px;
