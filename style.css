@@ -23,6 +23,11 @@ body {
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+     
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
 }
 
 .page-wrapper { flex: 1 0 auto; display: flex; flex-direction: column; }
@@ -511,7 +516,11 @@ body.touch-device .custom-cursor {
     
     .info-wrapper {
         transform: translateY(calc(100% - 1rem));
-      
+       overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;
     }
     
     .info-paper {
@@ -552,7 +561,11 @@ body.touch-device .custom-cursor {
         /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
         touch-action: none; }
     .info-overlay-title-container { max-width: 300px; }
-    .info-overlay-content p { font-size: 0.9rem; text-align: center; }
+    .info-overlay-content p { font-size: 0.9rem; text-align: center;  overflow: hidden;
+         overscroll-behavior: contain;
+
+        /* Deaktiviert Touch-Gesten wie Wischen und Zoomen komplett */
+        touch-action: none;}
 }
 
 /* ==========================================================================
