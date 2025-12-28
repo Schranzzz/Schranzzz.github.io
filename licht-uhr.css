@@ -1,0 +1,68 @@
+:root {
+    --bg: #ffffff;
+    --text: #1a1a1a;
+    --spacing: 4rem;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    font-family: 'Helvetica', Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 900px; /* Begrenzt die Breite für bessere Lesbarkeit */
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.hero {
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+h1 { font-size: 3rem; font-weight: 300; letter-spacing: 0.1rem; }
+
+.content-block {
+    margin: var(--spacing) 0;
+}
+
+.media-block {
+    margin: var(--spacing) 0;
+}
+
+img, video {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.caption {
+    font-size: 0.8rem;
+    color: #666;
+    font-style: italic;
+}
+
+.back-link {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    z-index: 100;
+}
+
+.back-link a {
+    text-decoration: none;
+    color: #000;
+    font-size: 0.9rem;
+    background: rgba(255,255,255,0.8);
+    padding: 5px 10px;
+}
