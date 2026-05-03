@@ -265,7 +265,11 @@ body {
     visibility: hidden;
     transition: opacity 0.5s ease-in-out, visibility 0.5s;
     z-index: 1;
+  
+       
 }
+
+
 
 .projekt-slide.active {
     opacity: 1;
@@ -298,7 +302,7 @@ body {
     height: 100%;
     width: auto;
     display: block;
-    filter: blur(22px);
+    filter: blur(12px);
     transition: filter 0.6s ease;
 }
 
@@ -310,7 +314,7 @@ body {
     pointer-events: none;
     transition: opacity 0.6s ease;
 }
-
+    
 .media-frame.media-active > * {
     filter: none;
 }
@@ -332,7 +336,7 @@ body {
     justify-content: center;
     align-items: center;
     color: var(--Papier);
-    font-size: 2.2rem;
+    font-size: 3rem;
     font-family: 'Courier Prime', monospace;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -364,8 +368,8 @@ body.touch-device .custom-cursor {
     pointer-events: none;
     background-image:
         radial-gradient(ellipse 70% 85% at center, transparent 65%, rgba(232, 232, 232, 0.5) 100%),
-        linear-gradient(to bottom, rgba(232, 232, 232, 1) 0%, rgba(232, 232, 232, 0.95) 10%, rgba(232, 232, 232, 0.9) 15%, rgba(232, 232, 232, 0.2) 70%, rgba(232, 232, 232, 0.1) 80%, rgba(232, 232, 232, 0.05) 90%, rgba(232, 232, 232, 0) 100%),
-        linear-gradient(to top, rgba(232, 232, 232, 1) 0%, rgba(232, 232, 232, 0.95) 10%, rgba(232, 232, 232, 0.9) 15%, rgba(232, 232, 232, 0.2) 70%, rgba(232, 232, 232, 0.1) 80%, rgba(232, 232, 232, 0.05) 90%, rgba(232, 232, 232, 0) 100%);
+        linear-gradient(to bottom, rgba(232, 232, 232, 1) 0%, rgba(232, 232, 232, 0.95) 10%, rgba(232, 232, 232, 0.9) 15%, rgba(232, 232, 232, 0.2) 70%, rgba(232, 232, 232, 0.1) 80%, rgba(232, 232, 232, 0.05) 90%, rgba(232, 232, 232, 0) 100%);
+       
     background-position: center, top, bottom;
     background-size: 100% 100%, 100% 6rem, 100% 6rem;
     background-repeat: no-repeat;
@@ -416,12 +420,12 @@ body.touch-device .custom-cursor {
 
 .projekt-nav-item:hover {
     opacity: 0.85;
-    transform: translateX(4px);
+  cursor: pointer;
 }
 
 .projekt-nav-item.active {
     opacity: 1;
-    transform: translateX(8px);
+   cursor: pointer;
 }
 
 .pfeil {
@@ -454,6 +458,10 @@ body.touch-device .custom-cursor {
     color: black;
     -webkit-text-stroke: 0.18px rgba(0, 0, 0, 0.42);
     text-shadow: 0 0 2.5px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.32);
+}
+.text-block {
+
+    position: relative;
 }
 
 .projekt-info.is-on-dark {
@@ -612,7 +620,7 @@ body.touch-device .custom-cursor {
     .projekt-info {
         right: 0.75rem;
         bottom: 1.25rem;
-        width: min(300px, 48vw);
+        width: min(200px, 48vw);
         font-size: 0.72rem;
         line-height: 1.45;
     }
