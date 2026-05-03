@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 'new-tool': {
                 titel: 'DUSTE',
-                beschreibung: 'Stackable, modular Lithing system.  <p> </p>70x45cm  <p> </p>Aluminum, Corugated Plastic, LED bulbs.  <p> </p> 2026',
+                beschreibung: 'Stackable, modular Lithing system. <br><br> <p> </p>70x45cm  <p> </p>Aluminum, Corugated Plastic, LED bulbs.  <p> </p> 2026',
                 medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
             },
 
@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
              'tin-3d': {
                 titel: 'TIN 3D PRINTER',
-                beschreibung: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error. <p> </p> 65x65cm  <p> </p> Ender 3 3D Printer  <p> </p> 2024',
+                beschreibung: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error. <br><br><p> </p> 65x65cm  <p> </p> Ender 3 3D Printer  <p> </p> 2024',
                 medien: [
                     { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
                     ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
@@ -117,13 +117,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
                   'faltkarre': {
                 titel: 'FOLDING WHEELBARROW',
-                beschreibung: 'A wheelbarrow can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is. <p> </p> 120x60cm  <p> </p> Truck Tarp, plywood, Aluminum Rods, rubber. <p> </p> 2025',
+                beschreibung: 'A wheelbarrow can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.<br><br> <p> </p> 120x60cm  <p> </p> Truck Tarp, plywood, Aluminum Rods, rubber. <p> </p> 2025',
                 medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
             },
 
             'ashoka-dupe': {
                 titel: 'ASHOKA DUPE',
-                beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation.  <p> </p> 60x60cm  <p> </p> Aluminum, Bulbs, PLA printed parts. <p> </p> 2025',
+                beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation.  <br><br><p> </p> 60x60cm  <p> </p> Aluminum, Bulbs, PLA printed parts. <p> </p> 2025',
                 medien: Array.from({ length: 3 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
             },
 
@@ -131,11 +131,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             'leiter': {
                 titel: 'DECORATED LADDER',
-                beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?  <p> </p> 200x100cm  <p> </p> Wooden Ladder, PLA printed parts. <p> </p> 2023',
-                medien: [
-                    { type: 'video', src: 'Projektvideos/leiter.mp4' },
-                    ...Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
-                ]
+                beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?  <br><br><p> </p> 200x100cm  <p> </p> Wooden Ladder, PLA printed parts. <p> </p> 2023',
+                medien: 
+                    
+                    Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
+                
             },
 
           
@@ -184,9 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function updateProjectTextContrast() {
-            updateContrastForElement(projektNav);
-            updateContrastForElement(document.querySelector('.projekt-info'));
-        }
+    updateContrastForElement(projektNav);
+
+    const projektInfo = document.querySelector('.projekt-info');
+    if (projektInfo) {
+        updateContrastForElement(projektInfo);
+    }
+}
 
         function updateContrastForElement(element) {
             if (!element || !contrastContext) return;
@@ -195,7 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (luminance === null) return;
 
             element.classList.toggle('is-on-light', luminance > 150);
-            element.classList.toggle('is-on-dark', luminance <= 150);
+            element.classList.toggle('is-on-dark', luminance <= 100);
         }
 
         function getLuminanceBehindElement(element) {
@@ -221,7 +225,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 totalArea += area;
             });
 
-            if (totalArea === 0) return null;
+          if (totalArea === 0) {
+    return getPaperOverlayAlpha(targetRect) > 0.3 ? 232 : 0;
+}
 
             const averageLuminance = weightedLuminance / totalArea;
             const paperOverlayAlpha = getPaperOverlayAlpha(targetRect);
@@ -230,18 +236,19 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         function getPaperOverlayAlpha(targetRect) {
-            if (!projekteContainer) return 0;
+    if (!projekteContainer) return 0;
 
-            const containerRect = projekteContainer.getBoundingClientRect();
-            const overlayHeight = 96;
-            const centerY = targetRect.top + (targetRect.height / 2);
-            const distanceFromTop = Math.max(0, centerY - containerRect.top);
-            const distanceFromBottom = Math.max(0, containerRect.bottom - centerY);
-            const topAlpha = distanceFromTop < overlayHeight ? 1 - (distanceFromTop / overlayHeight) : 0;
-            const bottomAlpha = distanceFromBottom < overlayHeight ? 1 - (distanceFromBottom / overlayHeight) : 0;
+    const containerRect = projekteContainer.getBoundingClientRect();
+    const overlayHeight = 96;
+    const centerY = targetRect.top + (targetRect.height / 2);
+    const distanceFromTop = Math.max(0, centerY - containerRect.top);
 
-            return Math.max(topAlpha, bottomAlpha);
-        }
+    const topAlpha = distanceFromTop < overlayHeight
+        ? 1 - (distanceFromTop / overlayHeight)
+        : 0;
+
+    return topAlpha;
+}
 
         function getRectOverlap(a, b) {
             const left = Math.max(a.left, b.left);

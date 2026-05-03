@@ -524,17 +524,17 @@ body.touch-device .custom-cursor {
     }
 
     .ordner-system {
-        margin-top: -2.3rem;
+        margin-top: 0.1rem;
     }
 
     .tab {
         -webkit-tap-highlight-color: transparent;
-        top: -0vw;
-        min-width: 29vw;
-        height: 8vw;
+        top: -2vw;
+        min-width: 34vw;
+        height: 10vw;
         padding: 1vw 2.5vw 1.5vw 2.5vw;
-        border-top-left-radius: 4vw;
-        border-top-right-radius: 4vw;
+        border-top-left-radius: 5vw;
+        border-top-right-radius: 5vw;
         font-size: clamp(0.75rem, 2.4vw, 1rem);
     }
 
@@ -547,7 +547,8 @@ body.touch-device .custom-cursor {
     }
 
     .tab[data-tab-target="startseite"] {
-        left: 21.6vw;
+        left: 23.6vw;
+       
     }
 
     .tab[data-tab-target="about"] {
@@ -556,22 +557,36 @@ body.touch-device .custom-cursor {
 
     .tab::before,
     .tab::after {
-        width: 2.9vw;
+        width: 4.5vw;
         height: 3.75vw;
-        top: 4.12vw;
+        top: 5.45vw;
+     
     }
 
-    .tab::before {
-        -webkit-mask-image: radial-gradient(circle 2.9vw at top right, transparent 2.9vw, black 2.9vw);
-    }
+   .tab::before {
+    -webkit-mask-image: radial-gradient(
+        ellipse 6vw 4.5vw at top right,
+        transparent 4.5vw,
+        black 4.55vw
+    );
+}
 
-    .tab::after {
-        -webkit-mask-image: radial-gradient(circle 2.9vw at top left, transparent 2.9vw, black 2.9vw);
-    }
+.tab::after {
+    -webkit-mask-image: radial-gradient(
+        ellipse 6vw 4.5vw at top left,
+        transparent 4.5vw,
+        black 4.55vw
+    );
+}
 
     .ordner-inhalt-stapel {
         top: 7vw;
     }
+
+    
+
+
+
 
     .tab,
     .tab.active,
@@ -579,11 +594,11 @@ body.touch-device .custom-cursor {
     .tab::after,
     .ordner-inhalt-stapel {
         box-shadow: 0 -2vw 1.5vw -1.2vw rgba(0, 0, 0, 0.2);
-
+        
     }
 
     .tab.active {
-        font-size: 1.15rem ;
+       font-size: 1.2rem;
     }
 
 
@@ -600,7 +615,7 @@ body.touch-device .custom-cursor {
     .text-block {
         margin: 0 auto;
         padding: 0 1rem;
-        transform: translateY(12vh);
+        transform: translateY(-6vh);
     }
 
     .unterschrift-bg {
@@ -609,21 +624,27 @@ body.touch-device .custom-cursor {
 
     .projekt-navigation-links {
         left: 0.75rem;
-        bottom: 1.25rem;
+        bottom: 7.25rem;
         gap: 0.35rem;
     }
 
     .projekt-nav-item {
-        font-size: 1.05rem;
+        font-size: 1.2rem;
     }
 
     .projekt-info {
-        right: 0.75rem;
-        bottom: 1.25rem;
-        width: min(200px, 48vw);
-        font-size: 0.72rem;
-        line-height: 1.45;
-    }
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    padding: 0 1rem 1rem 1rem;
+    font-size: 0.72rem;
+    text-align: left;
+        line-height: 1;
+}
+
+
+
 }
 
 /* ==========================================================================
@@ -635,4 +656,25 @@ body.touch-device .custom-cursor {
 .ordner-inhalt[data-content="projekte"].active img,
 .ordner-inhalt[data-content="projekte"].active video {
     cursor: none !important;
+}
+
+
+.projekt-info,
+.projekt-nav-item {
+    transition:
+        color 0.62s ease,
+        -webkit-text-stroke 0.62s ease,
+        text-shadow 0.62s ease,
+        opacity 0.62s ease;
+}
+
+
+@media (min-width: 993px) {
+    .projekt-info,
+    .projekt-info.is-on-light,
+    .projekt-info.is-on-dark {
+        color: black !important;
+        -webkit-text-stroke: 0.18px rgba(0, 0, 0, 0.42) !important;
+        text-shadow: 0 0 2.5px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.32) !important;
+    }
 }
