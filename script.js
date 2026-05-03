@@ -13,32 +13,31 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (tabsContainer) {
-        // --- FIX: Flag to check if projects tab has been viewed once ---
         let hasProjectsBeenInitialized = false;
 
         function setActiveState(tabToActivate, isInitialLoad = false) {
             if (!tabToActivate || tabToActivate.classList.contains('active')) return;
+
             if (!isInitialLoad) {
                 ordnerInhaltStapel.classList.add('no-transition');
                 ordnerInhaltStapel.classList.add('is-lifted');
                 ordnerInhaltStapel.offsetHeight;
                 ordnerInhaltStapel.classList.remove('no-transition');
             }
+
             tabs.forEach(t => t.classList.remove('active'));
             contentPages.forEach(p => p.classList.remove('active'));
+
             tabToActivate.classList.add('active');
+
             var targetContent = document.querySelector('.ordner-inhalt[data-content="' + tabToActivate.dataset.tabTarget + '"]');
             if (targetContent) {
                 targetContent.classList.add('active');
             }
 
-            // --- THE DEFINITIVE FIX ---
-            // This runs ONLY when the projects tab is made active for the very first time.
             if (tabToActivate.dataset.tabTarget === 'projekte' && !hasProjectsBeenInitialized) {
-                hasProjectsBeenInitialized = true; // Never run this again
+                hasProjectsBeenInitialized = true;
                 
-                // Use requestAnimationFrame to wait for the browser to be ready to paint.
-                // This is the most reliable way to ensure layout dimensions are available.
                 requestAnimationFrame(() => {
                     const aktiverSlide = document.querySelector('.projekt-slide.active');
                     if (aktiverSlide) {
@@ -47,18 +46,33 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             }
-            // --- END OF FIX ---
 
             const contentZIndex = 5;
             tabToActivate.style.zIndex = contentZIndex + 1;
+
             let zCounter = contentZIndex - 1;
-            tabs.forEach(t => { if (t !== tabToActivate) { t.style.zIndex = zCounter; zCounter--; } });
+            tabs.forEach(t => {
+                if (t !== tabToActivate) {
+                    t.style.zIndex = zCounter;
+                    zCounter--;
+                }
+            });
         }
+
         tabsContainer.addEventListener('click', (event) => setActiveState(event.target.closest('.tab')));
+
         tabs.forEach(tab => {
-            tab.addEventListener('mouseenter', () => { if (tab.classList.contains('active')) { ordnerInhaltStapel.classList.add('is-lifted'); } });
-            tab.addEventListener('mouseleave', () => { ordnerInhaltStapel.classList.remove('is-lifted'); });
+            tab.addEventListener('mouseenter', () => {
+                if (tab.classList.contains('active')) {
+                    ordnerInhaltStapel.classList.add('is-lifted');
+                }
+            });
+
+            tab.addEventListener('mouseleave', () => {
+                ordnerInhaltStapel.classList.remove('is-lifted');
+            });
         });
+
         setActiveState(document.querySelector('.tab'), true);
     }
 
@@ -70,73 +84,80 @@ document.addEventListener('DOMContentLoaded', function() {
     if (projektContainerWrapper) {
         const projekteContainer = document.getElementById('projekte-container');
         const customCursor = document.getElementById('custom-cursor');
-        const infoToggleButton = document.getElementById('info-toggle-button');
-        const overlayTitleImg = document.getElementById('overlay-title-img');
-        const overlayDescription = document.getElementById('overlay-description');
+        const projektInfoDescription = document.getElementById('projekt-info-description');
         const projektNav = document.getElementById('projekt-nav');
         const projektSlidesContainer = document.getElementById('projekt-slides');
-        const infoPaper = document.getElementById('info-paper');
+        const contrastCanvas = document.createElement('canvas');
+        const contrastContext = contrastCanvas.getContext('2d', { willReadFrequently: true });
         
-        let isInfoOverlayOpen = false;
         let aktuellerProjektIndex = 0;
         let isNavigating = false;
         let isChangingProject = false;
+
         const CLONE_COUNT = 5;
 
         const projektDaten = {
-            'ashoka-dupe': {
-                titel: 'Ashoka Dupe',
-                titelBild: 'Handwritten_Titles/Ashoka_Dupe.png',
-                beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. ',
-                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
+
+'new-tool': {
+                titel: 'DUSTE',
+                beschreibung: 'Stackable, modular Lithing system.',
+                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
             },
-            'leiter': {
-                titel: 'Decorated Ladder',
-                titelBild: 'Handwritten_Titles/Decorated_Ladder.png',
-                beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?',
-                medien: [
-                    { type: 'video', src: 'Projektvideos/leiter.mp4' },
-                    ...Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
-                ]
-            },
-            'faltkarre': {
-                titel: 'Folding Wheelbarrow',
-                titelBild: 'Handwritten_Titles/faltkarre.png',
-                beschreibung: 'The wheelbarrow in private use can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.',
-                medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
-            },
-            'tin-3d': {
+
+
+
+             'tin-3d': {
                 titel: 'Tin 3D Printer',
-                titelBild: 'Handwritten_Titles/Tin_3D_Printer.png',
                 beschreibung: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error.',
                 medien: [
                     { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
                     ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
                 ]
             },
-            'movement': {
+
+                  'faltkarre': {
+                titel: 'Folding Wheelbarrow',
+                beschreibung: 'A wheelbarrow can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.',
+                medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
+            },
+
+            'ashoka-dupe': {
+                titel: 'Ashoka Dupe',
+                beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. ',
+                medien: Array.from({ length: 3 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
+            },
+
+
+
+            'leiter': {
+                titel: 'Decorated Ladder',
+                beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?',
+                medien: [
+                    { type: 'video', src: 'Projektvideos/leiter.mp4' },
+                    ...Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
+                ]
+            },
+
+          
+
+           /*  'movement': {
                 titel: 'Movement to Signal',
-                titelBild: 'Handwritten_Titles/Movement_to_Signal.png',
                 beschreibung: 'The “Movement to Signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. It invites you to consciously movements and to explore the variations and gradations of the visual effects.',
                 medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung zum Signal/Bild (${i + 1}).jpg` }))
-            },
-            'new-tool': {
-                titel: 'SLIDE',
-                titelBild: 'Handwritten_Titles/Slide.png',
-                beschreibung: 'SLIDE is a bag filling aid for people with motor and/or mental disabilities. Especially for people with one arm. The project was developed in cooperation with the Gottessegen workshops in Dortmund.',
-                medien: Array.from({ length: 9 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
-            },
+            },  */
+
+          
+/*
             'sketches': {
                 titel: 'Sketches',
-                titelBild: 'Handwritten_Titles/Sketches.png',
                 beschreibung: 'Some sketches I created over the years.',
                 medien: Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Sketches/Bild (${i + 1}).jpg` }))
-            }
+            } */
         };
         
         const projektKeys = Object.keys(projektDaten);
         
-        new Image().src = 'Projektbilder/Ashoka_Dupe/Bild (1).jpg';
+        new Image().src = 'Projektbilder/Tin_Dripper/Bild (1).jpg';
 
         function muteAllVideos() {
             const videos = document.querySelectorAll('video');
@@ -147,23 +168,161 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        function toggleInfoOverlay(event) {
-            if (event) event.stopPropagation();
-            isInfoOverlayOpen = !isInfoOverlayOpen;
-            projekteContainer.classList.toggle('info-overlay-active');
+        function updateProjektInfo(index) {
+            const aktuellesProjekt = projektDaten[projektKeys[index]];
 
-            if (isInfoOverlayOpen) {
-                const aktuellesProjekt = projektDaten[projektKeys[aktuellerProjektIndex]];
-                overlayTitleImg.src = aktuellesProjekt.titelBild;
-                overlayTitleImg.alt = aktuellesProjekt.titel;
-                overlayDescription.innerHTML = aktuellesProjekt.beschreibung;
-            } else {
-                if (customCursor) customCursor.style.opacity = '0';
+            if (!aktuellesProjekt || !projektInfoDescription) return;
+
+            projektInfoDescription.innerHTML = aktuellesProjekt.beschreibung;
+        }
+
+        function scheduleProjectTextContrastUpdate() {
+            requestAnimationFrame(() => {
+                updateProjectTextContrast();
+                setTimeout(updateProjectTextContrast, 120);
+            });
+        }
+
+        function updateProjectTextContrast() {
+            updateContrastForElement(projektNav);
+            updateContrastForElement(document.querySelector('.projekt-info'));
+        }
+
+        function updateContrastForElement(element) {
+            if (!element || !contrastContext) return;
+
+            const luminance = getLuminanceBehindElement(element);
+            if (luminance === null) return;
+
+            element.classList.toggle('is-on-light', luminance > 150);
+            element.classList.toggle('is-on-dark', luminance <= 150);
+        }
+
+        function getLuminanceBehindElement(element) {
+            const activeSlide = document.querySelector('.projekt-slide.active');
+            if (!activeSlide) return null;
+
+            const targetRect = element.getBoundingClientRect();
+            const frames = Array.from(activeSlide.querySelectorAll('.media-frame'));
+            let weightedLuminance = 0;
+            let totalArea = 0;
+
+            frames.forEach(frame => {
+                const frameRect = frame.getBoundingClientRect();
+                const overlap = getRectOverlap(targetRect, frameRect);
+
+                if (!overlap) return;
+
+                const mediaLuminance = sampleMediaFrameLuminance(frame, frameRect, overlap);
+                if (mediaLuminance === null) return;
+
+                const area = overlap.width * overlap.height;
+                weightedLuminance += mediaLuminance * area;
+                totalArea += area;
+            });
+
+            if (totalArea === 0) return null;
+
+            const averageLuminance = weightedLuminance / totalArea;
+            const paperOverlayAlpha = getPaperOverlayAlpha(targetRect);
+
+            return (averageLuminance * (1 - paperOverlayAlpha)) + (232 * paperOverlayAlpha);
+        }
+
+        function getPaperOverlayAlpha(targetRect) {
+            if (!projekteContainer) return 0;
+
+            const containerRect = projekteContainer.getBoundingClientRect();
+            const overlayHeight = 96;
+            const centerY = targetRect.top + (targetRect.height / 2);
+            const distanceFromTop = Math.max(0, centerY - containerRect.top);
+            const distanceFromBottom = Math.max(0, containerRect.bottom - centerY);
+            const topAlpha = distanceFromTop < overlayHeight ? 1 - (distanceFromTop / overlayHeight) : 0;
+            const bottomAlpha = distanceFromBottom < overlayHeight ? 1 - (distanceFromBottom / overlayHeight) : 0;
+
+            return Math.max(topAlpha, bottomAlpha);
+        }
+
+        function getRectOverlap(a, b) {
+            const left = Math.max(a.left, b.left);
+            const top = Math.max(a.top, b.top);
+            const right = Math.min(a.right, b.right);
+            const bottom = Math.min(a.bottom, b.bottom);
+
+            if (right <= left || bottom <= top) return null;
+
+            return {
+                left,
+                top,
+                width: right - left,
+                height: bottom - top
+            };
+        }
+
+        function sampleMediaFrameLuminance(frame, frameRect, overlap) {
+            const media = frame.firstElementChild;
+            if (!media) return null;
+
+            const sourceWidth = media.videoWidth || media.naturalWidth || media.clientWidth;
+            const sourceHeight = media.videoHeight || media.naturalHeight || media.clientHeight;
+
+            if (!sourceWidth || !sourceHeight) return null;
+            if (media.tagName === 'IMG' && !media.complete) return null;
+            if (media.tagName === 'VIDEO' && media.readyState < 2) return null;
+
+            const sampleWidth = 24;
+            const sampleHeight = 24;
+            const sourceX = ((overlap.left - frameRect.left) / frameRect.width) * sourceWidth;
+            const sourceY = ((overlap.top - frameRect.top) / frameRect.height) * sourceHeight;
+            const sourceSampleWidth = (overlap.width / frameRect.width) * sourceWidth;
+            const sourceSampleHeight = (overlap.height / frameRect.height) * sourceHeight;
+
+            contrastCanvas.width = sampleWidth;
+            contrastCanvas.height = sampleHeight;
+            contrastContext.clearRect(0, 0, sampleWidth, sampleHeight);
+
+            try {
+                contrastContext.drawImage(
+                    media,
+                    sourceX,
+                    sourceY,
+                    sourceSampleWidth,
+                    sourceSampleHeight,
+                    0,
+                    0,
+                    sampleWidth,
+                    sampleHeight
+                );
+            } catch (error) {
+                return null;
             }
+
+            let pixels;
+
+            try {
+                pixels = contrastContext.getImageData(0, 0, sampleWidth, sampleHeight).data;
+            } catch (error) {
+                return null;
+            }
+
+            let luminance = 0;
+            const pixelCount = pixels.length / 4;
+
+            for (let i = 0; i < pixels.length; i += 4) {
+                luminance += (0.2126 * pixels[i]) + (0.7152 * pixels[i + 1]) + (0.0722 * pixels[i + 2]);
+            }
+
+            luminance /= pixelCount;
+
+            if (!frame.classList.contains('media-active')) {
+                luminance = (luminance * 0.52) + (232 * 0.48);
+            }
+
+            return luminance;
         }
 
         function initProjekte() {
-            if (!projekteContainer || !projektNav || !projektSlidesContainer || !infoToggleButton) {
+            if (!projekteContainer || !projektNav || !projektSlidesContainer || !projektInfoDescription) {
                 console.error("Ein oder mehrere benötigte Elemente für die Projektseite wurden nicht gefunden.");
                 return;
             }
@@ -172,15 +331,17 @@ document.addEventListener('DOMContentLoaded', function() {
             projektSlidesContainer.innerHTML = '';
 
             projektKeys.forEach((key, index) => {
-                const navDot = document.createElement('span');
-                navDot.className = 'projekt-nav-dot';
-                navDot.dataset.index = index;
-                navDot.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    if (isInfoOverlayOpen) return;
-                    zeigeProjekt(index);
-                });
-                projektNav.appendChild(navDot);
+             const navItem = document.createElement('button');
+navItem.className = 'projekt-nav-item';
+navItem.dataset.index = index;
+navItem.textContent = projektDaten[key].titel;
+
+navItem.addEventListener('click', (e) => {
+    e.stopPropagation();
+    zeigeProjekt(index);
+});
+
+projektNav.appendChild(navItem);
 
                 const slide = document.createElement('div');
                 slide.className = 'projekt-slide';
@@ -208,6 +369,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     originalMedien.forEach(mediaData => {
                         filmstrip.appendChild(createMediaElement(mediaData));
                     });
+
                     slide.dataset.prependedClones = 0;
                     slide.dataset.realCount = originalMedien.length;
                 }
@@ -217,73 +379,118 @@ document.addEventListener('DOMContentLoaded', function() {
                         handleTransitionEnd(slide);
                     }
                 });
+
                 slide.appendChild(filmstrip);
                 projektSlidesContainer.appendChild(slide);
             });
 
             zeigeProjekt(0, true);
-            infoToggleButton.addEventListener('click', toggleInfoOverlay);
-            if (infoPaper) {
-                infoPaper.addEventListener('click', toggleInfoOverlay);
-            }
         }
         
         function createMediaElement(mediaData) {
+            const mediaFrame = document.createElement('div');
+            mediaFrame.className = 'media-frame';
             let mediaElement;
-            if (mediaData.type === 'image') mediaElement = new Image();
-            else if (mediaData.type === 'video') mediaElement = document.createElement('video');
-            else if (mediaData.type === 'model') mediaElement = document.createElement('model-viewer');
 
-            if(mediaElement) {
-                if (mediaElement.tagName === 'IMG') mediaElement.loading = 'lazy';
-                if (mediaElement.tagName === 'VIDEO') Object.assign(mediaElement, { autoplay: true, loop: true, muted: true, playsInline: true });
-                if (mediaElement.tagName === 'MODEL-VIEWER') {
-                     mediaElement.setAttribute('camera-controls', '');
-                     mediaElement.setAttribute('auto-rotate', '');
+            if (mediaData.type === 'image') {
+                mediaElement = new Image();
+            } else if (mediaData.type === 'video') {
+                mediaElement = document.createElement('video');
+            } else if (mediaData.type === 'model') {
+                mediaElement = document.createElement('model-viewer');
+            }
+
+            if (mediaElement) {
+                if (mediaElement.tagName === 'IMG') {
+                    mediaElement.loading = 'lazy';
                 }
+
+           if (mediaElement.tagName === 'VIDEO') {
+    Object.assign(mediaElement, {
+        autoplay: true,
+        loop: true,
+        muted: true,
+        playsInline: true,
+        preload: 'auto'
+    });
+
+    mediaElement.addEventListener('loadedmetadata', () => {
+        const aktiverSlide = document.querySelector('.projekt-slide.active');
+        if (aktiverSlide) {
+            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
+            positioniereFilmstreifen(aktiverSlide, currentIndex);
+        }
+    });
+
+    mediaElement.addEventListener('loadeddata', () => {
+        const aktiverSlide = document.querySelector('.projekt-slide.active');
+        if (aktiverSlide) {
+            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
+            positioniereFilmstreifen(aktiverSlide, currentIndex);
+        }
+    });
+}
+
+                if (mediaElement.tagName === 'MODEL-VIEWER') {
+                    mediaElement.setAttribute('camera-controls', '');
+                    mediaElement.setAttribute('auto-rotate', '');
+                }
+
                 mediaElement.src = mediaData.src;
             }
-            return mediaElement;
+
+            if (mediaElement) {
+                mediaFrame.appendChild(mediaElement);
+            }
+
+            return mediaFrame;
         }
 
         function zeigeProjekt(index, isInitial = false) {
-            if (isChangingProject || isInfoOverlayOpen || index < 0 || index >= projektKeys.length || (!isInitial && index === aktuellerProjektIndex)) {
+            if (
+                isChangingProject ||
+                index < 0 ||
+                index >= projektKeys.length ||
+                (!isInitial && index === aktuellerProjektIndex)
+            ) {
                 return;
             }
+
             isChangingProject = true;
         
             const alterSlide = document.querySelector('.projekt-slide.active');
             const key = projektKeys[index];
             const neuerSlide = document.querySelector(`.projekt-slide[data-key="${key}"]`);
         
-            document.querySelectorAll('.projekt-nav-dot').forEach(n => n.classList.remove('active'));
-            document.querySelector(`.projekt-nav-dot[data-index="${index}"]`).classList.add('active');
+            document.querySelectorAll('.projekt-nav-item').forEach(n => n.classList.remove('active'));
+document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add('active');
             
             const filmstrip = neuerSlide.querySelector('.media-filmstrip');
             const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
             
-            // On initial load, just set the state. Positioning is handled by the click logic.
             if (isInitial) {
-                if(alterSlide) alterSlide.classList.remove('active');
+                if (alterSlide) alterSlide.classList.remove('active');
+
                 neuerSlide.classList.add('active');
                 neuerSlide.dataset.currentIndex = firstRealElementIndex;
                 
-                // Pre-activate the first image to make it sharp from the start
                 const firstImage = filmstrip.children[firstRealElementIndex];
                 if (firstImage) {
                     firstImage.classList.add('media-active');
                 }
                 
                 aktuellerProjektIndex = index;
+                updateProjektInfo(index);
+                scheduleProjectTextContrastUpdate();
                 isChangingProject = false;
                 return;
             }
 
-            // For all subsequent clicks, perform the full crossfade
             const performCrossfade = () => {
                 if (alterSlide) {
                     alterSlide.classList.remove('active');
                 }
+
                 neuerSlide.classList.add('active');
                 
                 const medien = Array.from(filmstrip.children);
@@ -295,10 +502,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 muteAllVideos();
         
                 aktuellerProjektIndex = index;
-                setTimeout(() => { isChangingProject = false; }, 500);
+                updateProjektInfo(index);
+                scheduleProjectTextContrastUpdate();
+
+                setTimeout(() => {
+                    isChangingProject = false;
+                }, 500);
             };
             
-            const firstRealMediaElement = filmstrip.children[firstRealElementIndex];
+            const firstRealFrame = filmstrip.children[firstRealElementIndex];
+            const firstRealMediaElement = firstRealFrame ? firstRealFrame.firstElementChild : null;
+
             if (firstRealMediaElement && firstRealMediaElement.tagName === 'IMG' && !firstRealMediaElement.complete) {
                 firstRealMediaElement.onload = performCrossfade;
                 firstRealMediaElement.onerror = performCrossfade;
@@ -309,19 +523,20 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function positioniereFilmstreifen(slide, newIndex) {
             const filmstrip = slide.querySelector('.media-filmstrip');
+
             if (!slide || !filmstrip) return;
             
             slide.dataset.currentIndex = newIndex;
+
             const targetMedium = filmstrip.children[newIndex];
             if (!targetMedium) return;
 
             const containerWidth = slide.offsetWidth;
 
-            // This should not happen with requestAnimationFrame, but as a fallback:
             if (containerWidth === 0) {
-                 console.warn("Positioning failed, retrying...");
-                 requestAnimationFrame(() => positioniereFilmstreifen(slide, newIndex));
-                 return;
+                console.warn("Positioning failed, retrying...");
+                requestAnimationFrame(() => positioniereFilmstreifen(slide, newIndex));
+                return;
             }
             
             const mediumWidth = targetMedium.offsetWidth;
@@ -333,7 +548,9 @@ document.addEventListener('DOMContentLoaded', function() {
         
         function handleTransitionEnd(slide) {
             const filmstrip = slide.querySelector('.media-filmstrip');
+
             let currentIndex = parseInt(slide.dataset.currentIndex, 10);
+
             const prependedClones = parseInt(slide.dataset.prependedClones, 10);
             const realCount = parseInt(slide.dataset.realCount, 10);
             
@@ -350,8 +567,9 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentIndex > endeDerEchtenBilder) {
                 neuerEchterIndex = anfangDerEchtenBilder + (currentIndex - 1 - endeDerEchtenBilder);
             }
+
             if (currentIndex < anfangDerEchtenBilder) {
-                 neuerEchterIndex = endeDerEchtenBilder - (anfangDerEchtenBilder - 1 - currentIndex);
+                neuerEchterIndex = endeDerEchtenBilder - (anfangDerEchtenBilder - 1 - currentIndex);
             }
 
             if (neuerEchterIndex !== -1) {
@@ -359,9 +577,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 const medien = Array.from(filmstrip.children);
                 medien.forEach(el => el.classList.remove('media-active'));
+
                 medien[neuerEchterIndex].classList.add('media-active');
 
                 positioniereFilmstreifen(slide, neuerEchterIndex);
+                scheduleProjectTextContrastUpdate();
                 
                 setTimeout(() => {
                     filmstrip.classList.remove('no-transition');
@@ -373,9 +593,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const handleNav = (direction) => {
-            if (isInfoOverlayOpen) return;
             const aktiverSlide = document.querySelector('.projekt-slide.active');
+
             if (!aktiverSlide || isNavigating) return;
+
             isNavigating = true;
 
             const filmstrip = aktiverSlide.querySelector('.media-filmstrip');
@@ -398,28 +619,34 @@ document.addEventListener('DOMContentLoaded', function() {
             
             filmstrip.classList.add('transitioning');
             positioniereFilmstreifen(aktiverSlide, nextIndex);
+            scheduleProjectTextContrastUpdate();
         };
         
         projektContainerWrapper.addEventListener('wheel', (event) => {
-            if (isInfoOverlayOpen) return;
             event.preventDefault();
+
             if (isChangingProject) return;
             
-            if (event.deltaY > 20) zeigeProjekt(aktuellerProjektIndex + 1);
-            else if (event.deltaY < -20) zeigeProjekt(aktuellerProjektIndex - 1);
+            if (event.deltaY > 20) {
+                zeigeProjekt(aktuellerProjektIndex + 1);
+            } else if (event.deltaY < -20) {
+                zeigeProjekt(aktuellerProjektIndex - 1);
+            }
         });
         
         projektContainerWrapper.addEventListener('mousemove', (event) => {
-            if (isInfoOverlayOpen || !customCursor) {
+            if (!customCursor) {
                 if (customCursor) customCursor.style.opacity = '0';
                 return;
             }
+
             customCursor.style.opacity = '1';
             customCursor.style.left = `${event.clientX}px`;
             customCursor.style.top = `${event.clientY}px`;
             
             const rect = projekteContainer.getBoundingClientRect();
             const midpoint = rect.left + rect.width / 2;
+
             if (event.clientX < midpoint) {
                 customCursor.textContent = '<';
             } else {
@@ -427,62 +654,93 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        projektContainerWrapper.addEventListener('mouseenter', () => { if(customCursor && !isInfoOverlayOpen) customCursor.style.opacity = '1'; });
-        projektContainerWrapper.addEventListener('mouseleave', () => { if(customCursor) customCursor.style.opacity = '0'; });
+        projektContainerWrapper.addEventListener('mouseenter', () => {
+            if (customCursor) customCursor.style.opacity = '1';
+        });
+
+        projektContainerWrapper.addEventListener('mouseleave', () => {
+            if (customCursor) customCursor.style.opacity = '0';
+        });
         
         projektContainerWrapper.addEventListener('click', (event) => {
-            if (event.target.closest('.info-toggle-button') || event.target.closest('.info-paper') || event.target.closest('.info-overlay')) return;
-            if (isInfoOverlayOpen) return;
-            
             const rect = projekteContainer.getBoundingClientRect();
             const midpoint = rect.left + rect.width / 2;
-            if (event.clientX < midpoint) handleNav(-1); else handleNav(1);
+
+            if (event.clientX < midpoint) {
+                handleNav(-1);
+            } else {
+                handleNav(1);
+            }
         });
 
         window.addEventListener('resize', () => {
             const aktiverSlide = document.querySelector('.projekt-slide.active');
-            if(aktiverSlide && projektContainerWrapper.classList.contains('active')) {
+
+            if (aktiverSlide && projektContainerWrapper.classList.contains('active')) {
                 const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
                 positioniereFilmstreifen(aktiverSlide, currentIndex);
+                scheduleProjectTextContrastUpdate();
             }
         });
 
         initProjekte();
+        setInterval(() => {
+            if (projektContainerWrapper.classList.contains('active')) {
+                updateProjectTextContrast();
+            }
+        }, 650);
         
-        let touchStartX = 0, touchStartY = 0, touchEndX = 0, touchEndY = 0;
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let touchEndX = 0;
+        let touchEndY = 0;
 
         projektContainerWrapper.addEventListener('touchstart', (e) => {
-            if (isInfoOverlayOpen) return;
             touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
         }, false);
 		
-        projektContainerWrapper.addEventListener('touchmove', (e) => { 
-            if (isInfoOverlayOpen) return;
-            e.preventDefault(); 
+        projektContainerWrapper.addEventListener('touchmove', (e) => {
+            e.preventDefault();
         }, { passive: false });
 
         projektContainerWrapper.addEventListener('touchend', (e) => {
-            if (isInfoOverlayOpen) return;
             touchEndX = e.changedTouches[0].screenX;
             touchEndY = e.changedTouches[0].screenY;
+
             handleSwipe();
-        }, false); 
+        }, false);
 
         function handleSwipe() {
-            const deltaX = touchEndX - touchStartX, deltaY = touchEndY - touchStartY, swipeThreshold = 50;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            const swipeThreshold = 50;
+
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (Math.abs(deltaX) > swipeThreshold) { if (deltaX > 0) handleNav(-1); else handleNav(1); }
+                if (Math.abs(deltaX) > swipeThreshold) {
+                    if (deltaX > 0) {
+                        handleNav(-1);
+                    } else {
+                        handleNav(1);
+                    }
+                }
             } else {
-                if (Math.abs(deltaY) > swipeThreshold) { if (deltaY > 0) zeigeProjekt(aktuellerProjektIndex - 1); else zeigeProjekt(aktuellerProjektIndex + 1); }
+                if (Math.abs(deltaY) > swipeThreshold) {
+                    if (deltaY > 0) {
+                        zeigeProjekt(aktuellerProjektIndex - 1);
+                    } else {
+                        zeigeProjekt(aktuellerProjektIndex + 1);
+                    }
+                }
             }
         }
     }
 
     // =======================================================
-    // LOGIK FÜR MARQUEE (Wird am Ende ausgeführt)
+    // LOGIK FÜR MARQUEE
     // =======================================================
     const marqueeContainers = document.querySelectorAll('.marquee-container');
+
     marqueeContainers.forEach(container => {
         const sharpContent = container.querySelector('.marquee-content.sharp');
         const blurryContent = container.querySelector('.marquee-content.blurry');
