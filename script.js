@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
              'tin-3d': {
-                titel: 'Tin 3D Printer',
+                titel: 'TIN 3D PRINTER',
                 beschreibung: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error.',
                 medien: [
                     { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
@@ -116,13 +116,13 @@ document.addEventListener('DOMContentLoaded', function() {
             },
 
                   'faltkarre': {
-                titel: 'Folding Wheelbarrow',
+                titel: 'FOLDING WHEELBARROW',
                 beschreibung: 'A wheelbarrow can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.',
                 medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
             },
 
             'ashoka-dupe': {
-                titel: 'Ashoka Dupe',
+                titel: 'ASHOKA DUPE',
                 beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation. ',
                 medien: Array.from({ length: 3 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
             },
@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
             'leiter': {
-                titel: 'Decorated Ladder',
+                titel: 'DECORATED LADDER',
                 beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?',
                 medien: [
                     { type: 'video', src: 'Projektvideos/leiter.mp4' },
