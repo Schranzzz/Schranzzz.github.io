@@ -183,13 +183,27 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        function updateProjectTextContrast() {
-    updateContrastForElement(projektNav);
-
+      function updateProjectTextContrast() {
     const projektInfo = document.querySelector('.projekt-info');
-    if (projektInfo) {
-        updateContrastForElement(projektInfo);
-    }
+    if (!projektNav || !projektInfo || !contrastContext) return;
+
+    const navLuminance = getLuminanceBehindElement(projektNav);
+    const infoLuminance = getLuminanceBehindElement(projektInfo);
+
+    if (navLuminance === null && infoLuminance === null) return;
+
+    const luminance =
+        navLuminance !== null && infoLuminance !== null
+            ? (navLuminance + infoLuminance) / 2
+            : (navLuminance ?? infoLuminance);
+
+    const isLight = luminance > 120;
+
+    [projektNav, projektInfo].forEach(el => {
+        el.classList.toggle('is-on-light', isLight);
+        el.classList.toggle('is-on-dark', !isLight);
+    });
+
 }
 
         function updateContrastForElement(element) {
@@ -333,6 +347,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error("Ein oder mehrere benötigte Elemente für die Projektseite wurden nicht gefunden.");
                 return;
             }
+            const swipeHint = document.getElementById('swipe-hint');
+
+if (swipeHint) {
+    setTimeout(() => {
+        swipeHint.classList.add('is-hidden');
+    }, 1300);
+
+    setTimeout(() => {
+        swipeHint.remove();
+    }, 2000);
+}
             
             projektNav.innerHTML = '';
             projektSlidesContainer.innerHTML = '';
