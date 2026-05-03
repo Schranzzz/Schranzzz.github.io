@@ -559,7 +559,7 @@ body.touch-device .custom-cursor {
     .tab::after {
         width: 4.5vw;
         height: 3.75vw;
-        top: 5.45vw;
+        top: 5.75vw;
      
     }
 
@@ -615,7 +615,8 @@ body.touch-device .custom-cursor {
     .text-block {
         margin: 0 auto;
         padding: 0 1rem;
-        transform: translateY(-6vh);
+        transform: translateY(-5vh);
+        font-size: 0.8rem;
     }
 
     .unterschrift-bg {
@@ -629,7 +630,7 @@ body.touch-device .custom-cursor {
     }
 
     .projekt-nav-item {
-        font-size: 1.2rem;
+        font-size: 0.9rem;
     }
 
     .projekt-info {
@@ -644,8 +645,6 @@ body.touch-device .custom-cursor {
 }
 
 
-
-}
 
 /* ==========================================================================
    CURSOR FIX
