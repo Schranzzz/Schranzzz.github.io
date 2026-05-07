@@ -9,7 +9,7 @@
     --Eselsohr-Farbe: var(--Papier);
 
     --font-script: 'Pinyon Script', cursive;
-    --font-mono: 'Geist', 'Geist Sans', Helvetica, Arial, sans-serif;
+    --font-mono: 'Geist light', 'Geist sans', Helvetica, Arial, sans-serif;
     --tab-radius: 35px;
     --inhalt-radius-gross: 80px;
 }
@@ -214,7 +214,7 @@ body {
     -webkit-text-stroke: 0.18px rgba(0, 0, 0, 0.42);
     text-shadow: 0 0 2.5px rgba(0, 0, 0, 0.6), 0 0 8px rgba(0, 0, 0, 0.32);
     text-rendering: geometricPrecision;
-    font-size: 0.9rem;
+    font-size: 1.5rem;
 }
 
 .logo {
@@ -427,6 +427,7 @@ body.touch-device .custom-cursor {
 .projekt-nav-item.active {
     opacity: 1;
    cursor: pointer;
+  
 }
 
 .pfeil {
@@ -444,7 +445,7 @@ body.touch-device .custom-cursor {
     width: 30%;
     color: white;
     font-family: var(--font-mono);
-    font-size: 0.8rem;
+    font-size: 1rem;
     font-weight: 700;
     line-height: 1;
     text-align: left;
@@ -636,12 +637,12 @@ body.touch-device .custom-cursor {
 
     .projekt-navigation-links {
         left: 0.75rem;
-        bottom: 7.25rem;
+        bottom: 8.25rem;
         gap: 0.35rem;
     }
 
     .projekt-nav-item {
-        font-size: 0.9rem;
+        font-size: 1.25rem;
     }
 
     .projekt-info {
@@ -650,7 +651,7 @@ body.touch-device .custom-cursor {
     bottom: 0;
     width: 100%;
     padding: 0 1rem 1rem 1rem;
-    font-size: 0.72rem;
+    font-size: 0.9rem;
     text-align: left;
         line-height: 1;
 }
@@ -711,22 +712,3 @@ body.touch-device .custom-cursor {
 }
 
 
-
-.site-signature {
-    position: fixed;
-    left: 1.25rem;
-    top: 1rem;
-    z-index: 999;
-
-    color: rgba(20, 20, 20, 0.9);
-    font-family: var(--font-mono);
-    font-size: 0.52rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    pointer-events: none;
-
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-stroke: 0.18px rgba(0, 0, 0, 0.42);
-    text-shadow: 0 0 2.5px rgba(0, 0, 0, 0.18);
-    text-rendering: geometricPrecision;
-}
