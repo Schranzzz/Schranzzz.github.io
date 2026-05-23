@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var tabsContainer = document.querySelector('.ordner-tabs');
     var tabs = document.querySelectorAll('.tab');
     var contentPages = document.querySelectorAll('.ordner-inhalt');
+    var ordnerSystem = document.querySelector('.ordner-system');
     var ordnerInhaltStapel = document.querySelector('.ordner-inhalt-stapel');
     
     if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
@@ -65,11 +66,16 @@ document.addEventListener('DOMContentLoaded', function() {
             tab.addEventListener('mouseenter', () => {
                 if (tab.classList.contains('active')) {
                     ordnerInhaltStapel.classList.add('is-lifted');
+                } else if (ordnerSystem) {
+                    ordnerSystem.classList.add('is-background-lifted');
                 }
             });
 
             tab.addEventListener('mouseleave', () => {
                 ordnerInhaltStapel.classList.remove('is-lifted');
+                if (ordnerSystem) {
+                    ordnerSystem.classList.remove('is-background-lifted');
+                }
             });
         });
 
@@ -93,6 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
         let aktuellerProjektIndex = 0;
         let isNavigating = false;
         let isChangingProject = false;
+        let projektNavHideTimer = null;
 
         const CLONE_COUNT = 5;
 
@@ -159,6 +166,21 @@ document.addEventListener('DOMContentLoaded', function() {
         
         new Image().src = 'Projektbilder/Tin_Dripper/Bild (1).jpg';
 
+        function isMobileProjectView() {
+            return window.matchMedia('(max-width: 992px)').matches;
+        }
+
+        function showProjectNavTemporarily(delay = 3000) {
+            if (!projektNav || !isMobileProjectView()) return;
+
+            projektNav.classList.remove('is-hidden');
+            clearTimeout(projektNavHideTimer);
+
+            projektNavHideTimer = setTimeout(() => {
+                projektNav.classList.add('is-hidden');
+            }, delay);
+        }
+
         function muteAllVideos() {
             const videos = document.querySelectorAll('video');
             videos.forEach(video => {
@@ -184,25 +206,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
       function updateProjectTextContrast() {
-    const projektInfo = document.querySelector('.projekt-info');
-    if (!projektNav || !projektInfo || !contrastContext) return;
+    if (!projektNav || !contrastContext) return;
 
     const navLuminance = getLuminanceBehindElement(projektNav);
-    const infoLuminance = getLuminanceBehindElement(projektInfo);
 
-    if (navLuminance === null && infoLuminance === null) return;
+    if (navLuminance === null) return;
 
-    const luminance =
-        navLuminance !== null && infoLuminance !== null
-            ? (navLuminance + infoLuminance) / 2
-            : (navLuminance ?? infoLuminance);
+    const isLight = navLuminance > 120;
 
-    const isLight = luminance > 120;
-
-    [projektNav, projektInfo].forEach(el => {
-        el.classList.toggle('is-on-light', isLight);
-        el.classList.toggle('is-on-dark', !isLight);
-    });
+    projektNav.classList.toggle('is-on-light', isLight);
+    projektNav.classList.toggle('is-on-dark', !isLight);
 
 }
 
@@ -493,9 +506,12 @@ projektNav.appendChild(navItem);
             const alterSlide = document.querySelector('.projekt-slide.active');
             const key = projektKeys[index];
             const neuerSlide = document.querySelector(`.projekt-slide[data-key="${key}"]`);
-        
+
             document.querySelectorAll('.projekt-nav-item').forEach(n => n.classList.remove('active'));
 document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add('active');
+            if (!isInitial) {
+                showProjectNavTemporarily();
+            }
             
             const filmstrip = neuerSlide.querySelector('.media-filmstrip');
             const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
@@ -587,6 +603,7 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
             const realCount = parseInt(slide.dataset.realCount, 10);
             
             if (realCount <= 1) {
+                clearTimeout(handleNav.resetTimer);
                 isNavigating = false;
                 return;
             }
@@ -617,9 +634,11 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
                 
                 setTimeout(() => {
                     filmstrip.classList.remove('no-transition');
+                    clearTimeout(handleNav.resetTimer);
                     isNavigating = false;
                 }, 50);
             } else {
+                clearTimeout(handleNav.resetTimer);
                 isNavigating = false;
             }
         }
@@ -630,6 +649,10 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
             if (!aktiverSlide || isNavigating) return;
 
             isNavigating = true;
+            clearTimeout(handleNav.resetTimer);
+            handleNav.resetTimer = setTimeout(() => {
+                isNavigating = false;
+            }, 800);
 
             const filmstrip = aktiverSlide.querySelector('.media-filmstrip');
             const medien = Array.from(filmstrip.children);
@@ -653,12 +676,25 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
             positioniereFilmstreifen(aktiverSlide, nextIndex);
             scheduleProjectTextContrastUpdate();
         };
-        
+        handleNav.resetTimer = null;
+
         projektContainerWrapper.addEventListener('wheel', (event) => {
             event.preventDefault();
 
             if (isChangingProject) return;
-            
+
+            const isHorizontalSwipe = Math.abs(event.deltaX) > Math.abs(event.deltaY);
+
+            if (isHorizontalSwipe) {
+                if (event.deltaX > 20) {
+                    handleNav(1);
+                } else if (event.deltaX < -20) {
+                    handleNav(-1);
+                }
+
+                return;
+            }
+
             if (event.deltaY > 20) {
                 zeigeProjekt(aktuellerProjektIndex + 1);
             } else if (event.deltaY < -20) {
@@ -716,6 +752,7 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
         });
 
         initProjekte();
+        showProjectNavTemporarily();
         setInterval(() => {
             if (projektContainerWrapper.classList.contains('active')) {
                 updateProjectTextContrast();
