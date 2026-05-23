@@ -426,6 +426,20 @@ projektNav.appendChild(navItem);
                 });
 
                 slide.appendChild(filmstrip);
+
+                // Carousel-Dots (nur mobile, nur bei >1 Bild)
+                const realCount = parseInt(slide.dataset.realCount, 10);
+                if (realCount > 1) {
+                    const dotsContainer = document.createElement('div');
+                    dotsContainer.className = 'carousel-dots';
+                    for (let i = 0; i < realCount; i++) {
+                        const dot = document.createElement('span');
+                        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                        dotsContainer.appendChild(dot);
+                    }
+                    slide.appendChild(dotsContainer);
+                }
+
                 projektSlidesContainer.appendChild(slide);
             });
 
@@ -541,21 +555,29 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
 
                 neuerSlide.classList.add('active');
                 
+                // Alle Transitions sofort deaktivieren — verhindert Blur-Blitz und Reinfliegen
+                filmstrip.classList.remove('transitioning');
+                filmstrip.classList.add('no-transition');
+
                 const medien = Array.from(filmstrip.children);
                 medien.forEach(el => el.classList.remove('media-active'));
-                
                 medien[firstRealElementIndex].classList.add('media-active');
-                
+
                 positioniereFilmstreifen(neuerSlide, firstRealElementIndex);
+
+                // Transitions nach einem Frame wieder freigeben
+                requestAnimationFrame(() => filmstrip.classList.remove('no-transition'));
+
+                updateDots(neuerSlide, 0);
                 muteAllVideos();
-        
+
                 aktuellerProjektIndex = index;
                 updateProjektInfo(index);
                 scheduleProjectTextContrastUpdate();
 
                 setTimeout(() => {
                     isChangingProject = false;
-                }, 500);
+                }, 1100);
             };
             
             const firstRealFrame = filmstrip.children[firstRealElementIndex];
@@ -569,6 +591,11 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
             }
         }
         
+        function updateDots(slide, realIndex) {
+            const dots = slide.querySelectorAll('.carousel-dot');
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
+        }
+
         function positioniereFilmstreifen(slide, newIndex) {
             const filmstrip = slide.querySelector('.media-filmstrip');
 
@@ -630,6 +657,7 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
                 medien[neuerEchterIndex].classList.add('media-active');
 
                 positioniereFilmstreifen(slide, neuerEchterIndex);
+                updateDots(slide, neuerEchterIndex - prependedClones);
                 scheduleProjectTextContrastUpdate();
                 
                 setTimeout(() => {
@@ -675,6 +703,13 @@ document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add
             filmstrip.classList.add('transitioning');
             positioniereFilmstreifen(aktiverSlide, nextIndex);
             scheduleProjectTextContrastUpdate();
+
+            // Dots aktualisieren (nur echte Bilder zählen, keine Clones)
+            const prependedClones = parseInt(aktiverSlide.dataset.prependedClones, 10);
+            const realCount = parseInt(aktiverSlide.dataset.realCount, 10);
+            const rawRealIndex = nextIndex - prependedClones;
+            const wrappedRealIndex = ((rawRealIndex % realCount) + realCount) % realCount;
+            updateDots(aktiverSlide, wrappedRealIndex);
         };
         handleNav.resetTimer = null;
 
