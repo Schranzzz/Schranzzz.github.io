@@ -1,862 +1,617 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
 
-    // =======================================================
-    // LOGIK FÜR ORDNER-TABS
-    // =======================================================
-    var tabsContainer = document.querySelector('.ordner-tabs');
-    var tabs = document.querySelectorAll('.tab');
-    var contentPages = document.querySelectorAll('.ordner-inhalt');
-    var ordnerSystem = document.querySelector('.ordner-system');
-    var ordnerInhaltStapel = document.querySelector('.ordner-inhalt-stapel');
-    
     if (('ontouchstart' in window) || (navigator.maxTouchPoints > 0)) {
         document.body.classList.add('touch-device');
     }
-    
-    if (tabsContainer) {
-        let hasProjectsBeenInitialized = false;
 
-        function setActiveState(tabToActivate, isInitialLoad = false) {
-            if (!tabToActivate || tabToActivate.classList.contains('active')) return;
+    // ==========================================================================
+    // ABOUT OVERLAY
+    // ==========================================================================
+    const menuBtn      = document.getElementById('menu-dots');
+    const aboutOverlay = document.getElementById('about-overlay');
+    const closeBtn     = document.getElementById('about-close');
 
-            if (!isInitialLoad) {
-                ordnerInhaltStapel.classList.add('no-transition');
-                ordnerInhaltStapel.classList.add('is-lifted');
-                ordnerInhaltStapel.offsetHeight;
-                ordnerInhaltStapel.classList.remove('no-transition');
-            }
-
-            tabs.forEach(t => t.classList.remove('active'));
-            contentPages.forEach(p => p.classList.remove('active'));
-
-            tabToActivate.classList.add('active');
-
-            var targetContent = document.querySelector('.ordner-inhalt[data-content="' + tabToActivate.dataset.tabTarget + '"]');
-            if (targetContent) {
-                targetContent.classList.add('active');
-            }
-
-            if (tabToActivate.dataset.tabTarget === 'projekte' && !hasProjectsBeenInitialized) {
-                hasProjectsBeenInitialized = true;
-                
-                requestAnimationFrame(() => {
-                    const aktiverSlide = document.querySelector('.projekt-slide.active');
-                    if (aktiverSlide) {
-                        const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-                        positioniereFilmstreifen(aktiverSlide, currentIndex);
-                    }
-                });
-            }
-
-            const contentZIndex = 5;
-            tabToActivate.style.zIndex = contentZIndex + 1;
-
-            let zCounter = contentZIndex - 1;
-            tabs.forEach(t => {
-                if (t !== tabToActivate) {
-                    t.style.zIndex = zCounter;
-                    zCounter--;
-                }
-            });
-        }
-
-        tabsContainer.addEventListener('click', (event) => setActiveState(event.target.closest('.tab')));
-
-        tabs.forEach(tab => {
-            tab.addEventListener('mouseenter', () => {
-                if (tab.classList.contains('active')) {
-                    ordnerInhaltStapel.classList.add('is-lifted');
-                } else if (ordnerSystem) {
-                    ordnerSystem.classList.add('is-background-lifted');
-                }
-            });
-
-            tab.addEventListener('mouseleave', () => {
-                ordnerInhaltStapel.classList.remove('is-lifted');
-                if (ordnerSystem) {
-                    ordnerSystem.classList.remove('is-background-lifted');
-                }
-            });
+    if (menuBtn && aboutOverlay && closeBtn) {
+        menuBtn.addEventListener('click',  () => aboutOverlay.classList.add('active'));
+        closeBtn.addEventListener('click', () => aboutOverlay.classList.remove('active'));
+        aboutOverlay.addEventListener('click', (e) => {
+            if (e.target === aboutOverlay) aboutOverlay.classList.remove('active');
         });
-
-        setActiveState(document.querySelector('.tab'), true);
     }
 
-    // =======================================================
-    // LOGIK FÜR PROJEKTSEITE
-    // =======================================================
-    const projektContainerWrapper = document.querySelector('.ordner-inhalt[data-content="projekte"]');
+    // ==========================================================================
+    // PROJECT VIEW
+    // ==========================================================================
+    const contentPane = document.querySelector('.view-pane[data-content="projects"]');
+    if (!contentPane) return;
 
-    if (projektContainerWrapper) {
-        const projekteContainer = document.getElementById('projekte-container');
-        const customCursor = document.getElementById('custom-cursor');
-        const projektInfoDescription = document.getElementById('projekt-info-description');
-        const projektNav = document.getElementById('projekt-nav');
-        const projektSlidesContainer = document.getElementById('projekt-slides');
-        const contrastCanvas = document.createElement('canvas');
-        const contrastContext = contrastCanvas.getContext('2d', { willReadFrequently: true });
-        
-        let aktuellerProjektIndex = 0;
-        let isNavigating = false;
-        let isChangingProject = false;
-        let projektNavHideTimer = null;
+    const carouselContainer = document.getElementById('carousel-container');
+    const customCursor      = document.getElementById('custom-cursor');
+    const titleEl           = document.getElementById('project-title');
+    const descriptionEl     = document.getElementById('project-description');
+    const slidesContainer   = document.getElementById('project-slides');
+    const projectGrid       = document.getElementById('project-grid');
+    const projectDetail     = document.getElementById('project-detail');
+    const backBtn           = document.getElementById('back-to-grid');
 
-        const CLONE_COUNT = 5;
+    let currentProjectIndex = 0;
+    let isNavigating        = false;
+    let isChangingProject   = false;
 
-        const projektDaten = {
+    const CLONE_COUNT = 5;
 
-'new-tool': {
-                titel: 'DUSTE',
-                beschreibung: 'Stackable, modular Lithing system. <br><br> <p> </p>70x45cm  <p> </p>Aluminum, Corugated Plastic, LED bulbs.  <p> </p> 2026',
-                medien: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
-            },
+    // --------------------------------------------------------------------------
+    // PROJECT DATA
+    // --------------------------------------------------------------------------
+    const projectData = {
 
+        'new-tool': {
+            title: 'DUSTE',
+            description: 'Stackable, modular Lithing system. <br><br> <p> </p>70x45cm  <p> </p>Aluminum, Corugated Plastic, LED bulbs.  <p> </p> 2026',
+            media: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` })),
+            pinned: true
+        },
 
+        'tin-3d': {
+            title: 'TIN 3D PRINTER',
+            description: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error. <br><br><p> </p> 65x65cm  <p> </p> Ender 3 3D Printer  <p> </p> 2024',
+            media: [
+                { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
+                ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
+            ],
+            pinned: true
+        },
 
-             'tin-3d': {
-                titel: 'TIN 3D PRINTER',
-                beschreibung: 'Conventional tin has a relatively low melting point for a metal. This led to the idea of modifying an existing 3D printer to extrude tin. The entire project was highly experimental, and I worked based on trial and error. <br><br><p> </p> 65x65cm  <p> </p> Ender 3 3D Printer  <p> </p> 2024',
-                medien: [
-                    { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
-                    ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
-                ]
-            },
+        'faltkarre': {
+            title: 'FOLDING WHEELBARROW',
+            description: 'A wheelbarrow can take up a lot of space. That\'s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don\'t, you store it flat as it is.<br><br> <p> </p> 120x60cm  <p> </p> Truck Tarp, plywood, Aluminum Rods, rubber. <p> </p> 2025',
+            media: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` })),
+            pinned: true
+        },
 
-                  'faltkarre': {
-                titel: 'FOLDING WHEELBARROW',
-                beschreibung: 'A wheelbarrow can take up a lot of space. That‘s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don‘t, you store it flat as it is.<br><br> <p> </p> 120x60cm  <p> </p> Truck Tarp, plywood, Aluminum Rods, rubber. <p> </p> 2025',
-                medien: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
-            },
+        'ashoka-dupe': {
+            title: 'ASHOKA DUPE',
+            description: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation.  <br><br><p> </p> 60x60cm  <p> </p> Aluminum, Bulbs, PLA printed parts. <p> </p> 2025',
+            media: Array.from({ length: 3 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
+        },
 
-            'ashoka-dupe': {
-                titel: 'ASHOKA DUPE',
-                beschreibung: 'Inspired by the legendary design of the Ashoka lamp by Etorre Sottsass for Memphis milano I created this modern recreation.  <br><br><p> </p> 60x60cm  <p> </p> Aluminum, Bulbs, PLA printed parts. <p> </p> 2025',
-                medien: Array.from({ length: 3 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
-            },
-
-
-
-            'leiter': {
-                titel: 'DECORATED LADDER',
-                beschreibung: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?  <br><br><p> </p> 200x100cm  <p> </p> Wooden Ladder, PLA printed parts. <p> </p> 2023',
-                medien: 
-                    
-                    Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
-                
-            },
-
-          
-
-           /*  'movement': {
-                titel: 'Movement to Signal',
-                beschreibung: 'The “Movement to Signal” project is an experimental control element that visualizes the movement of the hands in relation to each other. It invites you to consciously movements and to explore the variations and gradations of the visual effects.',
-                medien: Array.from({ length: 12 }, (_, i) => ({ type: 'image', src: `Projektbilder/Bewegung zum Signal/Bild (${i + 1}).jpg` }))
-            },  */
-
-          
-/*
-            'sketches': {
-                titel: 'Sketches',
-                beschreibung: 'Some sketches I created over the years.',
-                medien: Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Sketches/Bild (${i + 1}).jpg` }))
-            } */
-        };
-        
-        const projektKeys = Object.keys(projektDaten);
-        
-        new Image().src = 'Projektbilder/Tin_Dripper/Bild (1).jpg';
-
-        function isMobileProjectView() {
-            return window.matchMedia('(max-width: 992px)').matches;
+        'leiter': {
+            title: 'DECORATED LADDER',
+            description: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?  <br><br><p> </p> 200x100cm  <p> </p> Wooden Ladder, PLA printed parts. <p> </p> 2023',
+            media: Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
         }
 
-        function showProjectNavTemporarily(delay = 3000) {
-            if (!projektNav || !isMobileProjectView()) return;
+    };
 
-            projektNav.classList.remove('is-hidden');
-            clearTimeout(projektNavHideTimer);
+    const projectKeys = Object.keys(projectData);
 
-            projektNavHideTimer = setTimeout(() => {
-                projektNav.classList.add('is-hidden');
-            }, delay);
+    // --------------------------------------------------------------------------
+    // UTILITIES
+    // --------------------------------------------------------------------------
+    function muteAllVideos() {
+        document.querySelectorAll('video').forEach(video => {
+            video.muted  = true;
+            video.volume = 0;
+            video.play().catch(() => {});
+        });
+    }
+
+    function updateDescription(index) {
+        const project = projectData[projectKeys[index]];
+        if (!project) return;
+        if (titleEl)       titleEl.textContent    = project.title;
+        if (descriptionEl) descriptionEl.innerHTML = project.description;
+    }
+
+    function updateDots(slide, realIndex) {
+        slide.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === realIndex);
+        });
+    }
+
+    // --------------------------------------------------------------------------
+    // FILMSTRIP POSITIONING
+    // --------------------------------------------------------------------------
+    function positionFilmstrip(slide, index) {
+        const filmstrip = slide.querySelector('.filmstrip');
+        if (!slide || !filmstrip) return;
+
+        slide.dataset.currentIndex = index;
+
+        const target = filmstrip.children[index];
+        if (!target) return;
+
+        const containerWidth = slide.offsetWidth;
+        if (containerWidth === 0) {
+            requestAnimationFrame(() => positionFilmstrip(slide, index));
+            return;
         }
 
-        function muteAllVideos() {
-            const videos = document.querySelectorAll('video');
-            videos.forEach(video => {
-                video.muted = true;
-                video.volume = 0;
-                video.play().catch(error => {});
-            });
+        const x = (containerWidth / 2) - (target.offsetWidth / 2) - target.offsetLeft;
+        filmstrip.style.transform = `translateX(${x}px)`;
+    }
+
+    // --------------------------------------------------------------------------
+    // INFINITE LOOP WRAPPING
+    // --------------------------------------------------------------------------
+    function onTransitionEnd(slide) {
+        const filmstrip       = slide.querySelector('.filmstrip');
+        const currentIndex    = parseInt(slide.dataset.currentIndex, 10);
+        const prependedClones = parseInt(slide.dataset.prependedClones, 10);
+        const realCount       = parseInt(slide.dataset.realCount, 10);
+
+        if (realCount <= 1) {
+            isNavigating = false;
+            return;
         }
 
-        function updateProjektInfo(index) {
-            const aktuellesProjekt = projektDaten[projektKeys[index]];
+        const firstRealIndex = prependedClones;
+        const lastRealIndex  = prependedClones + realCount - 1;
+        let correctedIndex   = -1;
 
-            if (!aktuellesProjekt || !projektInfoDescription) return;
+        if (currentIndex > lastRealIndex)  correctedIndex = firstRealIndex + (currentIndex - 1 - lastRealIndex);
+        if (currentIndex < firstRealIndex) correctedIndex = lastRealIndex  - (firstRealIndex - 1 - currentIndex);
 
-            projektInfoDescription.innerHTML = aktuellesProjekt.beschreibung;
+        if (correctedIndex !== -1) {
+            filmstrip.classList.add('no-transition');
+
+            const frames = Array.from(filmstrip.children);
+            frames.forEach(f => f.classList.remove('media-active'));
+            frames[correctedIndex].classList.add('media-active');
+
+            positionFilmstrip(slide, correctedIndex);
+            updateDots(slide, correctedIndex - prependedClones);
+
+            setTimeout(() => {
+                filmstrip.classList.remove('no-transition');
+                clearTimeout(navigate.resetTimer);
+                isNavigating = false;
+            }, 50);
+        } else {
+            clearTimeout(navigate.resetTimer);
+            isNavigating = false;
         }
+    }
 
-        function scheduleProjectTextContrastUpdate() {
+    // --------------------------------------------------------------------------
+    // CAROUSEL NAVIGATION
+    // --------------------------------------------------------------------------
+    const navigate = (direction) => {
+        const activeSlide = document.querySelector('.project-slide.active');
+        if (!activeSlide || isNavigating) return;
+
+        isNavigating = true;
+        clearTimeout(navigate.resetTimer);
+        navigate.resetTimer = setTimeout(() => { isNavigating = false; }, 800);
+
+        const filmstrip    = activeSlide.querySelector('.filmstrip');
+        const frames       = Array.from(filmstrip.children);
+        const currentIndex = parseInt(activeSlide.dataset.currentIndex, 10);
+        const nextIndex    = currentIndex + direction;
+
+        const currentFrame = frames[currentIndex];
+        const nextFrame    = frames[nextIndex];
+
+        if (currentFrame) setTimeout(() => { currentFrame.classList.remove('media-active'); }, 250);
+        if (nextFrame)    nextFrame.classList.add('media-active');
+
+        filmstrip.classList.add('transitioning');
+        positionFilmstrip(activeSlide, nextIndex);
+
+        const prependedClones = parseInt(activeSlide.dataset.prependedClones, 10);
+        const realCount       = parseInt(activeSlide.dataset.realCount, 10);
+        const rawRealIndex    = nextIndex - prependedClones;
+        const wrappedIndex    = ((rawRealIndex % realCount) + realCount) % realCount;
+        updateDots(activeSlide, wrappedIndex);
+    };
+    navigate.resetTimer = null;
+
+    // --------------------------------------------------------------------------
+    // VIEW SWITCHING
+    // --------------------------------------------------------------------------
+    const inDetailView = () => projectDetail.classList.contains('active');
+
+    function openProject(index) {
+        projectGrid.style.display = 'none';
+        projectDetail.classList.add('active');
+
+        if (index === currentProjectIndex && document.querySelector('.project-slide.active')) {
             requestAnimationFrame(() => {
-                updateProjectTextContrast();
-                setTimeout(updateProjectTextContrast, 120);
+                const activeSlide = document.querySelector('.project-slide.active');
+                if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
             });
-        }
-
-      function updateProjectTextContrast() {
-    if (!projektNav || !contrastContext) return;
-
-    const navLuminance = getLuminanceBehindElement(projektNav);
-
-    if (navLuminance === null) return;
-
-    const isLight = navLuminance > 120;
-
-    projektNav.classList.toggle('is-on-light', isLight);
-    projektNav.classList.toggle('is-on-dark', !isLight);
-
-}
-
-        function updateContrastForElement(element) {
-            if (!element || !contrastContext) return;
-
-            const luminance = getLuminanceBehindElement(element);
-            if (luminance === null) return;
-
-            element.classList.toggle('is-on-light', luminance > 150);
-            element.classList.toggle('is-on-dark', luminance <= 100);
-        }
-
-        function getLuminanceBehindElement(element) {
-            const activeSlide = document.querySelector('.projekt-slide.active');
-            if (!activeSlide) return null;
-
-            const targetRect = element.getBoundingClientRect();
-            const frames = Array.from(activeSlide.querySelectorAll('.media-frame'));
-            let weightedLuminance = 0;
-            let totalArea = 0;
-
-            frames.forEach(frame => {
-                const frameRect = frame.getBoundingClientRect();
-                const overlap = getRectOverlap(targetRect, frameRect);
-
-                if (!overlap) return;
-
-                const mediaLuminance = sampleMediaFrameLuminance(frame, frameRect, overlap);
-                if (mediaLuminance === null) return;
-
-                const area = overlap.width * overlap.height;
-                weightedLuminance += mediaLuminance * area;
-                totalArea += area;
+        } else {
+            showProject(index, currentProjectIndex === -1);
+            requestAnimationFrame(() => {
+                const activeSlide = document.querySelector('.project-slide.active');
+                if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
             });
-
-          if (totalArea === 0) {
-    return getPaperOverlayAlpha(targetRect) > 0.3 ? 232 : 0;
-}
-
-            const averageLuminance = weightedLuminance / totalArea;
-            const paperOverlayAlpha = getPaperOverlayAlpha(targetRect);
-
-            return (averageLuminance * (1 - paperOverlayAlpha)) + (232 * paperOverlayAlpha);
-        }
-
-        function getPaperOverlayAlpha(targetRect) {
-    if (!projekteContainer) return 0;
-
-    const containerRect = projekteContainer.getBoundingClientRect();
-    const overlayHeight = 96;
-    const centerY = targetRect.top + (targetRect.height / 2);
-    const distanceFromTop = Math.max(0, centerY - containerRect.top);
-
-    const topAlpha = distanceFromTop < overlayHeight
-        ? 1 - (distanceFromTop / overlayHeight)
-        : 0;
-
-    return topAlpha;
-}
-
-        function getRectOverlap(a, b) {
-            const left = Math.max(a.left, b.left);
-            const top = Math.max(a.top, b.top);
-            const right = Math.min(a.right, b.right);
-            const bottom = Math.min(a.bottom, b.bottom);
-
-            if (right <= left || bottom <= top) return null;
-
-            return {
-                left,
-                top,
-                width: right - left,
-                height: bottom - top
-            };
-        }
-
-        function sampleMediaFrameLuminance(frame, frameRect, overlap) {
-            const media = frame.firstElementChild;
-            if (!media) return null;
-
-            const sourceWidth = media.videoWidth || media.naturalWidth || media.clientWidth;
-            const sourceHeight = media.videoHeight || media.naturalHeight || media.clientHeight;
-
-            if (!sourceWidth || !sourceHeight) return null;
-            if (media.tagName === 'IMG' && !media.complete) return null;
-            if (media.tagName === 'VIDEO' && media.readyState < 2) return null;
-
-            const sampleWidth = 24;
-            const sampleHeight = 24;
-            const sourceX = ((overlap.left - frameRect.left) / frameRect.width) * sourceWidth;
-            const sourceY = ((overlap.top - frameRect.top) / frameRect.height) * sourceHeight;
-            const sourceSampleWidth = (overlap.width / frameRect.width) * sourceWidth;
-            const sourceSampleHeight = (overlap.height / frameRect.height) * sourceHeight;
-
-            contrastCanvas.width = sampleWidth;
-            contrastCanvas.height = sampleHeight;
-            contrastContext.clearRect(0, 0, sampleWidth, sampleHeight);
-
-            try {
-                contrastContext.drawImage(
-                    media,
-                    sourceX,
-                    sourceY,
-                    sourceSampleWidth,
-                    sourceSampleHeight,
-                    0,
-                    0,
-                    sampleWidth,
-                    sampleHeight
-                );
-            } catch (error) {
-                return null;
-            }
-
-            let pixels;
-
-            try {
-                pixels = contrastContext.getImageData(0, 0, sampleWidth, sampleHeight).data;
-            } catch (error) {
-                return null;
-            }
-
-            let luminance = 0;
-            const pixelCount = pixels.length / 4;
-
-            for (let i = 0; i < pixels.length; i += 4) {
-                luminance += (0.2126 * pixels[i]) + (0.7152 * pixels[i + 1]) + (0.0722 * pixels[i + 2]);
-            }
-
-            luminance /= pixelCount;
-
-            if (!frame.classList.contains('media-active')) {
-                luminance = (luminance * 0.52) + (232 * 0.48);
-            }
-
-            return luminance;
-        }
-
-        function initProjekte() {
-            if (!projekteContainer || !projektNav || !projektSlidesContainer || !projektInfoDescription) {
-                console.error("Ein oder mehrere benötigte Elemente für die Projektseite wurden nicht gefunden.");
-                return;
-            }
-            const swipeHint = document.getElementById('swipe-hint');
-
-if (swipeHint) {
-    setTimeout(() => {
-        swipeHint.classList.add('is-hidden');
-    }, 1300);
-
-    setTimeout(() => {
-        swipeHint.remove();
-    }, 2000);
-}
-            
-            projektNav.innerHTML = '';
-            projektSlidesContainer.innerHTML = '';
-
-            projektKeys.forEach((key, index) => {
-             const navItem = document.createElement('button');
-navItem.className = 'projekt-nav-item';
-navItem.dataset.index = index;
-navItem.textContent = projektDaten[key].titel;
-
-navItem.addEventListener('click', (e) => {
-    e.stopPropagation();
-    zeigeProjekt(index);
-});
-
-projektNav.appendChild(navItem);
-
-                const slide = document.createElement('div');
-                slide.className = 'projekt-slide';
-                slide.dataset.key = key;
-
-                const filmstrip = document.createElement('div');
-                filmstrip.className = 'media-filmstrip';
-
-                const originalMedien = projektDaten[key].medien;
-                
-                if (originalMedien.length > 1) {
-                    const count = originalMedien.length;
-                    const actualCloneCount = Math.min(count, CLONE_COUNT);
-                    const clonesToPrepend = originalMedien.slice(-actualCloneCount);
-                    const clonesToAppend = originalMedien.slice(0, actualCloneCount);
-                    const allMediaData = [...clonesToPrepend, ...originalMedien, ...clonesToAppend];
-                    
-                    allMediaData.forEach(mediaData => {
-                        filmstrip.appendChild(createMediaElement(mediaData));
-                    });
-                    
-                    slide.dataset.prependedClones = clonesToPrepend.length;
-                    slide.dataset.realCount = count;
-                } else {
-                    originalMedien.forEach(mediaData => {
-                        filmstrip.appendChild(createMediaElement(mediaData));
-                    });
-
-                    slide.dataset.prependedClones = 0;
-                    slide.dataset.realCount = originalMedien.length;
-                }
-
-                filmstrip.addEventListener('transitionend', (e) => {
-                    if (e.target === filmstrip) {
-                        handleTransitionEnd(slide);
-                    }
-                });
-
-                slide.appendChild(filmstrip);
-
-                // Carousel-Dots (nur mobile, nur bei >1 Bild)
-                const realCount = parseInt(slide.dataset.realCount, 10);
-                if (realCount > 1) {
-                    const dotsContainer = document.createElement('div');
-                    dotsContainer.className = 'carousel-dots';
-                    for (let i = 0; i < realCount; i++) {
-                        const dot = document.createElement('span');
-                        dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-                        dotsContainer.appendChild(dot);
-                    }
-                    slide.appendChild(dotsContainer);
-                }
-
-                projektSlidesContainer.appendChild(slide);
-            });
-
-            zeigeProjekt(0, true);
-        }
-        
-        function createMediaElement(mediaData) {
-            const mediaFrame = document.createElement('div');
-            mediaFrame.className = 'media-frame';
-            let mediaElement;
-
-            if (mediaData.type === 'image') {
-                mediaElement = new Image();
-            } else if (mediaData.type === 'video') {
-                mediaElement = document.createElement('video');
-            } else if (mediaData.type === 'model') {
-                mediaElement = document.createElement('model-viewer');
-            }
-
-            if (mediaElement) {
-                if (mediaElement.tagName === 'IMG') {
-                    mediaElement.loading = 'lazy';
-                }
-
-           if (mediaElement.tagName === 'VIDEO') {
-    Object.assign(mediaElement, {
-        autoplay: true,
-        loop: true,
-        muted: true,
-        playsInline: true,
-        preload: 'auto'
-    });
-
-    mediaElement.addEventListener('loadedmetadata', () => {
-        const aktiverSlide = document.querySelector('.projekt-slide.active');
-        if (aktiverSlide) {
-            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-            positioniereFilmstreifen(aktiverSlide, currentIndex);
-        }
-    });
-
-    mediaElement.addEventListener('loadeddata', () => {
-        const aktiverSlide = document.querySelector('.projekt-slide.active');
-        if (aktiverSlide) {
-            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-            positioniereFilmstreifen(aktiverSlide, currentIndex);
-        }
-    });
-}
-
-                if (mediaElement.tagName === 'MODEL-VIEWER') {
-                    mediaElement.setAttribute('camera-controls', '');
-                    mediaElement.setAttribute('auto-rotate', '');
-                }
-
-                mediaElement.src = mediaData.src;
-            }
-
-            if (mediaElement) {
-                mediaFrame.appendChild(mediaElement);
-            }
-
-            return mediaFrame;
-        }
-
-        function zeigeProjekt(index, isInitial = false) {
-            if (
-                isChangingProject ||
-                index < 0 ||
-                index >= projektKeys.length ||
-                (!isInitial && index === aktuellerProjektIndex)
-            ) {
-                return;
-            }
-
-            isChangingProject = true;
-        
-            const alterSlide = document.querySelector('.projekt-slide.active');
-            const key = projektKeys[index];
-            const neuerSlide = document.querySelector(`.projekt-slide[data-key="${key}"]`);
-
-            document.querySelectorAll('.projekt-nav-item').forEach(n => n.classList.remove('active'));
-document.querySelector(`.projekt-nav-item[data-index="${index}"]`).classList.add('active');
-            if (!isInitial) {
-                showProjectNavTemporarily();
-            }
-            
-            const filmstrip = neuerSlide.querySelector('.media-filmstrip');
-            const firstRealElementIndex = parseInt(neuerSlide.dataset.prependedClones, 10);
-            
-            if (isInitial) {
-                if (alterSlide) alterSlide.classList.remove('active');
-
-                neuerSlide.classList.add('active');
-                neuerSlide.dataset.currentIndex = firstRealElementIndex;
-                
-                const firstImage = filmstrip.children[firstRealElementIndex];
-                if (firstImage) {
-                    firstImage.classList.add('media-active');
-                }
-                
-                aktuellerProjektIndex = index;
-                updateProjektInfo(index);
-                scheduleProjectTextContrastUpdate();
-                isChangingProject = false;
-                return;
-            }
-
-            const performCrossfade = () => {
-                if (alterSlide) {
-                    alterSlide.classList.remove('active');
-                }
-
-                neuerSlide.classList.add('active');
-                
-                // Alle Transitions sofort deaktivieren — verhindert Blur-Blitz und Reinfliegen
-                filmstrip.classList.remove('transitioning');
-                filmstrip.classList.add('no-transition');
-
-                const medien = Array.from(filmstrip.children);
-                medien.forEach(el => el.classList.remove('media-active'));
-                medien[firstRealElementIndex].classList.add('media-active');
-
-                positioniereFilmstreifen(neuerSlide, firstRealElementIndex);
-
-                // Transitions nach einem Frame wieder freigeben
-                requestAnimationFrame(() => filmstrip.classList.remove('no-transition'));
-
-                updateDots(neuerSlide, 0);
-                muteAllVideos();
-
-                aktuellerProjektIndex = index;
-                updateProjektInfo(index);
-                scheduleProjectTextContrastUpdate();
-
-                setTimeout(() => {
-                    isChangingProject = false;
-                }, 1100);
-            };
-            
-            const firstRealFrame = filmstrip.children[firstRealElementIndex];
-            const firstRealMediaElement = firstRealFrame ? firstRealFrame.firstElementChild : null;
-
-            if (firstRealMediaElement && firstRealMediaElement.tagName === 'IMG' && !firstRealMediaElement.complete) {
-                firstRealMediaElement.onload = performCrossfade;
-                firstRealMediaElement.onerror = performCrossfade;
-            } else {
-                performCrossfade();
-            }
-        }
-        
-        function updateDots(slide, realIndex) {
-            const dots = slide.querySelectorAll('.carousel-dot');
-            dots.forEach((dot, i) => dot.classList.toggle('active', i === realIndex));
-        }
-
-        function positioniereFilmstreifen(slide, newIndex) {
-            const filmstrip = slide.querySelector('.media-filmstrip');
-
-            if (!slide || !filmstrip) return;
-            
-            slide.dataset.currentIndex = newIndex;
-
-            const targetMedium = filmstrip.children[newIndex];
-            if (!targetMedium) return;
-
-            const containerWidth = slide.offsetWidth;
-
-            if (containerWidth === 0) {
-                console.warn("Positioning failed, retrying...");
-                requestAnimationFrame(() => positioniereFilmstreifen(slide, newIndex));
-                return;
-            }
-            
-            const mediumWidth = targetMedium.offsetWidth;
-            const mediumOffsetLeft = targetMedium.offsetLeft;
-            const translateX = (containerWidth / 2) - (mediumWidth / 2) - mediumOffsetLeft;
-
-            filmstrip.style.transform = `translateX(${translateX}px)`;
-        }
-        
-        function handleTransitionEnd(slide) {
-            const filmstrip = slide.querySelector('.media-filmstrip');
-
-            let currentIndex = parseInt(slide.dataset.currentIndex, 10);
-
-            const prependedClones = parseInt(slide.dataset.prependedClones, 10);
-            const realCount = parseInt(slide.dataset.realCount, 10);
-            
-            if (realCount <= 1) {
-                clearTimeout(handleNav.resetTimer);
-                isNavigating = false;
-                return;
-            }
-
-            const anfangDerEchtenBilder = prependedClones;
-            const endeDerEchtenBilder = prependedClones + realCount - 1;
-            
-            let neuerEchterIndex = -1;
-
-            if (currentIndex > endeDerEchtenBilder) {
-                neuerEchterIndex = anfangDerEchtenBilder + (currentIndex - 1 - endeDerEchtenBilder);
-            }
-
-            if (currentIndex < anfangDerEchtenBilder) {
-                neuerEchterIndex = endeDerEchtenBilder - (anfangDerEchtenBilder - 1 - currentIndex);
-            }
-
-            if (neuerEchterIndex !== -1) {
-                filmstrip.classList.add('no-transition');
-                
-                const medien = Array.from(filmstrip.children);
-                medien.forEach(el => el.classList.remove('media-active'));
-
-                medien[neuerEchterIndex].classList.add('media-active');
-
-                positioniereFilmstreifen(slide, neuerEchterIndex);
-                updateDots(slide, neuerEchterIndex - prependedClones);
-                scheduleProjectTextContrastUpdate();
-                
-                setTimeout(() => {
-                    filmstrip.classList.remove('no-transition');
-                    clearTimeout(handleNav.resetTimer);
-                    isNavigating = false;
-                }, 50);
-            } else {
-                clearTimeout(handleNav.resetTimer);
-                isNavigating = false;
-            }
-        }
-
-        const handleNav = (direction) => {
-            const aktiverSlide = document.querySelector('.projekt-slide.active');
-
-            if (!aktiverSlide || isNavigating) return;
-
-            isNavigating = true;
-            clearTimeout(handleNav.resetTimer);
-            handleNav.resetTimer = setTimeout(() => {
-                isNavigating = false;
-            }, 800);
-
-            const filmstrip = aktiverSlide.querySelector('.media-filmstrip');
-            const medien = Array.from(filmstrip.children);
-            const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-            const nextIndex = currentIndex + direction;
-
-            const currentElement = medien[currentIndex];
-            const nextElement = medien[nextIndex];
-            
-            if (currentElement) {
-                setTimeout(() => {
-                    currentElement.classList.remove('media-active');
-                }, 250);
-            }
-
-            if (nextElement) {
-                nextElement.classList.add('media-active');
-            }
-            
-            filmstrip.classList.add('transitioning');
-            positioniereFilmstreifen(aktiverSlide, nextIndex);
-            scheduleProjectTextContrastUpdate();
-
-            // Dots aktualisieren (nur echte Bilder zählen, keine Clones)
-            const prependedClones = parseInt(aktiverSlide.dataset.prependedClones, 10);
-            const realCount = parseInt(aktiverSlide.dataset.realCount, 10);
-            const rawRealIndex = nextIndex - prependedClones;
-            const wrappedRealIndex = ((rawRealIndex % realCount) + realCount) % realCount;
-            updateDots(aktiverSlide, wrappedRealIndex);
-        };
-        handleNav.resetTimer = null;
-
-        projektContainerWrapper.addEventListener('wheel', (event) => {
-            event.preventDefault();
-
-            if (isChangingProject) return;
-
-            const isHorizontalSwipe = Math.abs(event.deltaX) > Math.abs(event.deltaY);
-
-            if (isHorizontalSwipe) {
-                if (event.deltaX > 20) {
-                    handleNav(1);
-                } else if (event.deltaX < -20) {
-                    handleNav(-1);
-                }
-
-                return;
-            }
-
-            if (event.deltaY > 20) {
-                zeigeProjekt(aktuellerProjektIndex + 1);
-            } else if (event.deltaY < -20) {
-                zeigeProjekt(aktuellerProjektIndex - 1);
-            }
-        });
-        
-        projektContainerWrapper.addEventListener('mousemove', (event) => {
-            if (!customCursor) {
-                if (customCursor) customCursor.style.opacity = '0';
-                return;
-            }
-
-            customCursor.style.opacity = '1';
-            customCursor.style.left = `${event.clientX}px`;
-            customCursor.style.top = `${event.clientY}px`;
-            
-            const rect = projekteContainer.getBoundingClientRect();
-            const midpoint = rect.left + rect.width / 2;
-
-            if (event.clientX < midpoint) {
-                customCursor.textContent = '<';
-            } else {
-                customCursor.textContent = '>';
-            }
-        });
-        
-        projektContainerWrapper.addEventListener('mouseenter', () => {
-            if (customCursor) customCursor.style.opacity = '1';
-        });
-
-        projektContainerWrapper.addEventListener('mouseleave', () => {
-            if (customCursor) customCursor.style.opacity = '0';
-        });
-        
-        projektContainerWrapper.addEventListener('click', (event) => {
-            const rect = projekteContainer.getBoundingClientRect();
-            const midpoint = rect.left + rect.width / 2;
-
-            if (event.clientX < midpoint) {
-                handleNav(-1);
-            } else {
-                handleNav(1);
-            }
-        });
-
-        window.addEventListener('resize', () => {
-            const aktiverSlide = document.querySelector('.projekt-slide.active');
-
-            if (aktiverSlide && projektContainerWrapper.classList.contains('active')) {
-                const currentIndex = parseInt(aktiverSlide.dataset.currentIndex, 10);
-                positioniereFilmstreifen(aktiverSlide, currentIndex);
-                scheduleProjectTextContrastUpdate();
-            }
-        });
-
-        initProjekte();
-        showProjectNavTemporarily();
-        setInterval(() => {
-            if (projektContainerWrapper.classList.contains('active')) {
-                updateProjectTextContrast();
-            }
-        }, 650);
-        
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchEndX = 0;
-        let touchEndY = 0;
-
-        projektContainerWrapper.addEventListener('touchstart', (e) => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, false);
-		
-        projektContainerWrapper.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-        }, { passive: false });
-
-        projektContainerWrapper.addEventListener('touchend', (e) => {
-            touchEndX = e.changedTouches[0].screenX;
-            touchEndY = e.changedTouches[0].screenY;
-
-            handleSwipe();
-        }, false);
-
-        function handleSwipe() {
-            const deltaX = touchEndX - touchStartX;
-            const deltaY = touchEndY - touchStartY;
-            const swipeThreshold = 50;
-
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (Math.abs(deltaX) > swipeThreshold) {
-                    if (deltaX > 0) {
-                        handleNav(-1);
-                    } else {
-                        handleNav(1);
-                    }
-                }
-            } else {
-                if (Math.abs(deltaY) > swipeThreshold) {
-                    if (deltaY > 0) {
-                        zeigeProjekt(aktuellerProjektIndex - 1);
-                    } else {
-                        zeigeProjekt(aktuellerProjektIndex + 1);
-                    }
-                }
-            }
         }
     }
 
-    // =======================================================
-    // LOGIK FÜR MARQUEE
-    // =======================================================
-    const marqueeContainers = document.querySelectorAll('.marquee-container');
+    function showGrid() {
+        projectDetail.classList.remove('active');
+        projectGrid.style.display = 'grid';
+    }
 
-    marqueeContainers.forEach(container => {
-        const sharpContent = container.querySelector('.marquee-content.sharp');
-        const blurryContent = container.querySelector('.marquee-content.blurry');
+    if (backBtn) backBtn.addEventListener('click', showGrid);
 
-        if (sharpContent && blurryContent) {
-            const originalChildren = Array.from(sharpContent.children);
-            
-            originalChildren.forEach(child => {
-                sharpContent.appendChild(child.cloneNode(true));
-                blurryContent.appendChild(child.cloneNode(true));
-            });
+    const msgBtn = document.getElementById('message-btn');
+    if (msgBtn) {
+        msgBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.open('https://mail.google.com/mail/?view=cm&to=leonremmert1@gmail.com', '_blank', 'noopener');
+        });
+    }
+
+    // --------------------------------------------------------------------------
+    // SHOW PROJECT (crossfade)
+    // --------------------------------------------------------------------------
+    function showProject(index, isFirstOpen = false) {
+        if (
+            isChangingProject ||
+            index < 0 ||
+            index >= projectKeys.length ||
+            (!isFirstOpen && index === currentProjectIndex)
+        ) return;
+
+        isChangingProject = true;
+
+        const prevSlide  = document.querySelector('.project-slide.active');
+        const key        = projectKeys[index];
+        const nextSlide  = document.querySelector(`.project-slide[data-key="${key}"]`);
+        const filmstrip  = nextSlide.querySelector('.filmstrip');
+        const startIndex = parseInt(nextSlide.dataset.prependedClones, 10);
+
+        if (isFirstOpen) {
+            if (prevSlide) prevSlide.classList.remove('active');
+
+            nextSlide.classList.add('active');
+            nextSlide.dataset.currentIndex = startIndex;
+
+            const firstFrame = filmstrip.children[startIndex];
+            if (firstFrame) firstFrame.classList.add('media-active');
+
+            currentProjectIndex = index;
+            updateDescription(index);
+            isChangingProject = false;
+            return;
         }
+
+        const crossfade = () => {
+            if (prevSlide) prevSlide.classList.remove('active');
+
+            nextSlide.classList.add('active');
+            filmstrip.classList.remove('transitioning');
+            filmstrip.classList.add('no-transition');
+
+            const frames = Array.from(filmstrip.children);
+            frames.forEach(f => f.classList.remove('media-active'));
+            frames[startIndex].classList.add('media-active');
+
+            positionFilmstrip(nextSlide, startIndex);
+            requestAnimationFrame(() => filmstrip.classList.remove('no-transition'));
+
+            updateDots(nextSlide, 0);
+            muteAllVideos();
+
+            currentProjectIndex = index;
+            updateDescription(index);
+
+            setTimeout(() => { isChangingProject = false; }, 1100);
+        };
+
+        const firstFrame = filmstrip.children[startIndex];
+        const firstMedia = firstFrame ? firstFrame.firstElementChild : null;
+
+        if (firstMedia && firstMedia.tagName === 'IMG' && !firstMedia.complete) {
+            firstMedia.onload  = crossfade;
+            firstMedia.onerror = crossfade;
+        } else {
+            crossfade();
+        }
+    }
+
+    // --------------------------------------------------------------------------
+    // MEDIA ELEMENT FACTORY
+    // --------------------------------------------------------------------------
+    function createMediaElement(mediaData) {
+        const frame     = document.createElement('div');
+        frame.className = 'slide-frame';
+
+        let el;
+
+        if (mediaData.type === 'image') {
+            el         = new Image();
+            el.loading = 'lazy';
+        } else if (mediaData.type === 'video') {
+            el = document.createElement('video');
+            Object.assign(el, {
+                autoplay:    true,
+                loop:        true,
+                muted:       true,
+                playsInline: true,
+                preload:     'auto'
+            });
+            el.addEventListener('loadedmetadata', () => {
+                const activeSlide = document.querySelector('.project-slide.active');
+                if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
+            });
+            el.addEventListener('loadeddata', () => {
+                const activeSlide = document.querySelector('.project-slide.active');
+                if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
+            });
+        } else if (mediaData.type === 'model') {
+            el = document.createElement('model-viewer');
+            el.setAttribute('camera-controls', '');
+            el.setAttribute('auto-rotate', '');
+        }
+
+        if (el) {
+            el.src = mediaData.src;
+            frame.appendChild(el);
+        }
+
+        return frame;
+    }
+
+    // --------------------------------------------------------------------------
+    // INIT
+    // --------------------------------------------------------------------------
+    function init() {
+        if (!carouselContainer || !slidesContainer || !descriptionEl) {
+            console.error('Required elements not found.');
+            return;
+        }
+
+        projectGrid.innerHTML     = '';
+        slidesContainer.innerHTML = '';
+
+        projectKeys.forEach((key, index) => {
+
+            // Grid tile
+            const gridItem     = document.createElement('div');
+            gridItem.className = 'project-grid-item';
+
+            const firstMedia = projectData[key].media[0];
+            if (firstMedia.type === 'image') {
+                const img   = new Image();
+                img.src     = firstMedia.src;
+                img.alt     = projectData[key].title;
+                img.loading = 'lazy';
+                gridItem.appendChild(img);
+            } else if (firstMedia.type === 'video') {
+                const vid       = document.createElement('video');
+                vid.src         = firstMedia.src;
+                vid.muted       = true;
+                vid.autoplay    = true;
+                vid.loop        = true;
+                vid.playsInline = true;
+                gridItem.appendChild(vid);
+            }
+
+            if (projectData[key].pinned) {
+                const pin = document.createElement('div');
+                pin.className = 'grid-pin';
+                pin.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M2 5.5A3.5 3.5 0 0 1 5.5 2h13A3.5 3.5 0 0 1 22 5.5v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-1z"/><rect x="11" y="7.5" width="2" height="8.5" rx="1"/><path d="M11 16h2l-1 5z"/></svg>`;
+                gridItem.appendChild(pin);
+            }
+
+            gridItem.addEventListener('click', (e) => { e.stopPropagation(); openProject(index); });
+            projectGrid.appendChild(gridItem);
+
+            // Slide
+            const slide      = document.createElement('div');
+            slide.className  = 'project-slide';
+            slide.dataset.key = key;
+
+            const filmstrip     = document.createElement('div');
+            filmstrip.className = 'filmstrip';
+
+            const mediaItems = projectData[key].media;
+
+            if (mediaItems.length > 1) {
+                const count      = mediaItems.length;
+                const cloneCount = Math.min(count, CLONE_COUNT);
+                const prepend    = mediaItems.slice(-cloneCount);
+                const append     = mediaItems.slice(0, cloneCount);
+                const allMedia   = [...prepend, ...mediaItems, ...append];
+
+                allMedia.forEach(m => filmstrip.appendChild(createMediaElement(m)));
+
+                slide.dataset.prependedClones = cloneCount;
+                slide.dataset.realCount       = count;
+            } else {
+                mediaItems.forEach(m => filmstrip.appendChild(createMediaElement(m)));
+                slide.dataset.prependedClones = 0;
+                slide.dataset.realCount       = mediaItems.length;
+            }
+
+            filmstrip.addEventListener('transitionend', (e) => {
+                if (e.target === filmstrip) onTransitionEnd(slide);
+            });
+
+            slide.appendChild(filmstrip);
+
+            // Carousel dots
+            const realCount = parseInt(slide.dataset.realCount, 10);
+            if (realCount > 1) {
+                const dots     = document.createElement('div');
+                dots.className = 'carousel-dots';
+                for (let i = 0; i < realCount; i++) {
+                    const dot     = document.createElement('span');
+                    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+                    dots.appendChild(dot);
+                }
+                slide.appendChild(dots);
+            }
+
+            slidesContainer.appendChild(slide);
+        });
+
+        currentProjectIndex = -1;
+        showGrid();
+    }
+
+    // --------------------------------------------------------------------------
+    // EVENT LISTENERS
+    // --------------------------------------------------------------------------
+    contentPane.addEventListener('wheel', (e) => {
+        if (!inDetailView()) return;
+        e.preventDefault();
+        if (isChangingProject) return;
+
+        const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+        if (isHorizontal) {
+            if (e.deltaX > 20)       navigate(1);
+            else if (e.deltaX < -20) navigate(-1);
+        } else {
+            if (e.deltaY > 20)       showProject(currentProjectIndex + 1);
+            else if (e.deltaY < -20) showProject(currentProjectIndex - 1);
+        }
+    });
+
+    contentPane.addEventListener('mousemove', (e) => {
+        if (!inDetailView() || !customCursor) return;
+
+        customCursor.style.opacity = '1';
+        customCursor.style.left    = `${e.clientX}px`;
+        customCursor.style.top     = `${e.clientY}px`;
+
+        const rect        = carouselContainer.getBoundingClientRect();
+        const mid         = rect.left + rect.width / 2;
+        const cursorLeft  = document.getElementById('cursor-left');
+        const cursorRight = document.getElementById('cursor-right');
+
+        if (e.clientX < mid) {
+            if (cursorLeft)  cursorLeft.style.display  = 'block';
+            if (cursorRight) cursorRight.style.display = 'none';
+        } else {
+            if (cursorLeft)  cursorLeft.style.display  = 'none';
+            if (cursorRight) cursorRight.style.display = 'block';
+        }
+    });
+
+    contentPane.addEventListener('mouseenter', () => {
+        if (!inDetailView()) return;
+        if (customCursor) customCursor.style.opacity = '1';
+    });
+
+    contentPane.addEventListener('mouseleave', () => {
+        if (customCursor) customCursor.style.opacity = '0';
+    });
+
+    contentPane.addEventListener('click', (e) => {
+        if (!inDetailView()) return;
+        const rect = carouselContainer.getBoundingClientRect();
+        const mid  = rect.left + rect.width / 2;
+        if (e.clientX < mid) navigate(-1);
+        else                  navigate(1);
+    });
+
+    window.addEventListener('resize', () => {
+        const activeSlide = document.querySelector('.project-slide.active');
+        if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
+    });
+
+    // Touch — prevent scroll in detail view
+    contentPane.addEventListener('touchmove', (e) => {
+        if (projectDetail.classList.contains('active')) e.preventDefault();
+    }, { passive: false });
+
+    // Live drag state
+    let dragAxis      = null;   // 'x' | 'y' | null
+    let dragBaseX     = 0;      // filmstrip translateX at touch start
+    let dragStartX    = 0;
+    let dragStartY    = 0;
+    let dragStartTime = 0;
+
+    carouselContainer.addEventListener('touchstart', (e) => {
+        if (isChangingProject) return;
+        const activeSlide = document.querySelector('.project-slide.active');
+        if (!activeSlide) return;
+
+        const filmstrip = activeSlide.querySelector('.filmstrip');
+        const matrix    = new DOMMatrix(getComputedStyle(filmstrip).transform);
+        dragBaseX     = matrix.m41;
+        dragStartX    = e.changedTouches[0].clientX;
+        dragStartY    = e.changedTouches[0].clientY;
+        dragStartTime = Date.now();
+        dragAxis      = null;
+
+        // Freeze filmstrip in place during drag
+        filmstrip.classList.remove('transitioning');
+        filmstrip.classList.add('no-transition');
+    }, { passive: true });
+
+    carouselContainer.addEventListener('touchmove', (e) => {
+        const activeSlide = document.querySelector('.project-slide.active');
+        if (!activeSlide) return;
+
+        const dX = e.changedTouches[0].clientX - dragStartX;
+        const dY = e.changedTouches[0].clientY - dragStartY;
+
+        // Lock axis on first meaningful move
+        if (!dragAxis && (Math.abs(dX) > 4 || Math.abs(dY) > 4)) {
+            dragAxis = Math.abs(dX) >= Math.abs(dY) ? 'x' : 'y';
+        }
+
+        if (dragAxis === 'x') {
+            const filmstrip = activeSlide.querySelector('.filmstrip');
+            filmstrip.style.transform = `translateX(${dragBaseX + dX}px)`;
+        }
+    }, { passive: true });
+
+    carouselContainer.addEventListener('touchend', (e) => {
+        const activeSlide = document.querySelector('.project-slide.active');
+        if (!activeSlide) return;
+
+        const filmstrip = activeSlide.querySelector('.filmstrip');
+        const dX        = e.changedTouches[0].clientX - dragStartX;
+        const dY        = e.changedTouches[0].clientY - dragStartY;
+        const elapsed   = Math.max(1, Date.now() - dragStartTime);
+        const velocity  = Math.abs(dX) / elapsed; // px/ms
+        const realCount = parseInt(activeSlide.dataset.realCount, 10);
+
+        filmstrip.classList.remove('no-transition');
+
+        if (dragAxis === 'x') {
+            const snapThreshold = activeSlide.offsetWidth * 0.2; // 20% of width
+            const shouldNav     = realCount > 1 &&
+                (Math.abs(dX) > snapThreshold || velocity > 0.3);
+
+            if (shouldNav) {
+                // Let navigate() take over from current drag position
+                isNavigating = false;
+                navigate(dX > 0 ? -1 : 1);
+            } else {
+                // Snap back to current slide
+                const idx = parseInt(activeSlide.dataset.currentIndex, 10);
+                filmstrip.classList.add('transitioning');
+                positionFilmstrip(activeSlide, idx);
+                filmstrip.addEventListener('transitionend',
+                    () => filmstrip.classList.remove('transitioning'),
+                    { once: true }
+                );
+            }
+        } else if (dragAxis === 'y') {
+            if (Math.abs(dY) > 50) {
+                if (dY > 0) showProject(currentProjectIndex - 1);
+                else        showProject(currentProjectIndex + 1);
+            }
+        }
+
+        dragAxis = null;
+    }, { passive: true });
+
+    // --------------------------------------------------------------------------
+    // START
+    // --------------------------------------------------------------------------
+    init();
+
+    requestAnimationFrame(() => {
+        const activeSlide = document.querySelector('.project-slide.active');
+        if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
     });
 
 });
