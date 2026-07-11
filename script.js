@@ -48,8 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'new-tool': {
             title: 'DUSTE',
             description: 'Stackable, modular Lithing system. <br><br> <p> </p>70x45cm  <p> </p>Aluminum, Corugated Plastic, LED bulbs.  <p> </p> 2026',
-            media: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` })),
-            pinned: true
+            media: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
         },
 
         'tin-3d': {
@@ -58,15 +57,13 @@ document.addEventListener('DOMContentLoaded', function () {
             media: [
                 { type: 'video', src: 'Projektvideos/tin-3d.mp4' },
                 ...Array.from({ length: 6 }, (_, i) => ({ type: 'image', src: `Projektbilder/Tin_3D_Printer/Bild (${i + 1}).jpg` }))
-            ],
-            pinned: true
+            ]
         },
 
         'faltkarre': {
             title: 'FOLDING WHEELBARROW',
             description: 'A wheelbarrow can take up a lot of space. That\'s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don\'t, you store it flat as it is.<br><br> <p> </p> 120x60cm  <p> </p> Truck Tarp, plywood, Aluminum Rods, rubber. <p> </p> 2025',
-            media: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` })),
-            pinned: true
+            media: Array.from({ length: 16 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
         },
 
         'ashoka-dupe': {
