@@ -286,7 +286,7 @@ body {
     white-space: nowrap;
     color: #000;
     font-family: var(--font-mono);
-    font-size: clamp(1.1rem, 0.9rem + 0.7vw, 1.6rem);
+    font-size: clamp(1.5rem, 1.2rem + 1.2vw, 2.2rem);
     font-weight: 500;
     letter-spacing: 0.04em;
     text-align: center;
@@ -593,6 +593,7 @@ body.touch-device .custom-cursor {
     }
 
     .project-grid {
+        grid-template-columns: repeat(2, 1fr);
         align-content: center;
         min-height: 100%;
     }
