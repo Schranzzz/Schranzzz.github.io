@@ -7,7 +7,7 @@
 
     <title>LEON REMMERT</title>
 
-    <link rel="stylesheet" href="style.css?v=40">
+    <link rel="stylesheet" href="style.css?v=43">
     <link rel="preload" href="Projektbilder/New_Tool/Bild (1).jpg" as="image">
 
     <link rel="icon" type="image/png" href="Favicon.png">
@@ -22,7 +22,19 @@
     <div class="page-wrapper">
 
         <header class="page-header">
-            <button class="menu-dots" id="menu-dots">···</button>
+            <nav class="category-nav" id="category-nav">
+                <button class="cat-arrow" id="cat-prev" aria-label="Previous category">&lsaquo;</button>
+                <span class="cat-label-wrap">
+                    <span class="cat-label" id="cat-label">Objects</span>
+                </span>
+                <button class="cat-arrow" id="cat-next" aria-label="Next category">&rsaquo;</button>
+            </nav>
+            <button class="detail-close" id="detail-close" aria-label="Close project" style="display:none">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                </svg>
+            </button>
         </header>
 
         <div class="main-content">
@@ -32,23 +44,31 @@
                     <!-- GRID VIEW -->
                     <div id="project-grid" class="project-grid"></div>
 
-                    <a id="message-btn" class="message-btn" href="https://mail.google.com/mail/?view=cm&to=leonremmert1@gmail.com" target="_blank" rel="noopener">Message</a>
+                    <div id="spatial-grid" class="project-grid" style="display:none">
+                        <div class="project-grid-item placeholder-tile"></div>
+                        <div class="project-grid-item placeholder-tile"></div>
+                        <div class="project-grid-item placeholder-tile"></div>
+                    </div>
+
+                    <div id="exhibitions-grid" class="project-grid" style="display:none">
+                        <div class="project-grid-item placeholder-tile"></div>
+                        <div class="project-grid-item placeholder-tile"></div>
+                        <div class="project-grid-item placeholder-tile"></div>
+                    </div>
+
+                    <button id="about-btn" class="about-trigger">Leon Remmert</button>
 
                     <!-- DETAIL VIEW -->
                     <div id="project-detail" class="project-detail">
-                        <button id="back-to-grid" class="back-to-grid">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="15 18 9 12 15 6"/>
-                            </svg>
-                        </button>
-
                         <div id="carousel-container" class="carousel-container">
                             <div id="project-slides" class="project-slides"></div>
                             <div class="top-bar"></div>
 
                             <div class="project-info">
-                                <span class="project-title" id="project-title"></span>
-                                <p id="project-description"></p>
+                                <div class="project-info-inner" id="project-info-inner">
+                                    <span class="project-title" id="project-title"></span>
+                                    <p id="project-description"></p>
+                                </div>
                             </div>
 
                             <div id="custom-cursor" class="custom-cursor">
@@ -72,25 +92,25 @@
     <div class="about-overlay" id="about-overlay">
         <button class="about-close" id="about-close">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="15 18 9 12 15 6"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+                <line x1="18" y1="6" x2="6" y2="18"/>
             </svg>
         </button>
         <div class="text-block">
-            I aim to create objects that challenge the viewer's perception, provoking and testing the rules that seem to be in place, design should not be judged by how well it fits within established expectations.
+            "I aim to create objects that challenge the viewer's perception, provoking and testing the rules that seem to be in place, design should not be judged by how well it fits within established expectations."
             <br><br>
-            > Leon Remmert has been studying Product Design at the University of the Arts Berlin and The New School, Parsons in New York.
+            Leon Remmert has been studying Product Design at the University of the Arts Berlin and The New School, Parsons in New York.
             <p></p>
-            He is engaged intensively with other artistic disciplines such as photography, painting, and drawing. In his current practice, he is interested in themes like transformation, technology, and recontextualizing established narratives.
-            <p></p>
+           
             He follows an experimental and material-driven approach.
             <br><br>
-            <p>leonremmert1@gmail.com</p>
-            <p>@leonardo_tornado0</p>
+            <p><a href="https://mail.google.com/mail/?view=cm&to=leonremmert1@gmail.com" target="_blank" rel="noopener">leonremmert1@gmail.com</a></p>
+            <p><a href="https://www.instagram.com/leonardo_tornad0" target="_blank" rel="noopener">@leonardo_tornad0</a></p>
         </div>
     </div>
 
     <div class="corner-logo">leon remmert 2026</div>
 
-    <script src="script.js?v=19"></script>
+    <script src="script.js?v=20"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // ==========================================================================
     // ABOUT OVERLAY
     // ==========================================================================
-    const menuBtn      = document.getElementById('menu-dots');
+    const menuBtn      = document.getElementById('about-btn');
     const aboutOverlay = document.getElementById('about-overlay');
     const closeBtn     = document.getElementById('about-close');
 
@@ -29,26 +29,37 @@ document.addEventListener('DOMContentLoaded', function () {
     const customCursor      = document.getElementById('custom-cursor');
     const titleEl           = document.getElementById('project-title');
     const descriptionEl     = document.getElementById('project-description');
+    const projectInfoInner  = document.getElementById('project-info-inner');
     const slidesContainer   = document.getElementById('project-slides');
     const projectGrid       = document.getElementById('project-grid');
     const projectDetail     = document.getElementById('project-detail');
-    const backBtn           = document.getElementById('back-to-grid');
+    const categoryNav       = document.getElementById('category-nav');
+    const detailCloseBtn    = document.getElementById('detail-close');
 
     let currentProjectIndex = 0;
     let isNavigating        = false;
     let isChangingProject   = false;
 
     const CLONE_COUNT = 5;
+    const GRID_VIDEO_PLAYBACK_RATE = 0.5;
 
     // --------------------------------------------------------------------------
     // PROJECT DATA
     // --------------------------------------------------------------------------
     const projectData = {
 
-        'new-tool': {
-            title: 'DUSTE',
+        'MSL-01': {
+            title: 'MSL-01',
             description: 'Stackable, modular Lithing system. <br><br> <p> </p>70x45cm  <p> </p>Aluminum, Corugated Plastic, LED bulbs.  <p> </p> 2026',
-            media: Array.from({ length: 5 }, (_, i) => ({ type: 'image', src: `Projektbilder/New_Tool/Bild (${i + 1}).jpg` }))
+            media: [
+                { type: 'video', src: 'Projektvideos/MSL-01_REEL_FINAL.mp4' },
+                { type: 'image', src: 'Projektbilder/New_Tool/Bild (1).jpg' },
+                { type: 'image', src: 'Projektbilder/New_Tool/Bild (2).jpg' },
+                { type: 'image', src: 'Projektbilder/New_Tool/Bild (3).jpg' },
+                { type: 'image', src: 'Projektbilder/New_Tool/Bild (4).jpg' },
+                { type: 'image', src: 'Projektbilder/New_Tool/Bild (5).jpeg' },
+                { type: 'image', src: 'Projektbilder/New_Tool/Bild (6).jpeg' }
+            ]
         },
 
         'tin-3d': {
@@ -211,6 +222,9 @@ document.addEventListener('DOMContentLoaded', function () {
     function openProject(index) {
         projectGrid.style.display = 'none';
         projectDetail.classList.add('active');
+        document.body.classList.add('detail-open');
+        if (categoryNav)    categoryNav.style.display = 'none';
+        if (detailCloseBtn) detailCloseBtn.style.display = 'flex';
 
         if (index === currentProjectIndex && document.querySelector('.project-slide.active')) {
             requestAnimationFrame(() => {
@@ -228,22 +242,116 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function showGrid() {
         projectDetail.classList.remove('active');
+        document.body.classList.remove('detail-open');
         projectGrid.style.display = 'grid';
+        if (categoryNav)    categoryNav.style.display = 'flex';
+        if (detailCloseBtn) detailCloseBtn.style.display = 'none';
     }
 
-    if (backBtn) backBtn.addEventListener('click', showGrid);
+    if (detailCloseBtn) detailCloseBtn.addEventListener('click', showGrid);
 
-    const msgBtn = document.getElementById('message-btn');
-    if (msgBtn) {
-        msgBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            window.open('https://mail.google.com/mail/?view=cm&to=leonremmert1@gmail.com', '_blank', 'noopener');
-        });
+    // --------------------------------------------------------------------------
+    // CATEGORY NAVIGATION
+    // --------------------------------------------------------------------------
+    const catLabel     = document.getElementById('cat-label');
+    const catPrevBtn   = document.getElementById('cat-prev');
+    const catNextBtn   = document.getElementById('cat-next');
+    const spatialGrid     = document.getElementById('spatial-grid');
+    const exhibitionsGrid = document.getElementById('exhibitions-grid');
+
+    const categories    = ['Objects', 'Spatial', 'Exhibitions'];
+    const categoryGrids  = [projectGrid, spatialGrid, exhibitionsGrid];
+    let currentCategory  = 0;
+    let categoryAnimating = false;
+
+    const CATEGORY_SLIDE_DISTANCE = 36;
+    const CATEGORY_BLUR_AMOUNT    = 6; // px
+    const CATEGORY_TRANSITION_MS  = 350;
+
+    function setCategory(index, direction) {
+        const nextCategory = ((index % categories.length) + categories.length) % categories.length;
+        if (nextCategory === currentCategory || categoryAnimating) return;
+        if (direction === undefined) direction = nextCategory > currentCategory ? 1 : -1;
+
+        categoryAnimating = true;
+        if (inDetailView()) showGrid();
+
+        const oldGrid = categoryGrids[currentCategory];
+        const newGrid = categoryGrids[nextCategory];
+
+        // slide + fade + blur the current word and grid away
+        if (catLabel) {
+            catLabel.style.transform = `translateX(${-direction * CATEGORY_SLIDE_DISTANCE}px)`;
+            catLabel.style.opacity   = '0';
+            catLabel.style.filter    = `blur(${CATEGORY_BLUR_AMOUNT}px)`;
+        }
+        if (oldGrid) {
+            oldGrid.style.transform = `translateX(${-direction * CATEGORY_SLIDE_DISTANCE}px)`;
+            oldGrid.style.opacity   = '0';
+            oldGrid.style.filter    = `blur(${CATEGORY_BLUR_AMOUNT}px)`;
+        }
+
+        setTimeout(() => {
+            currentCategory = nextCategory;
+            if (catLabel) catLabel.textContent = categories[currentCategory];
+            if (oldGrid) oldGrid.style.display = 'none';
+
+            // place the new word and grid on the opposite side, instantly (no transition)
+            if (catLabel) catLabel.classList.add('no-transition');
+            if (newGrid)  newGrid.classList.add('no-transition');
+
+            if (newGrid) newGrid.style.display = 'grid';
+            if (catLabel) catLabel.style.transform = `translateX(${direction * CATEGORY_SLIDE_DISTANCE}px)`;
+            if (newGrid)  newGrid.style.transform  = `translateX(${direction * CATEGORY_SLIDE_DISTANCE}px)`;
+            if (newGrid)  newGrid.style.opacity    = '0';
+            if (catLabel) catLabel.style.filter    = `blur(${CATEGORY_BLUR_AMOUNT}px)`;
+            if (newGrid)  newGrid.style.filter     = `blur(${CATEGORY_BLUR_AMOUNT}px)`;
+
+            void (newGrid || catLabel).offsetWidth; // force reflow before re-enabling transitions
+
+            if (catLabel) catLabel.classList.remove('no-transition');
+            if (newGrid)  newGrid.classList.remove('no-transition');
+
+            requestAnimationFrame(() => {
+                if (catLabel) { catLabel.style.transform = 'translateX(0)'; catLabel.style.opacity = '1'; catLabel.style.filter = 'blur(0px)'; }
+                if (newGrid)  { newGrid.style.transform  = 'translateX(0)'; newGrid.style.opacity  = '1'; newGrid.style.filter  = 'blur(0px)'; }
+            });
+
+            setTimeout(() => { categoryAnimating = false; }, CATEGORY_TRANSITION_MS);
+        }, CATEGORY_TRANSITION_MS);
     }
 
+    if (catPrevBtn) catPrevBtn.addEventListener('click', () => setCategory(currentCategory - 1, -1));
+    if (catNextBtn) catNextBtn.addEventListener('click', () => setCategory(currentCategory + 1, 1));
+
     // --------------------------------------------------------------------------
-    // SHOW PROJECT (crossfade)
+    // SHOW PROJECT (slide + crossfade)
     // --------------------------------------------------------------------------
+    const PROJECT_SLIDE_DISTANCE = 50; // px, vertical image slide
+    const PROJECT_INFO_DISTANCE  = 22; // px, vertical text slide
+    const PROJECT_INFO_MS        = 320;
+
+    function animateProjectInfo(index, direction) {
+        if (!projectInfoInner) { updateDescription(index); return; }
+
+        projectInfoInner.style.transform = `translateY(${-direction * PROJECT_INFO_DISTANCE}px)`;
+        projectInfoInner.style.opacity   = '0';
+
+        setTimeout(() => {
+            updateDescription(index);
+
+            projectInfoInner.classList.add('no-transition');
+            projectInfoInner.style.transform = `translateY(${direction * PROJECT_INFO_DISTANCE}px)`;
+            void projectInfoInner.offsetWidth; // force reflow before re-enabling transitions
+            projectInfoInner.classList.remove('no-transition');
+
+            requestAnimationFrame(() => {
+                projectInfoInner.style.transform = 'translateY(0)';
+                projectInfoInner.style.opacity   = '1';
+            });
+        }, PROJECT_INFO_MS);
+    }
+
     function showProject(index, isFirstOpen = false) {
         if (
             isChangingProject ||
@@ -259,6 +367,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const nextSlide  = document.querySelector(`.project-slide[data-key="${key}"]`);
         const filmstrip  = nextSlide.querySelector('.filmstrip');
         const startIndex = parseInt(nextSlide.dataset.prependedClones, 10);
+        const direction  = index > currentProjectIndex ? 1 : -1;
 
         if (isFirstOpen) {
             if (prevSlide) prevSlide.classList.remove('active');
@@ -276,9 +385,21 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const crossfade = () => {
-            if (prevSlide) prevSlide.classList.remove('active');
+            if (prevSlide) {
+                prevSlide.classList.remove('active');
+                prevSlide.style.transform = `translateY(${-direction * PROJECT_SLIDE_DISTANCE}px)`;
+            }
 
-            nextSlide.classList.add('active');
+            nextSlide.classList.add('no-transition');
+            nextSlide.style.transform = `translateY(${direction * PROJECT_SLIDE_DISTANCE}px)`;
+            void nextSlide.offsetWidth; // force reflow before re-enabling transitions
+            nextSlide.classList.remove('no-transition');
+
+            requestAnimationFrame(() => {
+                nextSlide.classList.add('active');
+                nextSlide.style.transform = 'translateY(0)';
+            });
+
             filmstrip.classList.remove('transitioning');
             filmstrip.classList.add('no-transition');
 
@@ -292,8 +413,8 @@ document.addEventListener('DOMContentLoaded', function () {
             updateDots(nextSlide, 0);
             muteAllVideos();
 
+            animateProjectInfo(index, direction);
             currentProjectIndex = index;
-            updateDescription(index);
 
             setTimeout(() => { isChangingProject = false; }, 1100);
         };
@@ -319,8 +440,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let el;
 
         if (mediaData.type === 'image') {
-            el         = new Image();
-            el.loading = 'lazy';
+            el = new Image();
         } else if (mediaData.type === 'video') {
             el = document.createElement('video');
             Object.assign(el, {
@@ -378,12 +498,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 img.loading = 'lazy';
                 gridItem.appendChild(img);
             } else if (firstMedia.type === 'video') {
-                const vid       = document.createElement('video');
-                vid.src         = firstMedia.src;
-                vid.muted       = true;
-                vid.autoplay    = true;
-                vid.loop        = true;
-                vid.playsInline = true;
+                const vid              = document.createElement('video');
+                vid.src                = firstMedia.src;
+                vid.muted              = true;
+                vid.autoplay           = true;
+                vid.loop               = true;
+                vid.playsInline        = true;
+                vid.defaultPlaybackRate = GRID_VIDEO_PLAYBACK_RATE;
+                vid.playbackRate        = GRID_VIDEO_PLAYBACK_RATE;
+                vid.addEventListener('loadedmetadata', () => { vid.playbackRate = GRID_VIDEO_PLAYBACK_RATE; });
                 gridItem.appendChild(vid);
             }
 
