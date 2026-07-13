@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
         'faltkarre': {
             title: 'FOLDING WHEELBARROW',
             description: 'A wheelbarrow can take up a lot of space. That\'s why I developed this folding wheelbarrow. When you need it, you fold it up quickly and when you don\'t, you store it flat as it is.<br><br> <p> </p> 120x60cm  <p> </p> Truck Tarp, plywood, Aluminum Rods, rubber. <p> </p> 2025',
-            media: Array.from({ length: 9 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
+            media: Array.from({ length: 7 }, (_, i) => ({ type: 'image', src: `Projektbilder/Faltkarre/Bild (${i + 1}).jpg` }))
         },
 
         'ashoka-dupe': {
@@ -83,10 +83,26 @@ document.addEventListener('DOMContentLoaded', function () {
             media: Array.from({ length: 3 }, (_, i) => ({ type: 'image', src: `Projektbilder/Ashoka_Dupe/Bild (${i + 1}).jpg` }))
         },
 
-        'leiter': {
-            title: 'DECORATED LADDER',
-            description: 'What could decorations for a ladder look like that would make the ladder and its exclusive ornaments a worthy successor to the traditional Christmas tree?  <br><br><p> </p> 200x100cm  <p> </p> Wooden Ladder, PLA printed parts. <p> </p> 2023',
-            media: Array.from({ length: 11 }, (_, i) => ({ type: 'image', src: `Projektbilder/Leiter/Bild (${i + 1}).jpg` }))
+        'usps-chair': {
+            title: 'USPS CHAIR',
+            description: 'The inspiration for this chair came from the material and techniques used for the iconic United States Postal Service boxes. They are made of semi-transparent 4mm corrugated Twinwall PP plastic. Very specific techniques are used to give them great stability and durability. <br><br> <p> </p> 60x50x50cm  <p> </p> Corrugated Twinwall PP Plastic  <p> </p> 2026',
+            media: [
+                { type: 'image', src: 'Projektbilder/USPS Chair/Bild (1).jpeg' },
+                { type: 'image', src: 'Projektbilder/USPS Chair/Bild (2).jpeg' },
+                { type: 'image', src: 'Projektbilder/USPS Chair/Bild (3).jpeg' },
+                { type: 'image', src: 'Projektbilder/USPS Chair/Bild (4).jpeg' },
+                { type: 'image', src: 'Projektbilder/USPS Chair/Bild (5).jpg' }
+            ]
+        },
+
+        'split-stool': {
+            title: 'SPLIT STOOL',
+            description: 'A discarded MDF flower box found on the street became the sole material source for this stool. Almost nothing was wasted. The geometry was developed entirely around what the box could give, its dimensions, its panels, its limits. <br><br> <p> </p> 60x40x40cm  <p> </p> MDF  <p> </p> 2023',
+            media: [
+                { type: 'image', src: 'Projektbilder/Split Hocker/Bild (2).jpeg' },
+                { type: 'image', src: 'Projektbilder/Split Hocker/Bild (1).jpeg' },
+                { type: 'image', src: 'Projektbilder/Split Hocker/Bild (3).jpeg' }
+            ]
         }
 
     };
@@ -232,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
             });
         } else {
-            showProject(index, currentProjectIndex === -1);
+            showProject(index, true);
             requestAnimationFrame(() => {
                 const activeSlide = document.querySelector('.project-slide.active');
                 if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
@@ -370,13 +386,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const direction  = index > currentProjectIndex ? 1 : -1;
 
         if (isFirstOpen) {
-            if (prevSlide) prevSlide.classList.remove('active');
+            if (prevSlide) {
+                prevSlide.classList.remove('active');
+                prevSlide.style.transform = '';
+            }
 
+            nextSlide.classList.add('no-transition');
+            nextSlide.style.transform = '';
             nextSlide.classList.add('active');
             nextSlide.dataset.currentIndex = startIndex;
+            void nextSlide.offsetWidth; // force reflow while transition is disabled
+            nextSlide.classList.remove('no-transition');
 
             const firstFrame = filmstrip.children[startIndex];
             if (firstFrame) firstFrame.classList.add('media-active');
+
+            if (projectInfoInner) {
+                projectInfoInner.classList.add('no-transition');
+                projectInfoInner.style.transform = 'translateY(0)';
+                projectInfoInner.style.opacity   = '1';
+                void projectInfoInner.offsetWidth;
+                projectInfoInner.classList.remove('no-transition');
+            }
 
             currentProjectIndex = index;
             updateDescription(index);
@@ -593,6 +624,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     contentPane.addEventListener('mousemove', (e) => {
         if (!inDetailView() || !customCursor) return;
+
+        if (e.target.closest('.about-trigger')) {
+            customCursor.style.opacity = '0';
+            return;
+        }
 
         customCursor.style.opacity = '1';
         customCursor.style.left    = `${e.clientX}px`;

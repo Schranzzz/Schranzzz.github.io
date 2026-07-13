@@ -23,11 +23,19 @@
 
         <header class="page-header">
             <nav class="category-nav" id="category-nav">
-                <button class="cat-arrow" id="cat-prev" aria-label="Previous category">&lsaquo;</button>
+                <button class="cat-arrow" id="cat-prev" aria-label="Previous category">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                </button>
                 <span class="cat-label-wrap">
                     <span class="cat-label" id="cat-label">Objects</span>
                 </span>
-                <button class="cat-arrow" id="cat-next" aria-label="Next category">&rsaquo;</button>
+                <button class="cat-arrow" id="cat-next" aria-label="Next category">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                </button>
             </nav>
             <button class="detail-close" id="detail-close" aria-label="Close project" style="display:none">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -56,7 +64,7 @@
                         <div class="project-grid-item placeholder-tile"></div>
                     </div>
 
-                    <button id="about-btn" class="about-trigger">Leon Remmert</button>
+                    <button id="about-btn" class="about-trigger"><span class="about-trigger-text">Leon Remmert</span></button>
 
                     <!-- DETAIL VIEW -->
                     <div id="project-detail" class="project-detail">
@@ -97,7 +105,7 @@
             </svg>
         </button>
         <div class="text-block">
-            "I aim to create objects that challenge the viewer's perception, provoking and testing the rules that seem to be in place, design should not be judged by how well it fits within established expectations."
+            "I aim to create projects that challenge the viewer's perception, provoking and testing the rules that seem to be in place, design should not be judged by how well it fits within established expectations."
             <br><br>
             Leon Remmert has been studying Product Design at the University of the Arts Berlin and The New School, Parsons in New York.
             <p></p>
