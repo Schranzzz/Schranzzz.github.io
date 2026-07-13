@@ -476,8 +476,8 @@ body {
     left: 0;
     z-index: 9999;
     pointer-events: none;
-    width: clamp(84px, 70px + 8vw, 116px);
-    height: clamp(84px, 70px + 8vw, 116px);
+    width: clamp(58px, 50px + 5.5vw, 78px);
+    height: clamp(58px, 50px + 5.5vw, 78px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -488,8 +488,8 @@ body {
 }
 
 .custom-cursor svg {
-    width: clamp(54px, 44px + 4vw, 78px);
-    height: clamp(54px, 44px + 4vw, 78px);
+    width: clamp(38px, 30px + 1.5vw, 56px);
+    height: clamp(38px, 30px + 1.5vw, 56px);
     display: block;
     filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.7)) drop-shadow(0 0 16px rgba(0, 0, 0, 0.45));
 }
