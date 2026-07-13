@@ -468,10 +468,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const frame     = document.createElement('div');
         frame.className = 'slide-frame';
 
+        const spinner     = document.createElement('div');
+        spinner.className = 'media-spinner';
+        frame.appendChild(spinner);
+        const removeSpinner = () => spinner.remove();
+
         let el;
 
         if (mediaData.type === 'image') {
             el = new Image();
+            el.addEventListener('load',  removeSpinner);
+            el.addEventListener('error', removeSpinner);
         } else if (mediaData.type === 'video') {
             el = document.createElement('video');
             Object.assign(el, {
@@ -489,15 +496,21 @@ document.addEventListener('DOMContentLoaded', function () {
                 const activeSlide = document.querySelector('.project-slide.active');
                 if (activeSlide) positionFilmstrip(activeSlide, parseInt(activeSlide.dataset.currentIndex, 10));
             });
+            el.addEventListener('loadeddata', removeSpinner);
+            el.addEventListener('error', removeSpinner);
         } else if (mediaData.type === 'model') {
             el = document.createElement('model-viewer');
             el.setAttribute('camera-controls', '');
             el.setAttribute('auto-rotate', '');
+            el.addEventListener('load',  removeSpinner);
+            el.addEventListener('error', removeSpinner);
         }
 
         if (el) {
             el.src = mediaData.src;
             frame.appendChild(el);
+        } else {
+            removeSpinner();
         }
 
         return frame;
@@ -521,12 +534,18 @@ document.addEventListener('DOMContentLoaded', function () {
             const gridItem     = document.createElement('div');
             gridItem.className = 'project-grid-item';
 
+            const gridSpinner     = document.createElement('div');
+            gridSpinner.className = 'media-spinner';
+            gridItem.appendChild(gridSpinner);
+            const removeGridSpinner = () => gridSpinner.remove();
+
             const firstMedia = projectData[key].media[0];
             if (firstMedia.type === 'image') {
-                const img   = new Image();
-                img.src     = firstMedia.src;
-                img.alt     = projectData[key].title;
-                img.loading = 'lazy';
+                const img = new Image();
+                img.src   = firstMedia.src;
+                img.alt   = projectData[key].title;
+                img.addEventListener('load',  removeGridSpinner);
+                img.addEventListener('error', removeGridSpinner);
                 gridItem.appendChild(img);
             } else if (firstMedia.type === 'video') {
                 const vid              = document.createElement('video');
@@ -538,6 +557,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 vid.defaultPlaybackRate = GRID_VIDEO_PLAYBACK_RATE;
                 vid.playbackRate        = GRID_VIDEO_PLAYBACK_RATE;
                 vid.addEventListener('loadedmetadata', () => { vid.playbackRate = GRID_VIDEO_PLAYBACK_RATE; });
+                vid.addEventListener('loadeddata', removeGridSpinner);
+                vid.addEventListener('error', removeGridSpinner);
                 gridItem.appendChild(vid);
             }
 
